@@ -51,7 +51,7 @@ Usage:
 if __name__ == "__main__":
     topdir = sys.argv[1]
 
-    filters = ['.c', '.cc', '.cpp', '.cxx', '.c++', '.h', '.hxx', '.hh', '.hpp', '.h++']
+    filters = ['.c', '.cc', '.cpp', '.cxx', '.c++', '.h', '.hxx', '.hh', '.hpp', '.h++', '.txt']
 
     os.path.walk(topdir, visitor, filters)
 
