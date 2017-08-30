@@ -11,38 +11,72 @@ out_dir = sys.argv[2]
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
-def comment_finder(text):
-    pattern = re.compile( r'//.*?$|/\*.*?\*/', re.DOTALL | re.MULTILINE)
-    result = pattern.findall(text)
+def finder(text):
+    # pattern = re.compile( r'//.*?$|/\*.*?\*/', re.DOTALL | re.MULTILINE)
+    result = matchCommentMultiline(text) + matchCommentSingleline(text) + matchString(text)
     return result
 
-def print_command(filename, outfile):
+def matchCommentMultiline (text) :
+    # matches /* */
+    pattern_with_lf = re.compile( r'\/\*.*?\*\/', re.DOTALL | re.MULTILINE)
+    return pattern_with_lf.findall(text)
 
+def matchCommentSingleline (text) :
+    #matches //
+    pattern = re.compile( r'\/\/.*')
+    return pattern.findall(text)
+
+def matchString (text) :
+     # matches " " ' '
+    string_pattern = re.compile( r'(([\"\'])(?:(?=(\\?))\3.)*?\2)', re.DOTALL | re.MULTILINE)
+    result = []
+    string_matched_groups = string_pattern.findall(text)
+    # remove 2nd and 3rd group matched
+    for match in string_matched_groups:
+        result.append(match[0])
+    return result
+
+def read_file (filename) :
     codefile = codecs.open(filename,'r', encoding)
-    commentfile = codecs.open(out_dir+'/'+outfile+".cmt",'a', encoding)
     lines=codefile.read()
     codefile.close()
-    #the list of comments
-    list_of_comments = comment_finder(lines)
-    for comment in list_of_comments:
-        #print comment[0:2]
-        if comment[0:2] == "//":
-                comment_to_write = comment[2:]
-        else:
-            comment_to_write = comment[2:-2]
-        if comment_to_write.endswith("\r"):
-            comment_to_write = comment_to_write[0:-1]
-        if len(comment_to_write)!=0:
-            commentfile.write(comment_to_write)
-            commentfile.write(os.linesep)
-    commentfile.close()
+    return lines
+
+def trim_string (string) :
+    trimmed_string = string
+    if string[0:2] == "//":
+            trimmed_string = string[2:]
+            
+    if string[0:2] == "/*":
+        string = string.replace('\n', ' ').replace('\r', '')
+        trimmed_string = string[2:-2]
+      
+    if string[0:1] == "'" or string[0:1] == '"':
+        trimmed_string = string[1:-1]
+    return trimmed_string
+
+def print_command(filename, outfile):
+    
+    code = read_file (filename)
+    # commentfile = codecs.open(out_dir+'/'+outfile+".cmt",'a', encoding)
+    output_file = codecs.open(out_dir+'/'+outfile,'a', encoding)
+
+    list_of_strings = finder(code)
+    for string in list_of_strings:
+        string_to_write = trim_string(string).strip()
+        
+        if len(string_to_write)!=0:
+            output_file.write(string_to_write)
+            output_file.write(os.linesep)
+            
+    output_file.close()
 
 def visitor(filters, dirname, names):
 	mynames = filter(lambda n : os.path.splitext(n)[1].lower() in filters, names)
 	for name in mynames:
 		fname = os.path.join(dirname, name)
 		if not os.path.isdir(fname):
-			print_command(fname, name)
+			print_command(fname, 'parsed' + name)
 '''
 Usage:
     python srj-string_comments.py src_dir/ output_dir/

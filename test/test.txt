@@ -1,0 +1,10 @@
+/*
+test
+me
+*/
+// helloworld
+// comment 2
+function helloWorld() {
+    var string = "helloooo";
+    var string2 = "byeee";
+}
