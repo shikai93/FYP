@@ -11,6 +11,30 @@ out_dir = sys.argv[2]
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
+def visitor(filters, dirname, names):
+	mynames = filter(lambda n : os.path.splitext(n)[1].lower() in filters, names)
+	for name in mynames:
+		fname = os.path.join(dirname, name)
+		if not os.path.isdir(fname):
+			print_command(fname, 'parsed' + name)
+
+def print_command(filename, outfile):
+
+    code = read_file (filename)
+    outname = os.path.splitext(outfile)[0]
+    # commentfile = codecs.open(out_dir+'/'+outfile+".cmt",'a', encoding)
+    output_file = codecs.open(out_dir+'/'+outname+'.txt','a', encoding)
+
+    list_of_strings = finder(code)
+    for string in list_of_strings:
+        string_to_write = ' '.join(trim_string(string).split())+'\n'
+
+        if len(string_to_write)!=0:
+            output_file.write(string_to_write)
+            output_file.write(os.linesep)
+
+    output_file.close()
+
 def finder(text):
     # pattern = re.compile( r'//.*?$|/\*.*?\*/', re.DOTALL | re.MULTILINE)
     result = matchCommentMultiline(text) + matchCommentSingleline(text) + matchString(text)
@@ -61,29 +85,6 @@ def removeSpecials(characters,string):
         string = string.replace(unwantedSpecial,'')
     return string
 
-def print_command(filename, outfile):
-
-    code = read_file (filename)
-    outname = os.path.splitext(outfile)[0]
-    # commentfile = codecs.open(out_dir+'/'+outfile+".cmt",'a', encoding)
-    output_file = codecs.open(out_dir+'/'+outname+'.txt','a', encoding)
-
-    list_of_strings = finder(code)
-    for string in list_of_strings:
-        string_to_write = ' '.join(trim_string(string).split())+'\n'
-
-        if len(string_to_write)!=0:
-            output_file.write(string_to_write)
-            output_file.write(os.linesep)
-
-    output_file.close()
-
-def visitor(filters, dirname, names):
-	mynames = filter(lambda n : os.path.splitext(n)[1].lower() in filters, names)
-	for name in mynames:
-		fname = os.path.join(dirname, name)
-		if not os.path.isdir(fname):
-			print_command(fname, 'parsed' + name)
 '''
 Usage:
     python srj-string_comments.py src_dir/ output_dir/
