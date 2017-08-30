@@ -1,5 +1,0 @@
-test me
-helloworld
-comment 2
-helloooo
-byeee

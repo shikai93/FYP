@@ -46,29 +46,31 @@ def trim_string (string) :
     trimmed_string = string
     if string[0:2] == "//":
             trimmed_string = string[2:]
-            
+
     if string[0:2] == "/*":
-        string = string.replace('\n', ' ').replace('\r', '')
+        string = string.replace('\n', ' ').replace('\r', '').replace('\t','').replace('*','')
         trimmed_string = string[2:-2]
-      
+
     if string[0:1] == "'" or string[0:1] == '"':
         trimmed_string = string[1:-1]
     return trimmed_string
 
 def print_command(filename, outfile):
-    
+
     code = read_file (filename)
+    outname = os.path.splitext(outfile)[0]
     # commentfile = codecs.open(out_dir+'/'+outfile+".cmt",'a', encoding)
-    output_file = codecs.open(out_dir+'/'+outfile,'a', encoding)
+    output_file = codecs.open(out_dir+'/'+outname+'.txt','a', encoding)
 
     list_of_strings = finder(code)
     for string in list_of_strings:
-        string_to_write = trim_string(string).strip()
-        
+        trimmed_string = trim_string(string)
+        string_to_write = ' '.join(trimmed_string.split())+'\n'
+
         if len(string_to_write)!=0:
             output_file.write(string_to_write)
             output_file.write(os.linesep)
-            
+
     output_file.close()
 
 def visitor(filters, dirname, names):
@@ -88,4 +90,3 @@ if __name__ == "__main__":
     filters = ['.c', '.cc', '.cpp', '.cxx', '.c++', '.h', '.hxx', '.hh', '.hpp', '.h++', '.txt']
 
     os.path.walk(topdir, visitor, filters)
-
