@@ -48,12 +48,18 @@ def trim_string (string) :
             trimmed_string = string[2:]
 
     if string[0:2] == "/*":
-        string = string.replace('\n', ' ').replace('\r', '').replace('\t','').replace('*','')
+        string = string.replace('\n', ' ')
+        string = removeSpecials(['\r','\t','*'],string)
         trimmed_string = string[2:-2]
 
     if string[0:1] == "'" or string[0:1] == '"':
         trimmed_string = string[1:-1]
     return trimmed_string
+
+def removeSpecials(characters,string):
+    for unwantedSpecial in characters :
+        string = string.replace(unwantedSpecial,'')
+    return string
 
 def print_command(filename, outfile):
 
@@ -64,8 +70,7 @@ def print_command(filename, outfile):
 
     list_of_strings = finder(code)
     for string in list_of_strings:
-        trimmed_string = trim_string(string)
-        string_to_write = ' '.join(trimmed_string.split())+'\n'
+        string_to_write = ' '.join(trim_string(string).split())+'\n'
 
         if len(string_to_write)!=0:
             output_file.write(string_to_write)
