@@ -30,6 +30,7 @@ def print_command(filename, outfile):
         string_to_write = ' '.join(trim_string(string).split())+'\n'
 
         if len(string_to_write)!=0:
+
             output_file.write(string_to_write)
             output_file.write(os.linesep)
 
@@ -61,9 +62,18 @@ def matchString (text) :
     return result
 
 def read_file (filename) :
-    codefile = codecs.open(filename,'r', encoding)
-    lines=codefile.read()
-    codefile.close()
+    global encoding
+    try:
+        encoding = 'cp932'
+        codefile = codecs.open(filename,'r', encoding)
+        lines=codefile.read()
+        codefile.close()
+    except UnicodeDecodeError, err:
+        encoding = 'utf8'
+        codefile = codecs.open(filename,'r',encoding)
+        lines=codefile.read()
+        codefile.close()
+        return lines
     return lines
 
 def trim_string (string) :

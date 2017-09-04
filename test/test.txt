@@ -8,3 +8,5 @@ function helloWorld() {
     var string = "helloooo";
     var string2 = "byeee";
 }
+
+0x1234
