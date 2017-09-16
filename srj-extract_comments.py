@@ -37,8 +37,10 @@ def print_command(filename, outfile):
     output_file.close()
 
 def finder(text):
-    # pattern = re.compile( r'//.*?$|/\*.*?\*/', re.DOTALL | re.MULTILINE)
-    result = matchCommentMultiline(text) + matchCommentSingleline(text) + matchString(text)
+    result = matchCommentMultiline(text)
+    result += matchCommentSingleline(text)
+    result += matchString(text)
+    result += matchBytes
     return result
 
 def matchCommentMultiline (text) :
@@ -60,6 +62,11 @@ def matchString (text) :
     for match in string_matched_groups:
         result.append(match[0])
     return result
+
+# match magic byte - 0x
+def matchBytes (text) :
+    byte_pattern = re.compile( r'0[xX]\S*')
+    return byte_pattern.findall(text)
 
 def read_file (filename) :
     global encoding
