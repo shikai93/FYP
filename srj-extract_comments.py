@@ -40,7 +40,7 @@ def finder(text):
     result = matchCommentMultiline(text)
     result += matchCommentSingleline(text)
     result += matchString(text)
-    result += matchBytes
+    result += matchBytes(text)
     return result
 
 def matchCommentMultiline (text) :
@@ -76,6 +76,7 @@ def read_file (filename) :
         lines=codefile.read()
         codefile.close()
     except UnicodeDecodeError, err:
+        print err
         encoding = 'utf8'
         codefile = codecs.open(filename,'r',encoding)
         lines=codefile.read()

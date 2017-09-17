@@ -9,10 +9,10 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
 encoding = 'cp932'
-THRESHOLD = 0.5
+THRESHOLD = 0
 
 tfidf_transformer = TfidfTransformer()
-count_vect = CountVectorizer()
+count_vect = CountVectorizer(ngram_range=(2,2), analyzer="char_wb")
 
 all_filenames = []
 out_dir = sys.argv[2]
