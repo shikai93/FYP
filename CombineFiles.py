@@ -7,7 +7,7 @@ import codecs
 import os
 
 encoding = 'cp932'
-out_dir = sys.argv[2]
+out_dir = 'combinedFiles'
 if not os.path.exists(out_dir):
     os.makedirs(out_dir)
 
@@ -20,7 +20,7 @@ def visitor(filters, dirname, names):
 
 def combineStrings(fname):
     code = read_file(fname)
-    output_file = codecs.open(out_dir+'/'+'combined'+sys.argv[2]+'.txt','a', 'cp932')
+    output_file = codecs.open(out_dir+'/'+'combined'+sys.argv[1]+'.txt','a', 'cp932')
     output_file.write(code)
     output_file.write(os.linesep)
     output_file.close()

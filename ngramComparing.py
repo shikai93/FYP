@@ -4,7 +4,6 @@ import numpy as np
 import os.path
 import codecs
 import os
-import ngram
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 
