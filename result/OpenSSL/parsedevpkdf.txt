@@ -1,4 +1,0 @@
-www.openssl.org/source/license.html
-
-License
-
