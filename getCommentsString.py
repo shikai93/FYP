@@ -122,6 +122,8 @@ def combineStrings(fname):
 '''
 Usage:
     python srj-string_comments.py src_dir/ output_dir/
+    
+    out_dir is preferrable 'result'
     src_dir is the dir that stores all the different open source codes in folders.
     out_dir/combined contains all combined strings of all open source libraries compared as 'combined'+libname.txt
 '''
