@@ -1,0 +1,58 @@
+Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+sk_push() returns 0 on error. Let's adapt that
+
+sk_push() returns 0 on error. Let's adapt that
+
+Returns the index to the place in the stack or -1 for error. Uses a direct reference to the prompt.
+
+Same as UI_add_input_string(), excepts it takes a copy of the prompt
+
+Interrupt/Cancel/something...
+
+Errors
+
+Success
+
+Interrupt/Cancel/something...
+
+Errors
+
+Success
+
+BIG FSCKING WARNING!!!! If you use this on a statically allocated method (that is, it hasn't been allocated using UI_create_method(), you deserve anything Murphy can throw at you and more! You have been warned.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ui_locl.h
+
+s adapt that */ if (ret <= 0) { ret--; free_string(s); } } else free_string(s); } return ret; } static int general_allocate_boolean(UI *ui, const char *prompt, const char *action_desc, const char *ok_chars, const char *cancel_chars, int prompt_freeable, enum UI_string_types type, int input_flags, char *result_buf) { int ret = -1; UI_STRING *s; const char *p; if (ok_chars == NULL) { UIerr(UI_F_GENERAL_ALLOCATE_BOOLEAN, ERR_R_PASSED_NULL_PARAMETER); } else if (cancel_chars == NULL) { UIerr(UI_F_GENERAL_ALLOCATE_BOOLEAN, ERR_R_PASSED_NULL_PARAMETER); } else { for (p = ok_chars; *p !=
+
+; p++) { if (strchr(cancel_chars, *p) != NULL) { UIerr(UI_F_GENERAL_ALLOCATE_BOOLEAN, UI_R_COMMON_OK_AND_CANCEL_CHARACTERS); } } s = general_allocate_prompt(ui, prompt, prompt_freeable, type, input_flags, result_buf); if (s != NULL) { if (allocate_string_stack(ui) >= 0) { s->_.boolean_data.action_desc = action_desc; s->_.boolean_data.ok_chars = ok_chars; s->_.boolean_data.cancel_chars = cancel_chars; ret = sk_UI_STRING_push(ui->strings, s); /* * sk_push() returns 0 on error. Let
+
+Enter
+
+for
+
+:
+
+processing
+
+opening session
+
+writing strings
+
+flushing
+
+reading strings
+
+closing session
+
+while
+
+t been allocated using UI_create_method(), you deserve * anything Murphy can throw at you and more! You have been warned. */ void UI_destroy_method(UI_METHOD *ui_method) { if (ui_method == NULL) return; CRYPTO_free_ex_data(CRYPTO_EX_INDEX_UI_METHOD, ui_method, &ui_method->ex_data); OPENSSL_free(ui_method->name); ui_method->name = NULL; OPENSSL_free(ui_method); } int UI_method_set_opener(UI_METHOD *method, int (*opener) (UI *ui)) { if (method != NULL) { method->ui_open_session = opener; return 0; } return -1; } int UI_method_set_writer(UI_METHOD *method, int (*writer) (UI *ui, UI_STRING *uis)) { if (method != NULL) { method->ui_write_string = writer; return 0; } return -1; } int UI_method_set_flusher(UI_METHOD *method, int (*flusher) (UI *ui)) { if (method != NULL) { method->ui_flush = flusher; return 0; } return -1; } int UI_method_set_reader(UI_METHOD *method, int (*reader) (UI *ui, UI_STRING *uis)) { if (method != NULL) { method->ui_read_string = reader; return 0; } return -1; } int UI_method_set_closer(UI_METHOD *method, int (*closer) (UI *ui)) { if (method != NULL) { method->ui_close_session = closer; return 0; } return -1; } int UI_method_set_data_duplicator(UI_METHOD *method, void *(*duplicator) (UI *ui, void *ui_data), void (*destructor)(UI *ui, void *ui_data)) { if (method != NULL) { method->ui_duplicate_data = duplicator; method->ui_destroy_data = destructor; return 0; } return -1; } int UI_method_set_prompt_constructor(UI_METHOD *method, char *(*prompt_constructor) (UI *ui, const char *object_desc, const char *object_name)) { if (method != NULL) { method->ui_construct_prompt = prompt_constructor; return 0; } return -1; } int UI_method_set_ex_data(UI_METHOD *method, int idx, void *data) { return CRYPTO_set_ex_data(&method->ex_data, idx, data); } int (*UI_method_get_opener(const UI_METHOD *method)) (UI *) { if (method != NULL) return method->ui_open_session; return NULL; } int (*UI_method_get_writer(const UI_METHOD *method)) (UI *, UI_STRING *) { if (method != NULL) return method->ui_write_string; return NULL; } int (*UI_method_get_flusher(const UI_METHOD *method)) (UI *) { if (method != NULL) return method->ui_flush; return NULL; } int (*UI_method_get_reader(const UI_METHOD *method)) (UI *, UI_STRING *) { if (method != NULL) return method->ui_read_string; return NULL; } int (*UI_method_get_closer(const UI_METHOD *method)) (UI *) { if (method != NULL) return method->ui_close_session; return NULL; } char *(*UI_method_get_prompt_constructor(const UI_METHOD *method)) (UI *, const char *, const char *) { if (method != NULL) return method->ui_construct_prompt; return NULL; } void *(*UI_method_get_data_duplicator(const UI_METHOD *method)) (UI *, void *) { if (method != NULL) return method->ui_duplicate_data; return NULL; } void (*UI_method_get_data_destructor(const UI_METHOD *method)) (UI *, void *) { if (method != NULL) return method->ui_destroy_data; return NULL; } const void *UI_method_get_ex_data(const UI_METHOD *method, int idx) { return CRYPTO_get_ex_data(&method->ex_data, idx); } enum UI_string_types UI_get_string_type(UI_STRING *uis) { return uis->type; } int UI_get_input_flags(UI_STRING *uis) { return uis->input_flags; } const char *UI_get0_output_string(UI_STRING *uis) { return uis->out_string; } const char *UI_get0_action_string(UI_STRING *uis) { switch (uis->type) { case UIT_BOOLEAN: return uis->_.boolean_data.action_desc; case UIT_PROMPT: case UIT_NONE: case UIT_VERIFY: case UIT_INFO: case UIT_ERROR: break; } return NULL; } const char *UI_get0_result_string(UI_STRING *uis) { switch (uis->type) { case UIT_PROMPT: case UIT_VERIFY: return uis->result_buf; case UIT_NONE: case UIT_BOOLEAN: case UIT_INFO: case UIT_ERROR: break; } return NULL; } const char *UI_get0_test_string(UI_STRING *uis) { switch (uis->type) { case UIT_VERIFY: return uis->_.string_data.test_buf; case UIT_NONE: case UIT_BOOLEAN: case UIT_INFO: case UIT_ERROR: case UIT_PROMPT: break; } return NULL; } int UI_get_result_minsize(UI_STRING *uis) { switch (uis->type) { case UIT_PROMPT: case UIT_VERIFY: return uis->_.string_data.result_minsize; case UIT_NONE: case UIT_INFO: case UIT_ERROR: case UIT_BOOLEAN: break; } return -1; } int UI_get_result_maxsize(UI_STRING *uis) { switch (uis->type) { case UIT_PROMPT: case UIT_VERIFY: return uis->_.string_data.result_maxsize; case UIT_NONE: case UIT_INFO: case UIT_ERROR: case UIT_BOOLEAN: break; } return -1; } int UI_set_result(UI *ui, UI_STRING *uis, const char *result) { int l = strlen(result); ui->flags &= ~UI_FLAG_REDOABLE; switch (uis->type) { case UIT_PROMPT: case UIT_VERIFY: { char number1[DECIMAL_SIZE(uis->_.string_data.result_minsize) + 1]; char number2[DECIMAL_SIZE(uis->_.string_data.result_maxsize) + 1]; BIO_snprintf(number1, sizeof(number1), "%d", uis->_.string_data.result_minsize); BIO_snprintf(number2, sizeof(number2), "%d", uis->_.string_data.result_maxsize); if (l < uis->_.string_data.result_minsize) { ui->flags |= UI_FLAG_REDOABLE; UIerr(UI_F_UI_SET_RESULT, UI_R_RESULT_TOO_SMALL); ERR_add_error_data(5, "You must type in ", number1, " to ", number2, " characters"); return -1; } if (l > uis->_.string_data.result_maxsize) { ui->flags |= UI_FLAG_REDOABLE; UIerr(UI_F_UI_SET_RESULT, UI_R_RESULT_TOO_LARGE); ERR_add_error_data(5, "You must type in ", number1, " to ", number2, " characters"); return -1; } } if (uis->result_buf == NULL) { UIerr(UI_F_UI_SET_RESULT, UI_R_NO_RESULT_BUFFER); return -1; } OPENSSL_strlcpy(uis->result_buf, result, uis->_.string_data.result_maxsize + 1); break; case UIT_BOOLEAN: { const char *p; if (uis->result_buf == NULL) { UIerr(UI_F_UI_SET_RESULT, UI_R_NO_RESULT_BUFFER); return -1; } uis->result_buf[0] =
+

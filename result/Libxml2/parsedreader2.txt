@@ -1,0 +1,40 @@
+section: xmlReader synopsis: Parse and validate an XML file with an xmlReader purpose: Demonstrate the use of xmlReaderForFile() to parse an XML file validating the content in the process and activating options like entities substitution, and DTD attributes defaulting. (Note that the XMLReader functions require libxml2 version later than 2.6.) usage: reader2 <valid_xml_filename> test: reader2 test2.xml > reader1.tmp ; diff reader1.tmp reader1.res ; rm reader1.tmp author: Daniel Veillard copy: see Copyright for the status of this software.
+
+processNode: @reader: the xmlReader Dump information about the current node
+
+streamFile: @filename: the file name to parse Parse, validate and print information about an XML file.
+
+Pass some special parsing options to activate DTD attribute defaulting, entities substitution and DTD validation
+
+default DTD attributes
+
+substitute entities
+
+validate with the DTD
+
+Once the document has been fully parsed check the validation results
+
+this initialize the library and check potential ABI mismatches between the version it was compiled for and the actual shared library used.
+
+Cleanup function for the XML library.
+
+this is to debug memory for regression tests
+
+--
+
+%d %d %s %d %d
+
+\n
+
+%.40s...\n
+
+%s\n
+
+Document %s does not validate\n
+
+%s : failed to parse\n
+
+Unable to open %s\n
+
+XInclude support not compiled in\n
+

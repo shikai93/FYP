@@ -1,0 +1,490 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+2 hours, the 24 hours mentioned in the TLSv1 spec is way too long for http, the cache would over fill
+
+Curve NID
+
+Bits of security (from SP800-57)
+
+Flags: currently just field type
+
+Table of curve information. Do not delete entries or reorder this array! It is used as a lookup table: the index of each entry is one less than the TLS curve id.
+
+sect163k1 (1)
+
+sect163r1 (2)
+
+sect163r2 (3)
+
+sect193r1 (4)
+
+sect193r2 (5)
+
+sect233k1 (6)
+
+sect233r1 (7)
+
+sect239k1 (8)
+
+sect283k1 (9)
+
+sect283r1 (10)
+
+sect409k1 (11)
+
+sect409r1 (12)
+
+sect571k1 (13)
+
+sect571r1 (14)
+
+secp160k1 (15)
+
+secp160r1 (16)
+
+secp160r2 (17)
+
+secp192k1 (18)
+
+secp192r1 (19)
+
+secp224k1 (20)
+
+secp224r1 (21)
+
+secp256k1 (22)
+
+secp256r1 (23)
+
+secp384r1 (24)
+
+secp521r1 (25)
+
+brainpoolP256r1 (26)
+
+brainpoolP384r1 (27)
+
+brainpool512r1 (28)
+
+X25519 (29)
+
+The default curves
+
+X25519 (29)
+
+secp256r1 (23)
+
+secp521r1 (25)
+
+secp384r1 (24)
+
+ECC curves from RFC 4492 and RFC 7027
+
+Get curves list, if "sess" is set return client curves otherwise preferred list. Sets |num_curves| to the number of curves in the list, i.e., the length of |pcurves| is 2 num_curves. Returns 1 on success and 0 if the client curves list has invalid format. The latter indicates an internal error: we should not be accepting such lists in the first place. TODO(emilia): we should really be storing the curves list in explicitly parsed form instead. (However, this would affect binary compatibility so cannot happen in the 1.0.x series.)
+
+For Suite B mode only include P-256, P-384
+
+We do not allow odd length arrays to enter the system.
+
+See if curve is allowed by security callback
+
+Check a curve is one of our preferences
+
+Check curve matches Suite B preferences
+
+Should never happen
+
+For nmatch >= 0, return the NID of the |nmatch|th shared group or NID_undef if there is no match. For nmatch == -1, return number of matches For nmatch == -2, return the NID of the group to use for an EC tmp key, or NID_undef if there is no match.
+
+Can't do anything on client side
+
+For Suite B ciphersuite determines curve: we already know these are acceptable due to previous checks.
+
+P-256
+
+P-384
+
+Should never happen
+
+If not Suite B just return first preference shared curve
+
+Avoid truncation. tls1_get_curvelist takes an int but s->options is a long...
+
+In practice, NID_undef == 0 but let's be precise.
+
+Out of range (nmatch > k).
+
+Bitmap of groups included to detect duplicates: only works while group ids < 32
+
+TODO(TLS1.3): Convert for DH groups
+
+Set groups based on a colon separate list
+
+For an EC key set TLS id and required compression based on parameters
+
+Determine if it is a prime field
+
+Determine curve ID
+
+If no id return error: we don't support arbitrary explicit curves
+
+Check an EC key is compatible with extensions
+
+If point formats extension present check it, otherwise everything is supported (see RFC4492).
+
+Check curve is consistent with client and server preferences
+
+If we've not received any curves then skip this check. RFC 4492 does not require the supported elliptic curves extension so if it is not sent we can just choose any curve. It is invalid to send an empty list in the elliptic curves extension, so num_curves == 0 always means no extension.
+
+For clients can only check sent curve list
+
+If we have a custom point format list use it otherwise use default
+
+For Suite B we don't support char2 fields
+
+Check cert parameters compatible with extensions: currently just checks EC certificates have compatible curves and compression.
+
+If not EC nothing to do
+
+Can't check curve_id for client certs as we don't have a supported curves extension.
+
+Special case for suite B. We MUST sign using SHA256+P-256 or SHA384+P-384.
+
+Check to see we have necessary signing algorithm
+
+Should never happen
+
+tls1_check_ec_tmp_key - Check EC temporary key compatibility @s: SSL connection @cid: Cipher ID we're considering using Checks that the kECDHE cipher suite we're considering using is compatible with the client extensions. Returns 0 when the cipher can't be used or 1 when it can.
+
+If Suite B, AES128 MUST use P-256 and AES256 MUST use P-384, no other curves permitted.
+
+Curve to check determined by ciphersuite
+
+Check this curve is acceptable
+
+Need a shared curve
+
+OPENSSL_NO_EC
+
+Default sigalg schemes
+
+Legacy sigalgs for TLS < 1.2 RSA TLS signatures
+
+Default signature algorithm values used if signature algorithms not present. From RFC5246. Note: order must match certificate index order.
+
+SSL_PKEY_RSA
+
+SSL_PKEY_DSA_SIGN
+
+SSL_PKEY_ECC
+
+SSL_PKEY_GOST01
+
+SSL_PKEY_GOST12_256
+
+SSL_PKEY_GOST12_512
+
+SSL_PKEY_ED25519
+
+Lookup TLS signature algorithm
+
+Lookup hash: return 0 if invalid or not enabled
+
+lu->hash == NID_undef means no associated digest
+
+Return a signature algorithm for TLS < 1.2 where the signature type is fixed by the certificate type.
+
+Work out index corresponding to ciphersuite
+
+Set peer sigalg based key type
+
+If Suite B mode use Suite B sigalgs only, ignore any other preferences.
+
+We use client_sigalgs (if not NULL) if we're a server and sending a certificate request or if we're a client and determining which shared algorithm to use.
+
+Check signature algorithm is consistent with sent supported signature algorithms and if so set relevant digest and signature scheme in s.
+
+Should never happen
+
+Disallow DSA for TLS 1.3
+
+Only allow PSS for TLS 1.3
+
+Check sigalgs is known. Disallow SHA1/SHA224 with TLS 1.3. Check key type is consistent with signature: RSA keys can be used for RSA-PSS
+
+For TLS 1.3 check curve matches signature algorithm
+
+Check compression and curve matches extensions
+
+Check sigalg matches a permissible Suite B value
+
+Suite B also requires P-256+SHA256 and P-384+SHA384: this matches the TLS 1.3 requirements so we can just check the curve is the expected TLS 1.3 value. If this fails an inappropriate digest is being used.
+
+Check signature matches a type we sent
+
+Allow fallback to SHA1 if not strict mode
+
+Make sure security callback allows algorithm. For historical reasons we have to pass the sigalg as a two byte char array.
+
+Store the sigalg the peer uses
+
+Set a mask of disabled algorithms: an algorithm is disabled if it isn't supported, doesn't appear in supported signature algorithms, isn't supported by the enabled protocol versions or by the security level. This function should only be used for checking which ciphers are supported by the client. Call ssl_cipher_disabled() to check that it's enabled or not.
+
+with PSK there must be client callback set
+
+OPENSSL_NO_PSK
+
+ssl_cipher_disabled - check that a cipher is disabled or not @s: SSL connection that you want to use the cipher on @c: cipher to check @op: Security check that you want to do @ecdhe: If set to 1 then TLSv1 ECDHE ciphers are also allowed in SSLv3 Returns 1 when it's disabled, 0 when enabled.
+
+For historical reasons we will allow ECHDE to be selected by a server in SSLv3 if we are a client
+
+Clear any shared signature algorithms
+
+Clear certificate validity flags
+
+If peer sent no signature algorithms check to see if we support the default algorithm for each certificate type
+
+Check default matches a type we sent
+
+Fatal error if no shared signature algorithms
+
+Gets the ticket information supplied by the client if any. hello: The parsed ClientHello data ret: (output) on return, if a ticket was decrypted, then this is set to point to the resulting session. If s->tls_session_secret_cb is set then we are expecting a pre-shared key ciphersuite, in which case we have no use for session tickets and one will never be decrypted, nor will s->ext.ticket_expected be set to 1. Returns: -1: fatal error, either from parsing or decrypting the ticket. 0: no ticket was found (or was ignored, based on settings). 1: a zero length extension was found, indicating that the client supports session tickets but doesn't currently have one to offer. 2: either s->tls_session_secret_cb was set, or a ticket was offered but couldn't be decrypted because of a non-fatal error. 3: a ticket was successfully decrypted and ret was set. Side effects: Sets s->ext.ticket_expected to 1 if the server will have to issue a new session ticket to the client because the client indicated support (and s->tls_session_secret_cb is NULL) but the client either doesn't have a session ticket or we couldn't use the one it gave us, or if s->ctx->ext.ticket_key_cb asked to renew the client's ticket. Otherwise, s->ext.ticket_expected is set to 0.
+
+If tickets disabled or not supported by the protocol version (e.g. TLSv1.3) behave as if no ticket present to permit stateful resumption.
+
+The client will accept a ticket but doesn't currently have one.
+
+Indicate that the ticket couldn't be decrypted rather than generating the session from ticket now, trigger abbreviated handshake based on external mechanism to calculate the master secret later.
+
+tls_decrypt_ticket attempts to decrypt a session ticket. etick: points to the body of the session ticket extension. eticklen: the length of the session tickets extension. sess_id: points at the session ID. sesslen: the length of the session ID. psess: (output) on return, if a ticket was decrypted, then this is set to point to the resulting session.
+
+Initialize session ticket encryption and HMAC contexts
+
+Check key name matches
+
+Attempt to process session ticket, first conduct sanity and integrity checks on ticket.
+
+Sanity check ticket length: must exceed keyname + IV + HMAC
+
+Check HMAC of encrypted ticket
+
+Attempt to decrypt session data
+
+Move p after IV to start of encrypted ticket, update length
+
+Some additional consistency checks
+
+The session ID, if non-empty, is used by some clients to detect that the ticket has been accepted. So we copy it to the session structure. If it is empty set length to zero as required by standard.
+
+For session parse failure, indicate that we need to send a new ticket.
+
+Check to see if a signature algorithm is allowed
+
+See if sigalgs is recognised and if hash is enabled
+
+DSA is not allowed in TLS 1.3
+
+TODO(OpenSSL1.2) fully axe DSA/etc. in ClientHello per TLS 1.3 spec
+
+See if public key algorithm allowed
+
+Security bits: half digest bits
+
+Finally see if security callback allows it
+
+Get a mask of disabled public key algorithms based on supported signature algorithms. For example if no signature algorithm supports RSA then RSA is disabled.
+
+Go through all signature algorithms seeing if we support any in disabled_mask.
+
+If algorithm is disabled see if we can enable it
+
+If TLS 1.3 must have at least one valid TLS 1.3 message signing algorithm: i.e. neither RSA nor SHA1/SHA224
+
+Given preference and allowed sigalgs set shared sigalgs
+
+Skip disabled hashes or signature algorithms
+
+Set shared signature algorithms for SSL structures
+
+If client use client signature algorithms if not NULL
+
+Set preferred digest for each key type
+
+Extension ignored for inappropriate versions
+
+Should never happen
+
+Invalid data length
+
+Ignore PKCS1 based sig algs in TLSv1.3
+
+If not disabled indicate we can explicitly sign
+
+Maximum possible number of unique entries in sigalgs array
+
+Maximum length of a signature algorithm string component
+
+See if we have a match for TLS 1.3 names
+
+Set supported signature algorithms based on a colon separated list of the form sig+hash e.g. RSA+SHA512:DSA+SHA512
+
+Check to see if a certificate issuer name matches list of CA names
+
+Check certificate chain is consistent with TLS extensions and is usable by server. This servers two purposes: it allows users to check chains before passing them to the server and it allows the server to check chains before attempting to use them.
+
+Flags which need to be set for a certificate when strict mode not set
+
+Strict mode flags
+
+idx == -1 means checking server chains
+
+idx == -2 means checking client certificate chains
+
+If no cert or key, forget it
+
+Check all signature algorithms are consistent with signature algorithms extension if TLS 1.2 or later and strict mode.
+
+If no sigalgs extension use defaults from RFC5246
+
+If peer sent no signature algorithms extension and we have set preferred signature algorithms check we support sha1.
+
+Check signature algorithm of each cert in chain
+
+Else not TLS 1.2, so mark EE and CA signing algorithms OK
+
+Check cert parameters are consistent
+
+In strict mode check rest of chain too
+
+When checking a CERT_PKEY structure all flags are irrelevant if the chain is invalid.
+
+Preserve sign and explicit sign flag, clear rest
+
+Set validity of certificates in an SSL structure
+
+User level utility function to check a chain is suitable
+
+If no parameters this will return -1 and fail using the default security callback for any non-zero security level. This will reject keys which omit parameters but this only affects DSA and omission of parameters is never (?) done in practice.
+
+Lookup signature algorithm digest
+
+Don't check signature if self signed
+
+If digest NID not defined use signature NID
+
+Check security of a chain, if |sk| includes the end entity certificate then |x| is NULL. If |vfy| is 1 then we are verifying a peer chain and not sending one to the peer. Return values: 1 if ok otherwise error code to use
+
+For TLS 1.2 servers check if we have a certificate which can be used with the signature algorithm "lu".
+
+If not recognised or not supported by cipher mask it is not suitable
+
+Choose an appropriate signature algorithm based on available certificates Sets chosen certificate and signature algorithm. For servers if we fail to find a required certificate it is a fatal error and an appropriate error code is set and the TLS alert set in al. For clients al is set to NULL. If a certificate is not suitable it is not a fatal error: we will either try another certificate or not present one to the server. In this case no error is set.
+
+Look for a certificate matching shared sigalgs
+
+Skip SHA1, SHA224, DSA and RSA if not PSS
+
+If ciphersuite doesn't require a cert nothing to do
+
+For Suite B need to match signature algorithm to curve
+
+Find highest preference signature algorithm matching cert type
+
+If we have no sigalg use defaults
+
+Check signature matches a type we sent
+
+www.openssl.org/source/license.html
+
+License
+
+internal/nelem.h
+
+ssl_locl.h
+
+sess
+
+t do anything on client side */ if (s->server == 0) return -1; if (nmatch == -2) { if (tls1_suiteb(s)) { /* * For Suite B ciphersuite determines curve: we already know * these are acceptable due to previous checks. */ unsigned long cid = s->s3->tmp.new_cipher->id; if (cid == TLS1_CK_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256) return NID_X9_62_prime256v1; /* P-256 */ if (cid == TLS1_CK_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384) return NID_secp384r1; /* P-384 */ /* Should never happen */ return NID_undef; } /* If not Suite B just return first preference shared curve */ nmatch = 0; } /* * Avoid truncation. tls1_get_curvelist takes an int * but s->options is a long... */ if (!tls1_get_curvelist(s, (s->options & SSL_OP_CIPHER_SERVER_PREFERENCE) != 0, &supp, &num_supp)) /* In practice, NID_undef == 0 but let
+
+:
+
+t support arbitrary explicit curves */ if (id == 0) return 0; curve_id[0] = 0; curve_id[1] = (unsigned char)id; if (comp_id) { if (EC_KEY_get0_public_key(ec) == NULL) return 0; if (EC_KEY_get_conv_form(ec) == POINT_CONVERSION_UNCOMPRESSED) { *comp_id = TLSEXT_ECPOINTFORMAT_uncompressed; } else { if ((nid_list[id - 1].flags & TLS_CURVE_TYPE) == TLS_CURVE_PRIME) *comp_id = TLSEXT_ECPOINTFORMAT_ansiX962_compressed_prime; else *comp_id = TLSEXT_ECPOINTFORMAT_ansiX962_compressed_char2; } } return 1; } /* Check an EC key is compatible with extensions */ static int tls1_check_ec_key(SSL *s, unsigned char *curve_id, unsigned char *comp_id) { const unsigned char *pformats, *pcurves; size_t num_formats, num_curves, i; int j; /* * If point formats extension present check it, otherwise everything is * supported (see RFC4492). */ if (comp_id && s->session->ext.ecpointformats) { pformats = s->session->ext.ecpointformats; num_formats = s->session->ext.ecpointformats_len; for (i = 0; i < num_formats; i++, pformats++) { if (*comp_id == *pformats) break; } if (i == num_formats) return 0; } if (!curve_id) return 1; /* Check curve is consistent with client and server preferences */ for (j = 0; j <= 1; j++) { if (!tls1_get_curvelist(s, j, &pcurves, &num_curves)) return 0; if (j == 1 && num_curves == 0) { /* * If we
+
+t support char2 fields */ if (tls1_suiteb(s)) *num_formats = sizeof(ecformats_default) - 1; else *num_formats = sizeof(ecformats_default); } } /* * Check cert parameters compatible with extensions: currently just checks EC * certificates have compatible curves and compression. */ static int tls1_check_cert_param(SSL *s, X509 *x, int check_ee_md) { unsigned char comp_id, curve_id[2]; EVP_PKEY *pkey; int rv; pkey = X509_get0_pubkey(x); if (!pkey) return 0; /* If not EC nothing to do */ if (EVP_PKEY_id(pkey) != EVP_PKEY_EC) return 1; rv = tls1_set_ec_id(curve_id, &comp_id, EVP_PKEY_get0_EC_KEY(pkey)); if (!rv) return 0; /* * Can
+
+t have a supported * curves extension. */ rv = tls1_check_ec_key(s, s->server ? curve_id : NULL, &comp_id); if (!rv) return 0; /* * Special case for suite B. We *MUST* sign using SHA256+P-256 or * SHA384+P-384. */ if (check_ee_md && tls1_suiteb(s)) { int check_md; size_t i; CERT *c = s->cert; if (curve_id[0]) return 0; /* Check to see we have necessary signing algorithm */ if (curve_id[1] == TLSEXT_curve_P_256) check_md = NID_ecdsa_with_SHA256; else if (curve_id[1] == TLSEXT_curve_P_384) check_md = NID_ecdsa_with_SHA384; else return 0; /* Should never happen */ for (i = 0; i < c->shared_sigalgslen; i++) if (check_md == c->shared_sigalgs[i]->sigandhash) break; if (i == c->shared_sigalgslen) return 0; } return rv; } /* * tls1_check_ec_tmp_key - Check EC temporary key compatibility * @s: SSL connection * @cid: Cipher ID we
+
+re considering using * is compatible with the client extensions. * * Returns 0 when the cipher can
+
+ecdsa_secp256r1_sha256
+
+ecdsa_secp384r1_sha384
+
+ecdsa_secp521r1_sha512
+
+ed25519
+
+rsa_pss_sha256
+
+rsa_pss_sha384
+
+rsa_pss_sha512
+
+rsa_pkcs1_sha256
+
+rsa_pkcs1_sha384
+
+rsa_pkcs1_sha512
+
+rsa_pkcs1_sha224
+
+rsa_pkcs1_sha1
+
+rsa_pkcs1_md5_sha1
+
+re a server * and sending a certificate request or if we
+
+t * supported, doesn
+
+t supported * by the enabled protocol versions or by the security level. * * This function should only be used for checking which ciphers are supported * by the client. * * Call ssl_cipher_disabled() to check that it
+
+s disabled, 0 when enabled. */ int ssl_cipher_disabled(SSL *s, const SSL_CIPHER *c, int op, int ecdhe) { if (c->algorithm_mkey & s->s3->tmp.mask_k || c->algorithm_auth & s->s3->tmp.mask_a) return 1; if (s->s3->tmp.max_ver == 0) return 1; if (!SSL_IS_DTLS(s)) { int min_tls = c->min_tls; /* * For historical reasons we will allow ECHDE to be selected by a server * in SSLv3 if we are a client */ if (min_tls == TLS1_VERSION && ecdhe && (c->algorithm_mkey & (SSL_kECDHE | SSL_kECDHEPSK)) != 0) min_tls = SSL3_VERSION; if ((min_tls > s->s3->tmp.max_ver) || (c->max_tls < s->s3->tmp.min_ver)) return 1; } if (SSL_IS_DTLS(s) && (DTLS_VERSION_GT(c->min_dtls, s->s3->tmp.max_ver) || DTLS_VERSION_LT(c->max_dtls, s->s3->tmp.min_ver))) return 1; return !ssl_security(s, op, c->strength_bits, 0, (void *)c); } int tls_use_ticket(SSL *s) { if ((s->options & SSL_OP_NO_TICKET)) return 0; return ssl_security(s, SSL_SECOP_TICKET, 0, 0, NULL); } int tls1_set_server_sigalgs(SSL *s) { int al; size_t i; /* Clear any shared signature algorithms */ OPENSSL_free(s->cert->shared_sigalgs); s->cert->shared_sigalgs = NULL; s->cert->shared_sigalgslen = 0; /* Clear certificate validity flags */ for (i = 0; i < SSL_PKEY_NUM; i++) s->s3->tmp.valid_flags[i] = 0; /* * If peer sent no signature algorithms check to see if we support * the default algorithm for each certificate type */ if (s->s3->tmp.peer_sigalgs == NULL) { const uint16_t *sent_sigs; size_t sent_sigslen = tls12_get_psigalgs(s, 1, &sent_sigs); for (i = 0; i < SSL_PKEY_NUM; i++) { const SIGALG_LOOKUP *lu = tls1_get_legacy_sigalg(s, i); size_t j; if (lu == NULL) continue; /* Check default matches a type we sent */ for (j = 0; j < sent_sigslen; j++) { if (lu->sigalg == sent_sigs[j]) { s->s3->tmp.valid_flags[i] = CERT_PKEY_SIGN; break; } } } return 1; } if (!tls1_process_sigalgs(s)) { SSLerr(SSL_F_TLS1_SET_SERVER_SIGALGS, ERR_R_MALLOC_FAILURE); al = SSL_AD_INTERNAL_ERROR; goto err; } if (s->cert->shared_sigalgs != NULL) return 1; /* Fatal error if no shared signature algorithms */ SSLerr(SSL_F_TLS1_SET_SERVER_SIGALGS, SSL_R_NO_SHARED_SIGNATURE_ALGORITHMS); al = SSL_AD_HANDSHAKE_FAILURE; err: ssl3_send_alert(s, SSL3_AL_FATAL, al); return 0; } /*- * Gets the ticket information supplied by the client if any. * * hello: The parsed ClientHello data * ret: (output) on return, if a ticket was decrypted, then this is set to * point to the resulting session. * * If s->tls_session_secret_cb is set then we are expecting a pre-shared key * ciphersuite, in which case we have no use for session tickets and one will * never be decrypted, nor will s->ext.ticket_expected be set to 1. * * Returns: * -1: fatal error, either from parsing or decrypting the ticket. * 0: no ticket was found (or was ignored, based on settings). * 1: a zero length extension was found, indicating that the client supports * session tickets but doesn
+
+t be decrypted because of a non-fatal error. * 3: a ticket was successfully decrypted and *ret was set. * * Side effects: * Sets s->ext.ticket_expected to 1 if the server will have to issue * a new session ticket to the client because the client indicated support * (and s->tls_session_secret_cb is NULL) but the client either doesn
+
+t use the one it gave us, or if * s->ctx->ext.ticket_key_cb asked to renew the client
+
+t currently have * one. */ s->ext.ticket_expected = 1; return TICKET_EMPTY; } if (s->ext.session_secret_cb) { /* * Indicate that the ticket couldn
+
+RSA
+
+RSA-PSS
+
+PSS
+
+DSA
+
+ECDSA
+
++
+
+:
+
+t check signature if self signed */ if ((X509_get_extension_flags(x) & EXFLAG_SS) != 0) return 1; if (!X509_get_signature_info(x, &nid, &pknid, &secbits, NULL)) secbits = -1; /* If digest NID not defined use signature NID */ if (nid == NID_undef) nid = pknid; if (s) return ssl_security(s, op, secbits, nid, x); else return ssl_ctx_security(ctx, op, secbits, nid, x); } int ssl_security_cert(SSL *s, SSL_CTX *ctx, X509 *x, int vfy, int is_ee) { if (vfy) vfy = SSL_SECOP_PEER; if (is_ee) { if (!ssl_security_cert_key(s, ctx, x, SSL_SECOP_EE_KEY | vfy)) return SSL_R_EE_KEY_TOO_SMALL; } else { if (!ssl_security_cert_key(s, ctx, x, SSL_SECOP_CA_KEY | vfy)) return SSL_R_CA_KEY_TOO_SMALL; } if (!ssl_security_cert_sig(s, ctx, x, SSL_SECOP_CA_MD | vfy)) return SSL_R_CA_MD_TOO_WEAK; return 1; } /* * Check security of a chain, if |sk| includes the end entity certificate then * |x| is NULL. If |vfy| is 1 then we are verifying a peer chain and not sending * one to the peer. Return values: 1 if ok otherwise error code to use */ int ssl_security_cert_chain(SSL *s, STACK_OF(X509) *sk, X509 *x, int vfy) { int rv, start_idx, i; if (x == NULL) { x = sk_X509_value(sk, 0); start_idx = 1; } else start_idx = 0; rv = ssl_security_cert(s, NULL, x, vfy, 1); if (rv != 1) return rv; for (i = start_idx; i < sk_X509_num(sk); i++) { x = sk_X509_value(sk, i); rv = ssl_security_cert(s, NULL, x, vfy, 0); if (rv != 1) return rv; } return 1; } /* * For TLS 1.2 servers check if we have a certificate which can be used * with the signature algorithm "lu". */ static int tls12_check_cert_sigalg(const SSL *s, const SIGALG_LOOKUP *lu) { const SSL_CERT_LOOKUP *clu = ssl_cert_lookup_by_idx(lu->sig_idx); /* If not recognised or not supported by cipher mask it is not suitable */ if (clu == NULL || !(clu->amask & s->s3->tmp.new_cipher->algorithm_auth)) return 0; return s->s3->tmp.valid_flags[lu->sig_idx] & CERT_PKEY_VALID ? 1 : 0; } /* * Choose an appropriate signature algorithm based on available certificates * Sets chosen certificate and signature algorithm. * * For servers if we fail to find a required certificate it is a fatal error * and an appropriate error code is set and the TLS alert set in *al. * * For clients al is set to NULL. If a certificate is not suitable it is not * a fatal error: we will either try another certificate or not present one * to the server. In this case no error is set. */ int tls_choose_sigalg(SSL *s, int *al) { const SIGALG_LOOKUP *lu = NULL; s->s3->tmp.cert = NULL; s->s3->tmp.sigalg = NULL; if (SSL_IS_TLS13(s)) { size_t i; #ifndef OPENSSL_NO_EC int curve = -1, skip_ec = 0; #endif /* Look for a certificate matching shared sigalgs */ for (i = 0; i < s->cert->shared_sigalgslen; i++) { lu = s->cert->shared_sigalgs[i]; /* Skip SHA1, SHA224, DSA and RSA if not PSS */ if (lu->hash == NID_sha1 || lu->hash == NID_sha224 || lu->sig == EVP_PKEY_DSA || lu->sig == EVP_PKEY_RSA) continue; if (!tls1_lookup_md(lu, NULL)) continue; if (!ssl_has_cert(s, lu->sig_idx)) continue; if (lu->sig == EVP_PKEY_EC) { #ifndef OPENSSL_NO_EC if (curve == -1) { EC_KEY *ec = EVP_PKEY_get0_EC_KEY(s->cert->pkeys[SSL_PKEY_ECC].privatekey); curve = EC_GROUP_get_curve_name(EC_KEY_get0_group(ec)); if (EC_KEY_get_conv_form(ec) != POINT_CONVERSION_UNCOMPRESSED) skip_ec = 1; } if (skip_ec || (lu->curve != NID_undef && curve != lu->curve)) continue; #else continue; #endif } break; } if (i == s->cert->shared_sigalgslen) { if (al == NULL) return 1; *al = SSL_AD_HANDSHAKE_FAILURE; SSLerr(SSL_F_TLS_CHOOSE_SIGALG, SSL_R_NO_SUITABLE_SIGNATURE_ALGORITHM); return 0; } } else { /* If ciphersuite doesn
+
+0xff;
+
+0xff;
+
+0xff;
+
+0xff;
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+

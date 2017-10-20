@@ -1,0 +1,108 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Here follows specialised variants of bn_add_words() and bn_sub_words(). They have the property performing operations on arrays of different sizes. The sizes of those arrays is expressed through cl, which is the common length ( basically, min(len(a),len(b)) ), and dl, which is the delta between the two lengths, calculated as len(a)-len(b). All lengths are the number of BN_ULONGs... For the operations that require a result array as parameter, it must have the length cl+abs(dl). These functions should probably end up in bn_asm.c as soon as there are assembler counterparts for the systems that use assembler files.
+
+fall thru
+
+fall thru
+
+Karatsuba recursive multiplication algorithm (cf. Knuth, The Art of Computer Programming, Vol. 2)
+
+r is 2n2 words in size, a and b are both n2 words in size. n2 must be a power of 2. We multiply and return the result. t must be 2n2 words in size We calculate a[0]b[0] a[0]b[0]+a[1]b[1]+(a[0]-a[1])(b[1]-b[0]) a[1]b[1]
+
+dnX may not be positive, but n2/2+dnX has to be
+
+Only call bn_mul_comba 8 if n2 == 8 and the two arrays are complete [steve]
+
+BN_MUL_COMBA
+
+Else do normal multiply
+
+r=(a[0]-a[1])(b[1]-b[0])
+
+-
+
+-
+
+-
+
++
+
++
+
+-
+
+XXX: bn_mul_comba4 could take extra args to do this well
+
+XXX: bn_mul_comba8 could take extra args to do this well
+
+BN_MUL_COMBA
+
+t[32] holds (a[0]-a[1])(b[1]-b[0]), c1 is the sign r[10] holds (a[0]b[0]) r[32] holds (b[1]b[1])
+
+if t[32] is negative
+
+Might have a carry
+
+t[32] holds (a[0]-a[1])(b[1]-b[0])+(a[0]b[0])+(a[1]b[1]) r[10] holds (a[0]b[0]) r[32] holds (b[1]b[1]) c1 holds the carry bits
+
+The overflow will stop before we over write words we should not overwrite
+
+n+tn is the word length t needs to be n4 is size, as does r
+
+tnX may not be negative but less than n
+
+r=(a[0]-a[1])(b[1]-b[0])
+
+-
+
+-
+
+-
+
++
+
++
+
+-
+
+The zero case isn't yet implemented here. The speedup would probably be negligible.
+
+If there is only a bottom half to the number, just do it
+
+eg, n == 16, i == 8 and tn == 11
+
+(j < 0) eg, n == 16, i == 8 and tn == 5
+
+these simplified conditions work exclusively because difference between tna and tnb is 1 or 0
+
+t[32] holds (a[0]-a[1])(b[1]-b[0]), c1 is the sign r[10] holds (a[0]b[0]) r[32] holds (b[1]b[1])
+
+if t[32] is negative
+
+Might have a carry
+
+t[32] holds (a[0]-a[1])(b[1]-b[0])+(a[0]b[0])+(a[1]b[1]) r[10] holds (a[0]b[0]) r[32] holds (b[1]b[1]) c1 holds the carry bits
+
+The overflow will stop before we over write words we should not overwrite
+
+a and b must be the same size, which is n2. r needs to be n2 words and t needs to be n22
+
+BN_RECURSION
+
+BN_MUL_COMBA
+
+Find out the power of two lower or equal to the longest of the two numbers
+
+al <= j || bl <= j
+
+BN_RECURSION
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+bn_lcl.h
+

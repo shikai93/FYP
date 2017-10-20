@@ -1,0 +1,14 @@
+Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This file contains deprecated function(s) that are now wrappers to the new version(s).
+
+Parameter generation follows the updated Appendix 2.2 for FIPS PUB 186, also Appendix 2.2 of FIPS PUB 186-1 (i.e. use SHA as defined in FIPS PUB 180-1)
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+0x00908000L
+

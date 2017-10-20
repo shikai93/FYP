@@ -1,0 +1,72 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Does nothing. Previously this switched off constant time behaviour.
+
+If this flag is set the DH method is FIPS compliant and can be used in FIPS mode. This is set in the validated module method. If an application sets this flag in its own methods it is its responsibility to ensure the result is compliant.
+
+If this flag is set the operations normally disabled in FIPS mode are permitted it is then the applications responsibility to ensure that the usage is compliant.
+
+Already defined in ossl_typ.h
+
+typedef struct dh_st DH;
+
+typedef struct dh_method DH_METHOD;
+
+#define DH_GENERATOR_3 3
+
+DH_check error codes
+
+DH_check_pub_key error codes
+
+primes p where (p-1)/2 is prime too are called "safe"; we define this for backward compatibility:
+
+Deprecated version
+
+New version
+
+RFC 5114 parameters
+
+RFC2631 KDF
+
+KDF types
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+safe
+
+0x10100000L
+
+0x01
+
+0x10100000L
+
+0x00
+
+0x0400
+
+0x0400
+
+0x01
+
+0x02
+
+0x04
+
+0x08
+
+0x10
+
+0x20
+
+0x40
+
+0x01
+
+0x02
+
+0x04
+

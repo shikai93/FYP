@@ -1,0 +1,130 @@
+Copyright 1998-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+memory allocations functions for zlib initialisation
+
+When OpenSSL is built on Windows, we do not want to require that the ZLIB.DLL be available in order for the OpenSSL DLLs to work. Therefore, all ZLIB routines are loaded at run time and we do not link to a .LIB file when ZLIB_SHARED is set.
+
+!(OPENSSL_SYS_WINDOWS || OPENSSL_SYS_WIN32)
+
+Function pointers
+
+only attempt to init func pts once
+
+ZLIB_SHARED
+
+LIBZ may be externally defined, and we should respect that value
+
+Zlib based compression/decompression filter BIO
+
+Input buffer
+
+Buffer size
+
+Input decompress context
+
+Output buffer
+
+Output buffer size
+
+Position in output buffer
+
+Amount of data in output buffer
+
+deflate EOF
+
+Compression level to use
+
+Output compression context
+
+TODO: Convert to new style write function
+
+TODO: Convert to new style read function
+
+Destroy decompress context
+
+Destroy compress context
+
+Copy output data directly to supplied buffer
+
+Decompress while data available
+
+If EOF or we've read everything then return
+
+No data in input buffer try to read some in, if an error then return the total data read.
+
+Total data read
+
+Need error here
+
+Obtain input data directly from supplied buffer
+
+If data in output buffer write it first
+
+Total data written
+
+Have we consumed all supplied data?
+
+Compress some more
+
+Reset buffer
+
+Compress some more
+
+If no data written or already flush show success
+
+No more input data
+
+If data in output buffer write it first
+
+Compress some more
+
+Reset buffer
+
+Compress some more
+
+www.openssl.org/source/license.html
+
+License
+
+internal/comp.h
+
+internal/cryptlib_int.h
+
+internal/bio.h
+
+comp_lcl.h
+
+(undef)
+
+internal/dso.h
+
+ZLIB1
+
+LIBZ
+
+z
+
+compress
+
+inflateEnd
+
+inflate
+
+inflateInit_
+
+deflateEnd
+
+deflate
+
+deflateInit_
+
+zError
+
+zlib
+
+zlib error:
+
+zlib error:
+
+zlib error:
+

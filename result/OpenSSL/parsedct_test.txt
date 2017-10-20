@@ -1,0 +1,170 @@
+Copyright 2016-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Used when declaring buffers to read text files into
+
+The current time in milliseconds
+
+The CT log store to use during tests
+
+Set the following to test handling of SCTs in X509 certificates
+
+Expected number of SCTs
+
+Expected number of valid SCTS
+
+Set the following to test handling of SCTs in TLS format
+
+A file to load the expected SCT text from. This text will be compared to the actual text output during the test. A maximum of |CT_TEST_MAX_FILE_SIZE| bytes will be read of this file.
+
+Whether to test the validity of the SCT(s)
+
+Sep 7 17:33:46 2016 GMT
+
+Append \0 because we're about to use the buffer contents as a string.
+
+Append \0 because we're about to use the buffer contents as a string.
+
+Ignore other validation statuses.
+
+Apr 4 17:00:00 2013 GMT
+
+length of list
+
+version
+
+log ID
+
+timestamp
+
+extensions length
+
+extensions
+
+hash and signature algorithms
+
+signature length
+
+signature
+
+Tests that the CT_POLICY_EVAL_CTX default time is approximately now. Allow +-10 minutes, as it may compensate for clock skew.
+
+10 minutes
+
+We expect these to both fail!
+
+www.openssl.org/source/license.html
+
+License
+
+testutil.h
+
+openssl/crypto.h
+
+Failed to setup
+
+/
+
+
+
+r
+
+r
+
+\n
+
+re about to use the buffer contents as a string. */ if (!TEST_true(BIO_write(text_buffer, "\0", 1))) goto end; BIO_get_mem_data(text_buffer, &actual_output); if (!TEST_str_eq(actual_output, expected_output)) goto end; result = 1; end: BIO_free(text_buffer); return result; } static int compare_extension_printout(X509_EXTENSION *extension, const char *expected_output) { BIO *text_buffer = NULL; char *actual_output = NULL; int result = 0; if (!TEST_ptr(text_buffer = BIO_new(BIO_s_mem())) || !TEST_true(X509V3_EXT_print(text_buffer, extension, X509V3_EXT_DEFAULT, 0))) goto end; /* Append \0 because we
+
+\0
+
+%d SCTs failed, %d SCTs unverified
+
+\0
+
+leaf.pem
+
+subinterCA.pem
+
+embeddedSCTs1.pem
+
+embeddedSCTs1_issuer.pem
+
+embeddedSCTs1.sct
+
+embeddedSCTs3.pem
+
+embeddedSCTs3_issuer.pem
+
+embeddedSCTs3.sct
+
+embeddedSCTs1.pem
+
+embeddedSCTs1_issuer.pem
+
+embeddedSCTs3.pem
+
+embeddedSCTs3_issuer.pem
+
+embeddedSCTs1.pem
+
+embeddedSCTs1_issuer.pem
+
+\x00\x78
+
+\x00\x76
+
+\x00
+
+\xDF\x1C\x2E\xC1\x15\x00\x94\x52\x47\xA9\x61\x68\x32\x5D\xDC\x5C\x79
+
+\x59\xE8\xF7\xC6\xD3\x88\xFC\x00\x2E\x0B\xBD\x3F\x74\xD7\x64
+
+\x00\x00\x01\x3D\xDB\x27\xDF\x93
+
+\x00\x00
+
+
+
+\x04\x03
+
+\x00\x47
+
+\x30\x45\x02\x20\x48\x2F\x67\x51\xAF\x35\xDB\xA6\x54\x36\xBE\x1F\xD6
+
+\x64\x0F\x3D\xBF\x9A\x41\x42\x94\x95\x92\x45\x30\x28\x8F\xA3\xE5\xE2
+
+\x3E\x06\x02\x21\x00\xE4\xED\xC0\xDB\x3A\xC5\x72\xB1\xE2\xF5\xE8\xAB
+
+\x6A\x68\x06\x53\x98\x7D\xCF\x41\x02\x7D\xFE\xFF\xA1\x05\x51\x9D\x89
+
+\xED\xBF\x08
+
+tls1.sct
+
+3xwuwRUAlFJHqWFoMl3cXHlZ6PfG04j8AC4LvT9012Q=
+
+
+
+BAMARzBAMiBIL2dRrzXbplQ2vh/WZA89v5pBQpSVkkUwKI+j5
+
+eI+BgIhAOTtwNs6xXKx4vXoq2poBlOYfc9BAn3+/6EFUZ2J7b8I
+
+tls1.sct
+
+\01\02\03\04
+
+====
+
+name
+
+CT_DIR
+
+ct
+
+CERTS_DIR
+
+certs
+
+No CT support\n
+
+0x7a;
+

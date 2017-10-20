@@ -1,0 +1,136 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Resolve problems on some operating systems with symbol names that clash one way or another
+
+Old type for allocating dynamic locks. No longer used. Use the new thread API instead.
+
+OPENSSL_API_COMPAT
+
+The following can be used to detect memory leaks in the library. If used, it turns on malloc checking
+
+Control only
+
+Control and mode bit
+
+Control and mode bit
+
+Control only
+
+Per class, we have a STACK of function pointers.
+
+This is the default callbacks, but we can have others as well: this is needed in Win32 where the application malloc and the library malloc may not be the same.
+
+No longer use an index.
+
+Initialise/duplicate/free CRYPTO_EX_DATA variables corresponding to a given class (invokes whatever per-class callbacks are applicable)
+
+Get/set data in a CRYPTO_EX_DATA variable corresponding to a particular index (relative to the class type involved)
+
+This function cleans up all "ex_data" state. It mustn't be called under potential race-conditions.
+
+The old locking functions have been removed completely without compatibility macros. This is because the old functions either could not properly report errors, or the returned error values were not clearly documented. Replacing the locking functions with with no-ops would cause race condition issues in the affected applications. It is far better for them to fail at compile time. On the other hand, the locking callbacks are no longer used. Consequently, the callback management functions can be safely replaced with no-op macros.
+
+These defines where used in combination with the old locking callbacks, they are not called anymore, but old code that's not called might still use them.
+
+This structure is no longer used
+
+Only use CRYPTO_THREADID_set_[numeric|pointer]() within callbacks
+
+OPENSSL_API_COMPAT < 0x10000000L
+
+OPENSSL_API_COMPAT < 0x10100000L
+
+Debugging functions (enabled by CRYPTO_set_mem_debug(1)) The flag argument has the following significance: 0: called before the actual memory allocation has taken place 1: called after the actual memory allocation has taken place
+
+die if we have to
+
+CRYPTO_memcmp returns zero iff the |len| bytes at |a| and |b| are equal. It takes an amount of time dependent on |len|, but independent of the contents of |a| and |b|. Unlike memcmp, it cannot be used to put elements into a defined order as the return value when a != b is undefined, other than to be non-zero.
+
+Standard initialisation options
+
+OPENSSL_INIT flag range 0xfff00000 reserved for OPENSSL_init_ssl()
+
+Max OPENSSL_INIT flag value is 0x80000000
+
+openssl and dasync not counted as builtin
+
+Library initialisation functions
+
+Low-level control of initialization
+
+application has to include <windows.h> in order to use this
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+ex_data
+
+t be called under * potential race-conditions. */ # define CRYPTO_cleanup_all_ex_data() while(0) continue /* * The old locking functions have been removed completely without compatibility * macros. This is because the old functions either could not properly report * errors, or the returned error values were not clearly documented. * Replacing the locking functions with with no-ops would cause race condition * issues in the affected applications. It is far better for them to fail at * compile time. * On the other hand, the locking callbacks are no longer used. Consequently, * the callback management functions can be safely replaced with no-op macros. */ # define CRYPTO_num_locks() (1) # define CRYPTO_set_locking_callback(func) # define CRYPTO_get_locking_callback() (NULL) # define CRYPTO_set_add_lock_callback(func) # define CRYPTO_get_add_lock_callback() (NULL) /* * These defines where used in combination with the old locking callbacks, * they are not called anymore, but old code that
+
+assertion failed:
+
+0x10100000L
+
+0x10100000L
+
+0x0
+
+0x1
+
+0x2
+
+0x3
+
+0x10100000L
+
+0x10000000L
+
+0x10000000L
+
+0x10100000L
+
+0x10100000L
+
+0x00000001L
+
+0x00000002L
+
+0x00000004L
+
+0x00000008L
+
+0x00000010L
+
+0x00000020L
+
+0x00000040L
+
+0x00000080L
+
+0x00000100L
+
+0x00000200L
+
+0x00000400L
+
+0x00000800L
+
+0x00001000L
+
+0x00002000L
+
+0x00004000L
+
+0x00008000L
+
+0x00010000L
+
+0x00020000L
+
+0xfff00000
+
+0x80000000
+

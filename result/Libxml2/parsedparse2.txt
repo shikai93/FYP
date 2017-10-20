@@ -1,0 +1,32 @@
+section: Parsing synopsis: Parse and validate an XML file to a tree and free the result purpose: Create a parser context for an XML file, then parse and validate the file, creating a tree, check the validation result and xmlFreeDoc() to free the resulting tree. usage: parse2 test2.xml test: parse2 test2.xml author: Daniel Veillard copy: see Copyright for the status of this software.
+
+exampleFunc: @filename: a filename or an URL Parse and validate the resource and free the resulting tree
+
+the parser context
+
+the resulting document tree
+
+create a parser context
+
+parse the file, activating the DTD validation option
+
+check if parsing suceeded
+
+check if validation suceeded
+
+free up the resulting document
+
+free up the parser context
+
+this initialize the library and check potential ABI mismatches between the version it was compiled for and the actual shared library used.
+
+Cleanup function for the XML library.
+
+this is to debug memory for regression tests
+
+Failed to allocate parser context\n
+
+Failed to parse %s\n
+
+Failed to validate %s\n
+

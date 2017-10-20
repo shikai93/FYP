@@ -1,0 +1,42 @@
+Copyright 2011-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+calculate = SHA1(PAD(x) || PAD(y))
+
+k = SHA1(N | PAD(g)) -- tls-srp draft 8
+
+k = SHA1(PAD(A) || PAD(B) ) -- tls-srp draft 8
+
+S = (Avu) b
+
+B = gb + kv
+
+Checks if B % N == 0
+
+Checks if A % N == 0
+
+Check if G and N are known parameters. The values have been generated from the ietf-tls-srp draft version 8
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/bn_srp.h
+
+:
+
+8192
+
+6144
+
+4096
+
+3072
+
+2048
+
+1536
+
+1024
+

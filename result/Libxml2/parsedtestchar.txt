@@ -1,0 +1,592 @@
+Test the UTF-8 decoding routines author: Daniel Veillard copy: see Copyright for the status of this software.
+
+if first bit of first char is set, then second bit must too
+
+if first bit of first char is set, then second char first bits must be 10
+
+if using a 2 byte encoding then the value must be greater than 0x80, i.e. one of bits 5 to 1 of i must be set
+
+if third bit of first char is set, then the sequence would need at least 3 bytes, but we give only 2 !
+
+We should see no error in remaning cases
+
+testDocumentRanges: Test the correct UTF8 character parsing in context of XML documents Those are in-context injection tests checking the parser behaviour on edge case values at different point in content, beginning and end of CDATA in text or in attribute values.
+
+Set up a parsing context using the first document as the current input source.
+
+test 1 byte injection at beginning of area
+
+test 1 byte injection at end of area
+
+test 1 byte injection at beginning of area
+
+test 1 byte injection at end of area
+
+test 2 byte injection at beginning of area
+
+test 2 byte injection at end of area
+
+test 2 byte injection at beginning of area
+
+test 2 byte injection at end of area
+
+we must see an error there
+
+if first bit of first char is set, then second bit must too
+
+if first bit of first char is set, then second char first bits must be 10
+
+if using a 2 byte encoding then the value must be greater than 0x80, i.e. one of bits 5 to 1 of i must be set
+
+if third bit of first char is set, then the sequence would need at least 3 bytes, but we give only 2 !
+
+We should see no error in remaning cases
+
+Finally check the value is right
+
+if fourth bit of first char is set, then the sequence would need at least 4 bytes, but we give only 3 !
+
+The second and the third bytes must start with 10
+
+if using a 3 byte encoding then the value must be greater than 0x800, i.e. one of bits 4 to 0 of i must be set or the 6th byte of data[1] must be set
+
+There are values in that range that are not allowed in XML-1.0
+
+We should see no error in remaining cases
+
+Finally check the value is right
+
+if fifth bit of first char is set, then the sequence would need at least 5 bytes, but we give only 4 !
+
+The second, third and fourth bytes must start with 10
+
+if using a 3 byte encoding then the value must be greater than 0x10000, i.e. one of bits 3 to 0 of i must be set or the 6 or 5th byte of j must be set
+
+There are values in that range that are not allowed in XML-1.0
+
+We should see no error in remaining cases
+
+Finally check the value is right
+
+testCharRanges: Test the correct UTF8 character parsing in isolation i.e. not when parsing a full document, this is less expensive and we can cover the full range of UTF-8 chars accepted by XML-1.0
+
+Set up a parsing context using the above data buffer as the current input source.
+
+this initialize the library and check potential ABI mismatches between the version it was compiled for and the actual shared library used.
+
+Catch errors separately
+
+Run the tests
+
+Cleanup function for the XML library.
+
+this is to debug memory for regression tests
+
+<doc>XXXX</doc>
+
+<doc foo='XXXX'/>
+
+test
+
+Failed to detect invalid char for Byte 0x%02X: %c\n
+
+<
+
+&
+
+Failed to detect illegal char %c for Byte 0x%02X\n
+
+Failed to detect invalid char for Byte 0x%02X\n
+
+Failed to parse valid char for Byte 0x%02X : %c\n
+
+test
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x00\n
+
+Failed to parse document for Bytes 0x%02X 0x%02X\n
+
+Failed to allocate parser context\n
+
+testing 1 byte char in document: 1
+
+
+
+
+
+
+
+
+
+2
+
+
+
+
+
+
+
+
+
+3
+
+
+
+
+
+
+
+
+
+\'
+
+4
+
+
+
+
+
+
+
+
+
+\'
+
+done\n
+
+testing 2 byte char in document: 1
+
+
+
+
+
+
+
+
+
+2
+
+
+
+
+
+
+
+
+
+3
+
+
+
+
+
+
+
+
+
+4
+
+
+
+
+
+
+
+
+
+done\n
+
+Failed to detect invalid char for Byte 0x%02X\n
+
+Failed to convert char for Byte 0x%02X\n
+
+Failed to parse char for Byte 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X: %d\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X: %d\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x00\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X: expect %d got %d\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char 0x%04X for Bytes 0x%02X 0x%02X 0x%02X\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X 0x%02X\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X 0x%02X: expect %d got %d\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char for Bytes 0x%02X 0x%02X 0x%02X 0x%02X\n
+
+Failed to detect invalid char 0x%04X for Bytes 0x%02X 0x%02X 0x%02X 0x%02X\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X 0x%02X\n
+
+Failed to parse char for Bytes 0x%02X 0x%02X 0x%02X: expect %d got %d\n
+
+Failed to allocate parser context\n
+
+Failed to allocate input buffer\n
+
+testing char range: 1
+
+2
+
+3
+
+4
+
+done\n
+
+0xFF;i++)
+
+0x%02X:
+
+0x%02X\n",
+
+0x20)
+
+0x80))
+
+0x9)
+
+0xA)
+
+0xD))
+
+0x%02X\n",
+
+0x%02X
+
+0x80;i
+
+0xFF;i++)
+
+0xFF;j++)
+
+0x80)
+
+0x40)
+
+0x%02X
+
+0x%02X\n",
+
+0x80)
+
+0xC0)
+
+0x80))
+
+0x%02X
+
+0x%02X\n",
+
+0x80,
+
+0x80)
+
+0x1E)
+
+0x%02X
+
+0x%02X\n",
+
+0xE0)
+
+0xE0)
+
+0x%02X
+
+0x%02X
+
+0x00\n",
+
+0x%02X
+
+0x%02X\n",
+
+0xFF;i++)
+
+0x80))
+
+0x%02X\n",
+
+0xD)
+
+0xA)
+
+0x%02X\n",
+
+0x%02X\n",
+
+0x80;i
+
+0xFF;i++)
+
+0xFF;j++)
+
+0x80)
+
+0x40)
+
+0x%02X
+
+0x%02X\n",
+
+0x80)
+
+0xC0)
+
+0x80))
+
+0x%02X
+
+0x%02X:
+
+0x80,
+
+0x80)
+
+0x1E)
+
+0x%02X
+
+0x%02X:
+
+0xE0)
+
+0xE0)
+
+0x%02X
+
+0x%02X
+
+0x00\n",
+
+0x%02X
+
+0x%02X\n",
+
+0x3F)
+
+0x1F)
+
+0x%02X
+
+0x%02X:
+
+0x3F)
+
+0x1F)
+
+0x80,
+
+0x81,
+
+0xC1,
+
+0xFF,
+
+0xBF};
+
+0xE0;i
+
+0xFF;i++)
+
+0xFF;j++)
+
+0x3F)
+
+0x3F)
+
+0xF)
+
+0xF0)
+
+0xF0)
+
+0x%02X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0xC0)
+
+0x80)
+
+0xC0)
+
+0x80))
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x800,
+
+0xF)
+
+0x20)
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0xD7FF)
+
+0xE000))
+
+0xFFFD)
+
+0x10000)))
+
+0x%04X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x%02X
+
+0x%02X
+
+0x%02X:
+
+0x80,
+
+0x81,
+
+0xC1,
+
+0xFF,
+
+0xBF};
+
+0xF0;i
+
+0xFF;i++)
+
+0xFF;j++)
+
+0x3F)
+
+0x3F)
+
+0x3F)
+
+0x7)
+
+0xF8)
+
+0xF8)
+
+0x%02X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0xC0)
+
+0x80)
+
+0xC0)
+
+0x80)
+
+0xC0)
+
+0x80))
+
+0x%02X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x10000,
+
+0x7)
+
+0x30)
+
+0x%02X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0xD7FF)
+
+0xE000))
+
+0xFFFD)
+
+0x10000))
+
+0x10FFFF))
+
+0x%04X
+
+0x%02X
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x%02X
+
+0x%02X
+
+0x%02X\n",
+
+0x%02X
+
+0x%02X
+
+0x%02X:
+

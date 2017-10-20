@@ -1,0 +1,86 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+just print the certificate
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+inform
+
+F
+
+Input format - default PEM (DER or PEM)
+
+outform
+
+f
+
+Output format - default PEM (PEM, DER or NSS)
+
+in
+
+s
+
+Input file - default stdin
+
+out
+
+s
+
+Output file - default stdout
+
+text
+
+-
+
+Print ssl session id details
+
+cert
+
+-
+
+Output certificate
+
+noout
+
+-
+
+Don't output the encoded session info
+
+context
+
+s
+
+Set the session ID context
+
+%s: Use -help for summary.\n
+
+Context too long\n
+
+Error setting id context\n
+
+w
+
+No certificate present\n
+
+bad output format specified for outfile\n
+
+unable to write SSL_SESSION\n
+
+bad output format specified for outfile\n
+
+unable to write X509\n
+
+r
+
+unable to load SSL_SESSION\n
+

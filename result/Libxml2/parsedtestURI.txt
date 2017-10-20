@@ -1,0 +1,60 @@
+testURI.c : a small tester program for XML input. See Copyright for the status of this software. daniel@veillard.com
+
+read one line in string buffer.
+
+remove the ending spaces
+
+libxml.h
+
+%s : error %d\n
+
+scheme: %s\n
+
+opaque: %s\n
+
+authority: %s\n
+
+server: %s\n
+
+user: %s\n
+
+port: %d\n
+
+path: %s\n
+
+query: %s\n
+
+fragment: %s\n
+
+query_raw: %s\n
+
+cleanup\n
+
+%s\n
+
+\n
+
+%s\n
+
+::ERROR::\n
+
+-base
+
+--base
+
+-escape
+
+--escape
+
+-debug
+
+--debug
+
+\n
+
+\r
+
+
+
+\t
+

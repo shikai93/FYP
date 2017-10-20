@@ -1,0 +1,42 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Information about a CT log server.
+
+A store for multiple CTLOG instances. It takes ownership of any CTLOG instances added to it.
+
+The context when loading a CT log list from a CONF file.
+
+Creates an empty context for loading a CT log store. It should be populated before use.
+
+Deletes a CT log store load context. Does not delete any of the fields.
+
+Converts a log's public key into a SHA256 log ID
+
+Called by CONF_parse_list, which stops if this returns <= 0, Otherwise, one bad log entry would stop loading of any of the following log entries. It may stop parsing and returns -1 on any internal (malloc) error.
+
+log_name may not be null-terminated, so fix that before using it
+
+log_name will be NULL for empty list entries
+
+Propagate any internal error
+
+If we can't load this log, record that fact and skip it
+
+Initialize a new CTLOG object. Takes ownership of the public key. Copies the name.
+
+Frees CT log and associated structures
+
+Given a log ID, finds the matching log. Returns NULL if no match found.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+s public key into a SHA256 log ID */ static int ct_v1_log_id_from_pkey(EVP_PKEY *pkey, unsigned char log_id[CT_V1_HASHLEN]) { int ret = 0; unsigned char *pkey_der = NULL; int pkey_der_len = i2d_PUBKEY(pkey, &pkey_der); if (pkey_der_len <= 0) { CTerr(CT_F_CT_V1_LOG_ID_FROM_PKEY, CT_R_LOG_KEY_INVALID); goto err; } SHA256(pkey_der, pkey_der_len, log_id); ret = 1; err: OPENSSL_free(pkey_der); return ret; } CTLOG_STORE *CTLOG_STORE_new(void) { CTLOG_STORE *ret = OPENSSL_zalloc(sizeof(*ret)); if (ret == NULL) { CTerr(CT_F_CTLOG_STORE_NEW, ERR_R_MALLOC_FAILURE); return NULL; } ret->logs = sk_CTLOG_new_null(); if (ret->logs == NULL) goto err; return ret; err: OPENSSL_free(ret); return NULL; } void CTLOG_STORE_free(CTLOG_STORE *store) { if (store != NULL) { sk_CTLOG_pop_free(store->logs, CTLOG_free); OPENSSL_free(store); } } static int ctlog_new_from_conf(CTLOG **ct_log, const CONF *conf, const char *section) { const char *description = NCONF_get_string(conf, section, "description"); char *pkey_base64; if (description == NULL) { CTerr(CT_F_CTLOG_NEW_FROM_CONF, CT_R_LOG_CONF_MISSING_DESCRIPTION); return 0; } pkey_base64 = NCONF_get_string(conf, section, "key"); if (pkey_base64 == NULL) { CTerr(CT_F_CTLOG_NEW_FROM_CONF, CT_R_LOG_CONF_MISSING_KEY); return 0; } return CTLOG_new_from_base64(ct_log, pkey_base64, description); } int CTLOG_STORE_load_default_file(CTLOG_STORE *store) { const char *fpath = getenv(CTLOG_FILE_EVP); if (fpath == NULL) fpath = CTLOG_FILE; return CTLOG_STORE_load_file(store, fpath); } /* * Called by CONF_parse_list, which stops if this returns <= 0, * Otherwise, one bad log entry would stop loading of any of * the following log entries. * It may stop parsing and returns -1 on any internal (malloc) error. */ static int ctlog_store_load_log(const char *log_name, int log_name_len, void *arg) { CTLOG_STORE_LOAD_CTX *load_ctx = arg; CTLOG *ct_log = NULL; /* log_name may not be null-terminated, so fix that before using it */ char *tmp; int ret = 0; /* log_name will be NULL for empty list entries */ if (log_name == NULL) return 1; tmp = OPENSSL_strndup(log_name, log_name_len); if (tmp == NULL) goto mem_err; ret = ctlog_new_from_conf(&ct_log, load_ctx->conf, tmp); OPENSSL_free(tmp); if (ret < 0) { /* Propagate any internal error */ return ret; } if (ret == 0) { /* If we can
+
+enabled_logs
+
+,
+

@@ -1,0 +1,84 @@
+Copyright 2006-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+we have a 'named curve' => just set the OID
+
+explicit parameters
+
+type == V_ASN1_OBJECT => the parameters are given by an asn1 OID
+
+We have parameters now set public key
+
+We have parameters now set private key
+
+set the private key
+
+do not include the parameters in the SEC1 private key see PKCS#11 12.11
+
+If absent parameters get group from main key
+
+We have parameters now set public key
+
+Set KDF parameters based on KDF NID
+
+Lookup KDF type, cofactor mode and digest
+
+See if we need to set peer key
+
+Set ECDH derivation parameters and initialise unwrap context
+
+Get ephemeral key
+
+Is everything uninitialised?
+
+Set the key
+
+See if custom parameters set
+
+Unknown KDF
+
+Fixme later for better MD
+
+Lookup NID for KDF+cofactor+digest
+
+Get wrap NID
+
+Package wrap algorithm in an AlgorithmIdentifier
+
+Now need to wrap encoding of wrap AlgorithmIdentifier into parameter of another AlgorithmIdentifier.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+internal/evp_int.h
+
+ec_lcl.h
+
+named curve
+
+Private-Key
+
+Public-Key
+
+ECDSA-Parameters
+
+%s: (%d bit)\n
+
+%*spriv:\n
+
+
+
+%*spub:\n
+
+
+
+EC
+
+OpenSSL EC algorithm
+
+0x07);
+

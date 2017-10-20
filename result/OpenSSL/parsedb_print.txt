@@ -1,0 +1,254 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Copyright Patrick Powell 1995 This code is based on code written by Patrick Powell <papowell@astart.com> It may be used for any purpose as long as this notice remains intact on all source code distributions.
+
+format read states
+
+format flags - Bits
+
+left-aligned padding
+
+print an explicit '+' for a value with positive sign
+
+print an explicit ' ' for a value with positive sign
+
+print 0/0x prefix for octal/hex and decimal point for floating point
+
+print leading zeroes
+
+print HEX in UPPPERcase
+
+treat value as unsigned
+
+conversion flags
+
+Floating point formats
+
+some handy macros
+
+FALLTHROUGH
+
+fall thru
+
+fall thru
+
+not supported yet, treat as next char
+
+unknown, skip
+
+We have to truncate if there is no dynamic buffer and we have filled the static buffer.
+
+Calculate the maximum output including padding. Make sure max doesn't overflow into negativity
+
+spaces
+
+sign
+
+prefix
+
+zeros
+
+digits
+
+left justified spaces
+
+G_FORMAT sometimes prints like E_FORMAT and sometimes like F_FORMAT depending on the number to be printed. Work out which one it is and use that from here on.
+
+Calculate the exponent
+
+In G_FORMAT the "precision" represents significant digits. We always have at least 1 significant digit.
+
+Now convert significant digits to decimal places
+
+Should not happen. If we're in F_FORMAT then exp < max?
+
+In E_FORMAT there is always one significant digit in front of the decimal point, so: significant digits == 1 + decimal places
+
+Number too big
+
+sorry, we only support 9 digits past the decimal because of our conversion method
+
+we "cheat" by converting the fractional part to integer by multiplying by a factor of 10
+
+convert integer part
+
+convert fractional part
+
+We strip trailing zeros in G_FORMAT
+
+convert exponent part
+
+Exponent is huge!! Too big to print
+
+Add a leading 0 for single digit exponents
+
+-1 for decimal point (if we have one, i.e. max > 0), another -1 if we are printing a sign
+
+Take some off for exponent prefix "+e" and exponent
+
+Decimal point. This should probably use locale to find the correct char to print out.
+
+If we haven't at least one buffer, someone has done a big booboo
+
+|currlen| must always be <= |maxlen|
+
+
+
+Was previously 10k, which is unreasonable in small-stack environments, like threads or DOS programs.
+
+As snprintf is not available everywhere, we provide our own implementation. This function has nothing to do with BIOs, but it's closely related to BIO_printf, and we need some name prefix ... (XXX the function should be renamed, but to what?)
+
+In case of truncation, return -1 like traditional snprintf. (Current drafts for ISO/IEC 9899 say snprintf should return the number of characters that would have been written, had the buffer been large enough.)
+
+www.openssl.org/source/license.html
+
+License
+
+internal/ctype.h
+
+internal/numbers.h
+
+internal/cryptlib.h
+
++
+
+
+
+0
+
+\0
+
+%
+
+-
+
++
+
+
+
+#
+
+0
+
+*
+
+.
+
+*
+
+h
+
+l
+
+l
+
+q
+
+j
+
+L
+
+z
+
+d
+
+i
+
+X
+
+x
+
+o
+
+u
+
+o
+
+u
+
+f
+
+E
+
+e
+
+G
+
+g
+
+c
+
+s
+
+p
+
+n
+
+%
+
+w
+
+\0
+
+<NULL>
+
+t overflow into negativity */ if (max < INT_MAX - padlen) max += padlen; else max = INT_MAX; } if (flags & DP_F_MINUS) padlen = -padlen; while ((padlen > 0) && (max < 0 || cnt < max)) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen,
+
+)) return 0; --padlen; ++cnt; } while (strln > 0 && (max < 0 || cnt < max)) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen, *value++)) return 0; --strln; ++cnt; } while ((padlen < 0) && (max < 0 || cnt < max)) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen,
+
+)) return 0; ++padlen; ++cnt; } return 1; } static int fmtint(char **sbuffer, char **buffer, size_t *currlen, size_t *maxlen, int64_t value, int base, int min, int max, int flags) { int signvalue = 0; const char *prefix = ""; uint64_t uvalue; char convert[DECIMAL_SIZE(value) + 3]; int place = 0; int spadlen = 0; int zpadlen = 0; int caps = 0; if (max < 0) max = 0; uvalue = value; if (!(flags & DP_F_UNSIGNED)) { if (value < 0) { signvalue =
+
+; uvalue = 0 - (uint64_t)value; } else if (flags & DP_F_PLUS) signvalue =
+
+; else if (flags & DP_F_SPACE) signvalue =
+
+; } if (flags & DP_F_NUM) { if (base == 8) prefix = "0"; if (base == 16) prefix = "0x"; } if (flags & DP_F_UP) caps = 1; do { convert[place++] = (caps ? "0123456789ABCDEF" : "0123456789abcdef") [uvalue % (unsigned)base]; uvalue = (uvalue / (unsigned)base); } while (uvalue && (place < (int)sizeof(convert))); if (place == sizeof(convert)) place--; convert[place] = 0; zpadlen = max - place; spadlen = min - OSSL_MAX(max, place) - (signvalue ? 1 : 0) - strlen(prefix); if (zpadlen < 0) zpadlen = 0; if (spadlen < 0) spadlen = 0; if (flags & DP_F_ZERO) { zpadlen = OSSL_MAX(zpadlen, spadlen); spadlen = 0; } if (flags & DP_F_MINUS) spadlen = -spadlen; /* spaces */ while (spadlen > 0) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen,
+
+)) return 0; --spadlen; } /* sign */ if (signvalue) if(!doapr_outch(sbuffer, buffer, currlen, maxlen, signvalue)) return 0; /* prefix */ while (*prefix) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen, *prefix)) return 0; prefix++; } /* zeros */ if (zpadlen > 0) { while (zpadlen > 0) { if(!doapr_outch(sbuffer, buffer, currlen, maxlen,
+
+)) return 0; --zpadlen; } } /* digits */ while (place > 0) { if (!doapr_outch(sbuffer, buffer, currlen, maxlen, convert[--place])) return 0; } /* left justified spaces */ while (spadlen < 0) { if (!doapr_outch(sbuffer, buffer, currlen, maxlen,
+
+)) return 0; ++spadlen; } return 1; } static LDOUBLE abs_val(LDOUBLE value) { LDOUBLE result = value; if (value < 0) result = -value; return result; } static LDOUBLE pow_10(int in_exp) { LDOUBLE result = 1; while (in_exp) { result *= 10; in_exp--; } return result; } static long roundv(LDOUBLE value) { long intpart; intpart = (long)value; value = value - intpart; if (value >= 0.5) intpart++; return intpart; } static int fmtfp(char **sbuffer, char **buffer, size_t *currlen, size_t *maxlen, LDOUBLE fvalue, int min, int max, int flags, int style) { int signvalue = 0; LDOUBLE ufvalue; LDOUBLE tmpvalue; char iconvert[20]; char fconvert[20]; char econvert[20]; int iplace = 0; int fplace = 0; int eplace = 0; int padlen = 0; int zpadlen = 0; long exp = 0; unsigned long intpart; unsigned long fracpart; unsigned long max10; int realstyle; if (max < 0) max = 6; if (fvalue < 0) signvalue =
+
+; else if (flags & DP_F_PLUS) signvalue =
+
+; else if (flags & DP_F_SPACE) signvalue =
+
+; /* * G_FORMAT sometimes prints like E_FORMAT and sometimes like F_FORMAT * depending on the number to be printed. Work out which one it is and use * that from here on. */ if (style == G_FORMAT) { if (fvalue == 0.0) { realstyle = F_FORMAT; } else if (fvalue < 0.0001) { realstyle = E_FORMAT; } else if ((max == 0 && fvalue >= 10) || (max > 0 && fvalue >= pow_10(max))) { realstyle = E_FORMAT; } else { realstyle = F_FORMAT; } } else { realstyle = style; } if (style != F_FORMAT) { tmpvalue = fvalue; /* Calculate the exponent */ if (fvalue != 0.0) { while (tmpvalue < 1) { tmpvalue *= 10; exp--; } while (tmpvalue > 10) { tmpvalue /= 10; exp++; } } if (style == G_FORMAT) { /* * In G_FORMAT the "precision" represents significant digits. We * always have at least 1 significant digit. */ if (max == 0) max = 1; /* Now convert significant digits to decimal places */ if (realstyle == F_FORMAT) { max -= (exp + 1); if (max < 0) { /* * Should not happen. If we
+
+cheat
+
+0123456789
+
+0123456789
+
+0123456789
+
+0
+
++e
+
+0
+
+
+
+.
+
+0
+
+e
+
+E
+
+-
+
++
+
+
+
+t at least one buffer, someone has done a big booboo */ if (!ossl_assert(*sbuffer != NULL || buffer != NULL)) return 0; /* |currlen| must always be <= |*maxlen| */ if (!ossl_assert(*currlen <= *maxlen)) return 0; if (buffer && *currlen == *maxlen) { if (*maxlen > INT_MAX - BUFFER_INC) return 0; *maxlen += BUFFER_INC; if (*buffer == NULL) { *buffer = OPENSSL_malloc(*maxlen); if (*buffer == NULL) return 0; if (*currlen > 0) { if (!ossl_assert(*sbuffer != NULL)) return 0; memcpy(*buffer, *sbuffer, *currlen); } *sbuffer = NULL; } else { char *tmpbuf; tmpbuf = OPENSSL_realloc(*buffer, *maxlen); if (tmpbuf == NULL) return 0; *buffer = tmpbuf; } } if (*currlen < *maxlen) { if (*sbuffer) (*sbuffer)[(*currlen)++] = (char)c; else (*buffer)[(*currlen)++] = (char)c; } return 1; } /***************************************************************************/ int BIO_printf(BIO *bio, const char *format, ...) { va_list args; int ret; va_start(args, format); ret = BIO_vprintf(bio, format, args); va_end(args); return (ret); } int BIO_vprintf(BIO *bio, const char *format, va_list args) { int ret; size_t retlen; char hugebuf[1024 * 2]; /* Was previously 10k, which is unreasonable * in small-stack environments, like threads * or DOS programs. */ char *hugebufp = hugebuf; size_t hugebufsize = sizeof(hugebuf); char *dynbuf = NULL; int ignored; dynbuf = NULL; if (!_dopr(&hugebufp, &dynbuf, &hugebufsize, &retlen, &ignored, format, args)) { OPENSSL_free(dynbuf); return -1; } if (dynbuf) { ret = BIO_write(bio, dynbuf, (int)retlen); OPENSSL_free(dynbuf); } else { ret = BIO_write(bio, hugebuf, (int)retlen); } return (ret); } /* * As snprintf is not available everywhere, we provide our own * implementation. This function has nothing to do with BIOs, but it
+
+0x
+
+0x";
+

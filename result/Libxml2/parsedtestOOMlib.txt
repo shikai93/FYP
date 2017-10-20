@@ -1,0 +1,40 @@
+testOOM.c: Test out-of-memory handling See Copyright for the status of this software. Copyright 2003 Red Hat, Inc. Written by: hp@redhat.com
+
+set_fail_alloc_counter: @until_next_fail: number of successful allocs before one fails Sets the number of allocations until we simulate a failed allocation. If set to 0, the next allocation to run fails; if set to 1, one succeeds then the next fails; etc. Set to _TEST_INT_MAX to not fail anything.
+
+get_fail_alloc_counter: Returns the number of successful allocs until we'll simulate a failed alloc.
+
+set_fail_alloc_failures: @failures_per_failure: number to fail Sets how many mallocs to fail when the fail alloc counter reaches 0.
+
+decrement_fail_alloc_counter: Called when about to alloc some memory; if it returns #TRUE, then the allocation should fail. If it returns #FALSE, then the allocation should not fail. returns #TRUE if this alloc should fail
+
+test_get_malloc_blocks_outstanding: Get the number of outstanding malloc()'d blocks. Returns number of blocks
+
+FAIL the malloc
+
+some system mallocs handle this, some don't
+
+FAIL
+
+guarantee this is safe
+
+we guarantee it's safe to free (NULL)
+
+fudge factor to ensure reallocs etc. are covered
+
+test_oom_handling: @func: function to call @data: data to pass to function Tests how well the given function responds to out-of-memory situations. Calls the function repeatedly, failing a different call to malloc() each time. If the function ever returns #FALSE, the test fails. The function should return #TRUE whenever something valid (such as returning an error, or succeeding) occurs, and #FALSE if it gets confused in some way. Returns #TRUE if the function never returns FALSE
+
+Run once to see about how many mallocs are involved
+
+testOOMlib.h
+
+ll simulate * a failed alloc. */ static int get_fail_alloc_counter (void) { return fail_alloc_counter; } /** * set_fail_alloc_failures: * @failures_per_failure: number to fail * * Sets how many mallocs to fail when the fail alloc counter reaches * 0. * */ static void set_fail_alloc_failures (int failures_per_failure) { n_failures_per_failure = failures_per_failure; } /** * decrement_fail_alloc_counter: * * Called when about to alloc some memory; if * it returns #TRUE, then the allocation should * fail. If it returns #FALSE, then the allocation * should not fail. * * returns #TRUE if this alloc should fail */ static int decrement_fail_alloc_counter (void) { if (fail_alloc_counter <= 0) { n_failures_this_failure += 1; if (n_failures_this_failure >= n_failures_per_failure) { fail_alloc_counter = _TEST_INT_MAX; n_failures_this_failure = 0; } return TRUE; } else { fail_alloc_counter -= 1; return FALSE; } } /** * test_get_malloc_blocks_outstanding: * * Get the number of outstanding malloc()
+
+t */ return NULL; else { void *mem; mem = xmlMemMalloc (bytes); if (mem) n_blocks_outstanding += 1; return mem; } } void* test_realloc (void *memory, size_t bytes) { if (decrement_fail_alloc_counter ()) { /* FAIL */ return NULL; } if (bytes == 0) /* guarantee this is safe */ { test_free (memory); return NULL; } else { void *mem; mem = xmlMemRealloc (memory, bytes); if (memory == NULL && mem != NULL) n_blocks_outstanding += 1; return mem; } } void test_free (void *memory) { if (memory) /* we guarantee it
+
+returns true on success
+
+returns true on success
+
+get number of blocks leaked
+

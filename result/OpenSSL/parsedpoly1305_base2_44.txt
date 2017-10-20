@@ -1,0 +1,92 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This module is meant to be used as template for base 2^44 assembly implementation[s]. On side note compiler-generated code is not slower than compiler-generated base 2^64 code on [high-end] x86_64, even though amount of multiplications is 50% higher. Go figure...
+
+pick 64-bit unsigned integer in little endian order
+
+store a 64-bit unsigned integer in little endian
+
+h = 0
+
+break r1:r0 to three 44-bit digits, masks are 1<<44-1
+
+h += m[i], m[i] is broken to 44-bit digits
+
+h = r "%" p, where "%" stands for "partial remainder"
+
+"lazy" reduction step
+
+last 42 bits
+
+after "lazy" reduction, convert 44+bit digits to 64-bit ones
+
+compare to modulus by computing h + -p
+
+if there was carry into 131st bit, h1:h0 = g1:g0
+
+mac = (h + nonce) % (2^128)
+
+www.openssl.org/source/license.html
+
+License
+
+%
+
+%
+
+partial remainder
+
+lazy
+
+lazy
+
+0xff))
+
+0xff)
+
+0xff)
+
+0xff)
+
+0xff)
+
+0xff)
+
+0xff)
+
+0xff)
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0x0ffffffc0fffffff;
+
+0x0ffffffc0ffffffc;
+
+0x0fffffffffff;
+
+0x0fffffffffff;
+
+0x0fffffffffff;
+
+0x0fffffffffff;
+
+0x0fffffffffff;
+
+0x0fffffffffff;
+
+0x03ffffffffff;
+

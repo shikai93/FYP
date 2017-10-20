@@ -1,0 +1,346 @@
+Copyright 1999-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+X509 v3 extension utilities
+
+Add a CONF_VALUE name value pair to stack
+
+Free function for STACK_OF(CONF_VALUE)
+
+#define DEBUG
+
+We are going to modify the line so copy it first
+
+Go through all characters
+
+Delete leading and trailing spaces from a string
+
+Skip over leading spaces
+
+V2I name comparison function: returns zero if 'name' matches cmp or cmp.
+
+Now add any email address(es) to STACK
+
+First supplied X509_NAME
+
+First some sanity checks
+
+Don't add duplicates
+
+free on push failure
+
+Skip pattern prefix to match "wildcard" subject
+
+If subject starts with a leading '.' followed by more octets, and pattern is longer, compare just an equal-length suffix with the full subject (starting at the '.'), provided the prefix contains no NULs.
+
+Skip if entire prefix acceptable
+
+Compare while ASCII ignoring case.
+
+The pattern must not contain NUL characters.
+
+Compare using memcmp.
+
+RFC 5280, section 7.5, requires that only the domain is compared in a case-insensitive manner.
+
+We search backwards for the '@' character, so that we do not have to deal with quoted local-parts. The domain part is compared in a case-insensitive manner.
+
+Compare the prefix and suffix with the subject, and check that the characters in-between are valid.
+
+If the wildcard makes up the entire first label, it must match at least one character.
+
+IDNA labels cannot match partial wildcards
+
+The wildcard may match a literal ''
+
+Check that the part matched by the wildcard contains only permitted characters and only matches a single label unless allow_multi is set.
+
+Locate first and only legal wildcard, either at the start or end of a non-IDNA first and not final label.
+
+At most one wildcard per pattern. No wildcards in IDNA labels. No wildcards after the first label.
+
+Only full-label '.example.com' wildcards?
+
+No 'foobar' wildcards
+
+no domain/subdomain starts with '-'
+
+The final label must not end in a hyphen or ".", and there must be at least two dots after the star.
+
+Compare using wildcards.
+
+Subject names starting with '.' can only match a wildcard pattern via a subject sub-domain pattern suffix match.
+
+Compare an ASN1_STRING to a supplied string. If they match return 1. If cmp_type > 0 only compare if string matches the type, otherwise convert it to UTF8.
+
+-1 could be an internal malloc failure or a decoding error from malformed input; we can't distinguish.
+
+See below, this flag is internal-only
+
+Implicit client-side DNS sub-domain pattern
+
+Positive on success, negative on error!
+
+We're done if CN-ID is not pertinent
+
+Positive on success, negative on error!
+
+Embedded NULs are disallowed, except as the last character of a string of length 2 or more (tolerate caller including terminating NUL in string length).
+
+Embedded NULs are disallowed, except as the last character of a string of length 2 or more (tolerate caller including terminating NUL in string length).
+
+Convert IP addresses both IPv4 and IPv6 into an OCTET STRING compatible with RFC3280.
+
+If string contains a ':' assume IPv6
+
+If string contains a ':' assume IPv6
+
+Temporary store for IPV6 output
+
+Total number of bytes in tmp
+
+The position of a zero (corresponding to '::')
+
+Number of zeroes
+
+Treat the IPv6 representation as a list of values separated by ':'. The presence of a '::' will parse as one, two or three zero length elements.
+
+Now for some sanity checks
+
+If no '::' must have exactly 16 bytes
+
+If '::' must have less than 16 bytes
+
+More than three zeroes is an error
+
+Can only have three zeroes if nothing else present
+
+Can only have two zeroes if at start or end
+
+Can only have one zero if not start or end
+
+Format result
+
+Copy initial part
+
+Zero middle
+
+Copy final part
+
+Error if 16 bytes written
+
+Zero length element, corresponds to '::'
+
+If we've already got a :: its an error
+
+If more than 4 characters could be final a.b.c.d form
+
+Need at least 4 bytes left
+
+Must be end of string
+
+Convert a string of up to 4 hex digits into the corresponding IPv6 form.
+
+Skip past any leading X. X: X, etc to allow for multiple instances
+
+www.openssl.org/source/license.html
+
+License
+
+e_os.h
+
+internal/cryptlib.h
+
+internal/ctype.h
+
+internal/x509_int.h
+
+ext_dat.h
+
+TRUE
+
+FALSE
+
+TRUE
+
+-
+
+0
+
+x
+
+X
+
+TRUE
+
+true
+
+Y
+
+y
+
+YES
+
+yes
+
+FALSE
+
+false
+
+N
+
+n
+
+NO
+
+no
+
+\r
+
+\n
+
+:
+
+,
+
+,
+
+name
+
+.
+
+t add duplicates */ if (sk_OPENSSL_STRING_find(*sk, (char *)email->data) != -1) return 1; emtmp = OPENSSL_strdup((char *)email->data); if (emtmp == NULL || !sk_OPENSSL_STRING_push(*sk, emtmp)) { OPENSSL_free(emtmp); /* free on push failure */ X509_email_free(*sk); *sk = NULL; return 0; } return 1; } void X509_email_free(STACK_OF(OPENSSL_STRING) *sk) { sk_OPENSSL_STRING_pop_free(sk, str_free); } typedef int (*equal_fn) (const unsigned char *pattern, size_t pattern_len, const unsigned char *subject, size_t subject_len, unsigned int flags); /* Skip pattern prefix to match "wildcard" subject */ static void skip_prefix(const unsigned char **p, size_t *plen, size_t subject_len, unsigned int flags) { const unsigned char *pattern = *p; size_t pattern_len = *plen; /* * If subject starts with a leading
+
+followed by more octets, and * pattern is longer, compare just an equal-length suffix with the * full subject (starting at the
+
+), provided the prefix contains * no NULs. */ if ((flags & _X509_CHECK_FLAG_DOT_SUBDOMAINS) == 0) return; while (pattern_len > subject_len && *pattern) { if ((flags & X509_CHECK_FLAG_SINGLE_LABEL_SUBDOMAINS) && *pattern ==
+
+) break; ++pattern; --pattern_len; } /* Skip if entire prefix acceptable */ if (pattern_len == subject_len) { *p = pattern; *plen = pattern_len; } } /* Compare while ASCII ignoring case. */ static int equal_nocase(const unsigned char *pattern, size_t pattern_len, const unsigned char *subject, size_t subject_len, unsigned int flags) { skip_prefix(&pattern, &pattern_len, subject_len, flags); if (pattern_len != subject_len) return 0; while (pattern_len) { unsigned char l = *pattern; unsigned char r = *subject; /* The pattern must not contain NUL characters. */ if (l == 0) return 0; if (l != r) { if (
+
+<= l && l <=
+
+) l = (l -
+
+) +
+
+; if (
+
+<= r && r <=
+
+) r = (r -
+
+) +
+
+; if (l != r) return 0; } ++pattern; ++subject; --pattern_len; } return 1; } /* Compare using memcmp. */ static int equal_case(const unsigned char *pattern, size_t pattern_len, const unsigned char *subject, size_t subject_len, unsigned int flags) { skip_prefix(&pattern, &pattern_len, subject_len, flags); if (pattern_len != subject_len) return 0; return !memcmp(pattern, subject, pattern_len); } /* * RFC 5280, section 7.5, requires that only the domain is compared in a * case-insensitive manner. */ static int equal_email(const unsigned char *a, size_t a_len, const unsigned char *b, size_t b_len, unsigned int unused_flags) { size_t i = a_len; if (a_len != b_len) return 0; /* * We search backwards for the
+
+character, so that we do not have to * deal with quoted local-parts. The domain part is compared in a * case-insensitive manner. */ while (i > 0) { --i; if (a[i] ==
+
+|| b[i] ==
+
+) { if (!equal_nocase(a + i, a_len - i, b + i, a_len - i, 0)) return 0; break; } } if (i == 0) i = a_len; return equal_case(a, i, b, i, 0); } /* * Compare the prefix and suffix with the subject, and check that the * characters in-between are valid. */ static int wildcard_match(const unsigned char *prefix, size_t prefix_len, const unsigned char *suffix, size_t suffix_len, const unsigned char *subject, size_t subject_len, unsigned int flags) { const unsigned char *wildcard_start; const unsigned char *wildcard_end; const unsigned char *p; int allow_multi = 0; int allow_idna = 0; if (subject_len < prefix_len + suffix_len) return 0; if (!equal_nocase(prefix, prefix_len, subject, prefix_len, flags)) return 0; wildcard_start = subject + prefix_len; wildcard_end = subject + (subject_len - suffix_len); if (!equal_nocase(wildcard_end, suffix_len, suffix, suffix_len, flags)) return 0; /* * If the wildcard makes up the entire first label, it must match at * least one character. */ if (prefix_len == 0 && *suffix ==
+
+) { if (wildcard_start == wildcard_end) return 0; allow_idna = 1; if (flags & X509_CHECK_FLAG_MULTI_LABEL_WILDCARDS) allow_multi = 1; } /* IDNA labels cannot match partial wildcards */ if (!allow_idna && subject_len >= 4 && strncasecmp((char *)subject, "xn--", 4) == 0) return 0; /* The wildcard may match a literal
+
+*/ if (wildcard_end == wildcard_start + 1 && *wildcard_start ==
+
+) return 1; /* * Check that the part matched by the wildcard contains only * permitted characters and only matches a single label unless * allow_multi is set. */ for (p = wildcard_start; p != wildcard_end; ++p) if (!((
+
+<= *p && *p <=
+
+) || (
+
+<= *p && *p <=
+
+) || (
+
+<= *p && *p <=
+
+) || *p ==
+
+|| (allow_multi && *p ==
+
+))) return 0; return 1; } #define LABEL_START (1 << 0) #define LABEL_END (1 << 1) #define LABEL_HYPHEN (1 << 2) #define LABEL_IDNA (1 << 3) static const unsigned char *valid_star(const unsigned char *p, size_t len, unsigned int flags) { const unsigned char *star = 0; size_t i; int state = LABEL_START; int dots = 0; for (i = 0; i < len; ++i) { /* * Locate first and only legal wildcard, either at the start * or end of a non-IDNA first and not final label. */ if (p[i] ==
+
+) { int atstart = (state & LABEL_START); int atend = (i == len - 1 || p[i + 1] ==
+
+); /*- * At most one wildcard per pattern. * No wildcards in IDNA labels. * No wildcards after the first label. */ if (star != NULL || (state & LABEL_IDNA) != 0 || dots) return NULL; /* Only full-label
+
+wildcards? */ if ((flags & X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS) && (!atstart || !atend)) return NULL; /* No
+
+wildcards */ if (!atstart && !atend) return NULL; star = &p[i]; state &= ~LABEL_START; } else if ((
+
+<= p[i] && p[i] <=
+
+) || (
+
+<= p[i] && p[i] <=
+
+) || (
+
+<= p[i] && p[i] <=
+
+)) { if ((state & LABEL_START) != 0 && len - i >= 4 && strncasecmp((char *)&p[i], "xn--", 4) == 0) state |= LABEL_IDNA; state &= ~(LABEL_HYPHEN | LABEL_START); } else if (p[i] ==
+
+) { if ((state & (LABEL_HYPHEN | LABEL_START)) != 0) return NULL; state = LABEL_START; ++dots; } else if (p[i] ==
+
+) { /* no domain/subdomain starts with
+
+*/ if ((state & LABEL_START) != 0) return NULL; state |= LABEL_HYPHEN; } else return NULL; } /* * The final label must not end in a hyphen or ".", and * there must be at least two dots after the star. */ if ((state & (LABEL_START | LABEL_HYPHEN)) != 0 || dots < 2) return NULL; return star; } /* Compare using wildcards. */ static int equal_wildcard(const unsigned char *pattern, size_t pattern_len, const unsigned char *subject, size_t subject_len, unsigned int flags) { const unsigned char *star = NULL; /* * Subject names starting with
+
+can only match a wildcard pattern * via a subject sub-domain pattern suffix match. */ if (!(subject_len > 1 && subject[0] ==
+
+)) star = valid_star(pattern, pattern_len, flags); if (star == NULL) return equal_nocase(pattern, pattern_len, subject, subject_len, flags); return wildcard_match(pattern, star - pattern, star + 1, (pattern + pattern_len) - star - 1, subject, subject_len, flags); } /* * Compare an ASN1_STRING to a supplied string. If they match return 1. If * cmp_type > 0 only compare if string matches the type, otherwise convert it * to UTF8. */ static int do_check_string(const ASN1_STRING *a, int cmp_type, equal_fn equal, unsigned int flags, const char *b, size_t blen, char **peername) { int rv = 0; if (!a->data || !a->length) return 0; if (cmp_type > 0) { if (cmp_type != a->type) return 0; if (cmp_type == V_ASN1_IA5STRING) rv = equal(a->data, a->length, (unsigned char *)b, blen, flags); else if (a->length == (int)blen && !memcmp(a->data, b, blen)) rv = 1; if (rv > 0 && peername) *peername = OPENSSL_strndup((char *)a->data, a->length); } else { int astrlen; unsigned char *astr; astrlen = ASN1_STRING_to_UTF8(&astr, a); if (astrlen < 0) { /* * -1 could be an internal malloc failure or a decoding error from * malformed input; we can
+
+.
+
+re done if CN-ID is not pertinent */ if (cnid == NID_undef || (flags & X509_CHECK_FLAG_NEVER_CHECK_SUBJECT)) return 0; i = -1; name = X509_get_subject_name(x); while ((i = X509_NAME_get_index_by_NID(name, cnid, i)) >= 0) { const X509_NAME_ENTRY *ne = X509_NAME_get_entry(name, i); const ASN1_STRING *str = X509_NAME_ENTRY_get_data(ne); /* Positive on success, negative on error! */ if ((rv = do_check_string(str, -1, equal, flags, chk, chklen, peername)) != 0) return rv; } return 0; } int X509_check_host(X509 *x, const char *chk, size_t chklen, unsigned int flags, char **peername) { if (chk == NULL) return -2; /* * Embedded NULs are disallowed, except as the last character of a * string of length 2 or more (tolerate caller including terminating * NUL in string length). */ if (chklen == 0) chklen = strlen(chk); else if (memchr(chk,
+
+, chklen > 1 ? chklen - 1 : chklen)) return -2; if (chklen > 1 && chk[chklen - 1] ==
+
+) --chklen; return do_x509_check(x, chk, chklen, flags, GEN_DNS, peername); } int X509_check_email(X509 *x, const char *chk, size_t chklen, unsigned int flags) { if (chk == NULL) return -2; /* * Embedded NULs are disallowed, except as the last character of a * string of length 2 or more (tolerate caller including terminating * NUL in string length). */ if (chklen == 0) chklen = strlen((char *)chk); else if (memchr(chk,
+
+, chklen > 1 ? chklen - 1 : chklen)) return -2; if (chklen > 1 && chk[chklen - 1] ==
+
+) --chklen; return do_x509_check(x, chk, chklen, flags, GEN_EMAIL, NULL); } int X509_check_ip(X509 *x, const unsigned char *chk, size_t chklen, unsigned int flags) { if (chk == NULL) return -2; return do_x509_check(x, (char *)chk, chklen, flags, GEN_IPADD, NULL); } int X509_check_ip_asc(X509 *x, const char *ipasc, unsigned int flags) { unsigned char ipout[16]; size_t iplen; if (ipasc == NULL) return -2; iplen = (size_t)a2i_ipadd(ipout, ipasc); if (iplen == 0) return -2; return do_x509_check(x, (char *)ipout, iplen, flags, GEN_IPADD, NULL); } /* * Convert IP addresses both IPv4 and IPv6 into an OCTET STRING compatible * with RFC3280. */ ASN1_OCTET_STRING *a2i_IPADDRESS(const char *ipasc) { unsigned char ipout[16]; ASN1_OCTET_STRING *ret; int iplen; /* If string contains a
+
+assume IPv6 */ iplen = a2i_ipadd(ipout, ipasc); if (!iplen) return NULL; ret = ASN1_OCTET_STRING_new(); if (ret == NULL) return NULL; if (!ASN1_OCTET_STRING_set(ret, ipout, iplen)) { ASN1_OCTET_STRING_free(ret); return NULL; } return ret; } ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc) { ASN1_OCTET_STRING *ret = NULL; unsigned char ipout[32]; char *iptmp = NULL, *p; int iplen1, iplen2; p = strchr(ipasc,
+
+); if (!p) return NULL; iptmp = OPENSSL_strdup(ipasc); if (!iptmp) return NULL; p = iptmp + (p - ipasc); *p++ = 0; iplen1 = a2i_ipadd(ipout, iptmp); if (!iplen1) goto err; iplen2 = a2i_ipadd(ipout + iplen1, p); OPENSSL_free(iptmp); iptmp = NULL; if (!iplen2 || (iplen1 != iplen2)) goto err; ret = ASN1_OCTET_STRING_new(); if (ret == NULL) goto err; if (!ASN1_OCTET_STRING_set(ret, ipout, iplen1 + iplen2)) goto err; return ret; err: OPENSSL_free(iptmp); ASN1_OCTET_STRING_free(ret); return NULL; } int a2i_ipadd(unsigned char *ipout, const char *ipasc) { /* If string contains a
+
+assume IPv6 */ if (strchr(ipasc,
+
+)) { if (!ipv6_from_asc(ipout, ipasc)) return 0; return 16; } else { if (!ipv4_from_asc(ipout, ipasc)) return 0; return 4; } } static int ipv4_from_asc(unsigned char *v4, const char *in) { int a0, a1, a2, a3; if (sscanf(in, "%d.%d.%d.%d", &a0, &a1, &a2, &a3) != 4) return 0; if ((a0 < 0) || (a0 > 255) || (a1 < 0) || (a1 > 255) || (a2 < 0) || (a2 > 255) || (a3 < 0) || (a3 > 255)) return 0; v4[0] = a0; v4[1] = a1; v4[2] = a2; v4[3] = a3; return 1; } typedef struct { /* Temporary store for IPV6 output */ unsigned char tmp[16]; /* Total number of bytes in tmp */ int total; /* The position of a zero (corresponding to
+
+) */ int zero_pos; /* Number of zeroes */ int zero_cnt; } IPV6_STAT; static int ipv6_from_asc(unsigned char *v6, const char *in) { IPV6_STAT v6stat; v6stat.total = 0; v6stat.zero_pos = -1; v6stat.zero_cnt = 0; /* * Treat the IPv6 representation as a list of values separated by
+
+. * The presence of a
+
+will parse as one, two or three zero length * elements. */ if (!CONF_parse_list(in,
+
+, 0, ipv6_cb, &v6stat)) return 0; /* Now for some sanity checks */ if (v6stat.zero_pos == -1) { /* If no
+
+must have exactly 16 bytes */ if (v6stat.total != 16) return 0; } else { /* If
+
+must have less than 16 bytes */ if (v6stat.total == 16) return 0; /* More than three zeroes is an error */ if (v6stat.zero_cnt > 3) return 0; /* Can only have three zeroes if nothing else present */ else if (v6stat.zero_cnt == 3) { if (v6stat.total > 0) return 0; } /* Can only have two zeroes if at start or end */ else if (v6stat.zero_cnt == 2) { if ((v6stat.zero_pos != 0) && (v6stat.zero_pos != v6stat.total)) return 0; } else /* Can only have one zero if *not* start or end */ { if ((v6stat.zero_pos == 0) || (v6stat.zero_pos == v6stat.total)) return 0; } } /* Format result */ if (v6stat.zero_pos >= 0) { /* Copy initial part */ memcpy(v6, v6stat.tmp, v6stat.zero_pos); /* Zero middle */ memset(v6 + v6stat.zero_pos, 0, 16 - v6stat.total); /* Copy final part */ if (v6stat.total != v6stat.zero_pos) memcpy(v6 + v6stat.zero_pos + 16 - v6stat.total, v6stat.tmp + v6stat.zero_pos, v6stat.total - v6stat.zero_pos); } else memcpy(v6, v6stat.tmp, 16); return 1; } static int ipv6_cb(const char *elem, int len, void *usr) { IPV6_STAT *s = usr; /* Error if 16 bytes written */ if (s->total == 16) return 0; if (len == 0) { /* Zero length element, corresponds to
+
+*/ if (s->zero_pos == -1) s->zero_pos = s->total; /* If we
+
+:
+
+,
+
+.
+
+:
+
+,
+
+.
+
++
+
++
+
+0xff;
+
+0xff;
+

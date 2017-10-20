@@ -1,0 +1,96 @@
+Summary: internal interfaces for XML Path Language implementation Description: internal interfaces for XML Path Language implementation used to build new modules on top of XPath like XPointer and XSLT Copy: See Copyright for the status of this software. Author: Daniel Veillard
+
+Helpers
+
+Many of these macros may later turn into functions. They shouldn't be used in #ifdef's preprocessor instructions.
+
+xmlXPathSetError: @ctxt: an XPath parser context @err: an xmlXPathError code Raises an error.
+
+xmlXPathSetArityError: @ctxt: an XPath parser context Raises an XPATH_INVALID_ARITY error.
+
+xmlXPathSetTypeError: @ctxt: an XPath parser context Raises an XPATH_INVALID_TYPE error.
+
+xmlXPathGetError: @ctxt: an XPath parser context Get the error code of an XPath context. Returns the context error.
+
+xmlXPathCheckError: @ctxt: an XPath parser context Check if an XPath error was raised. Returns true if an error has been raised, false otherwise.
+
+xmlXPathGetDocument: @ctxt: an XPath parser context Get the document of an XPath context. Returns the context document.
+
+xmlXPathGetContextNode: @ctxt: an XPath parser context Get the context node of an XPath context. Returns the context node.
+
+xmlXPathReturnBoolean: @ctxt: an XPath parser context @val: a boolean Pushes the boolean @val on the context stack.
+
+xmlXPathReturnTrue: @ctxt: an XPath parser context Pushes true on the context stack.
+
+xmlXPathReturnFalse: @ctxt: an XPath parser context Pushes false on the context stack.
+
+xmlXPathReturnNumber: @ctxt: an XPath parser context @val: a double Pushes the double @val on the context stack.
+
+xmlXPathReturnString: @ctxt: an XPath parser context @str: a string Pushes the string @str on the context stack.
+
+xmlXPathReturnEmptyString: @ctxt: an XPath parser context Pushes an empty string on the stack.
+
+xmlXPathReturnNodeSet: @ctxt: an XPath parser context @ns: a node-set Pushes the node-set @ns on the context stack.
+
+xmlXPathReturnEmptyNodeSet: @ctxt: an XPath parser context Pushes an empty node-set on the context stack.
+
+xmlXPathReturnExternal: @ctxt: an XPath parser context @val: user data Pushes user data on the context stack.
+
+xmlXPathStackIsNodeSet: @ctxt: an XPath parser context Check if the current value on the XPath stack is a node set or an XSLT value tree. Returns true if the current object on the stack is a node-set.
+
+xmlXPathStackIsExternal: @ctxt: an XPath parser context Checks if the current value on the XPath stack is an external object. Returns true if the current object on the stack is an external object.
+
+xmlXPathEmptyNodeSet: @ns: a node-set Empties a node-set.
+
+CHECK_ERROR: Macro to return from the function if an XPath error was detected.
+
+CHECK_ERROR0: Macro to return 0 from the function if an XPath error was detected.
+
+XP_ERROR: @X: the error code Macro to raise an XPath error and return.
+
+XP_ERROR0: @X: the error code Macro to raise an XPath error and return 0.
+
+CHECK_TYPE: @typeval: the XPath type Macro to check that the value on top of the XPath stack is of a given type.
+
+CHECK_TYPE0: @typeval: the XPath type Macro to check that the value on top of the XPath stack is of a given type. Return(0) in case of failure
+
+CHECK_ARITY: @x: the number of expected args Macro to check that the number of args passed to an XPath function matches.
+
+CAST_TO_STRING: Macro to try to cast the value on the top of the XPath stack to a string.
+
+CAST_TO_NUMBER: Macro to try to cast the value on the top of the XPath stack to a number.
+
+CAST_TO_BOOLEAN: Macro to try to cast the value on the top of the XPath stack to a boolean.
+
+Variable Lookup forwarding.
+
+Function Lookup forwarding.
+
+Error reporting.
+
+NodeSet handling.
+
+Extending a context.
+
+Utilities to extend XPath.
+
+TODO: remap to xmlXPathValuePop and Push.
+
+Existing functions.
+
+Some of the axis navigation routines.
+
+The official core of XPath functions.
+
+Really internal functions
+
+LIBXML_XPATH_ENABLED
+
+! __XML_XPATH_INTERNALS_H__
+
+C
+
+t be used in #ifdef
+
+
+

@@ -1,0 +1,162 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+display the hash of the subject as it would appear in OCSP requests
+
+display the hash of the public key as it would appear in OCSP requests
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+
+
+\n
+
+Certificate:\n
+
+Data:\n
+
+%8sVersion: %ld (0x%lx)\n
+
+
+
+%8sVersion: Unknown (%ld)\n
+
+
+
+Serial Number:
+
+-
+
+
+
+%s%lu (%s0x%lx)\n
+
+(Negative)
+
+
+
+\n%12s%s
+
+
+
+%02x%c
+
+\n
+
+:
+
+Issuer:%c
+
+\n
+
+Validity\n
+
+Not Before:
+
+\n Not After :
+
+\n
+
+Subject:%c
+
+\n
+
+Subject Public Key Info:\n
+
+%12sPublic Key Algorithm:
+
+
+
+\n
+
+%12sUnable to load Public Key\n
+
+
+
+%8sIssuer Unique ID:
+
+
+
+%8sSubject Unique ID:
+
+
+
+X509v3 extensions
+
+Subject OCSP hash:
+
+%02X
+
+\n Public key OCSP hash:
+
+%02X
+
+\n
+
+\n
+
+%02x%s
+
+
+
+:
+
+\n
+
+Signature Algorithm:
+
+\n
+
+%*sTrusted Uses:\n%*s
+
+
+
+
+
+,
+
+\n
+
+%*sNo Trusted Uses.\n
+
+
+
+%*sRejected Uses:\n%*s
+
+
+
+
+
+,
+
+\n
+
+%*sNo Rejected Uses.\n
+
+
+
+%*sAlias: %s\n
+
+
+
+%*sKey Id:
+
+
+
+%s%02X
+
+:
+
+
+
+\n
+
+0x%lx)\n",
+
+0x%lx)\n",
+

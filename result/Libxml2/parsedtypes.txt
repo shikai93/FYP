@@ -1,0 +1,168 @@
+types.c: converter functions between the internal representation and the Python objects See Copyright for the status of this software. daniel@veillard.com
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+TODO: look at deallocation
+
+libxml_xmlXPathDestructNsNode: cobj: xmlNsPtr namespace node desc: ignored string This function is called if and when a namespace node returned in an XPath node set is to be destroyed. That's the only kind of object returned in node set not directly linked to the original xmlDoc document, see xmlXPathNodeSetDupNs.
+
+Return now, do not free the object passed down
+
+make sure the xmlNsPtr is not destroyed now
+
+mlXPathObjectPtr setob
+
+xmlXPathFreeObject(setobj) is called
+
+LIBXML_REGEXP_ENABLED
+
+LIBXML_READER_ENABLED
+
+LIBXML_SCHEMAS_ENABLED
+
+libxml_wrap.h
+
+libxml_intWrap: val = %d\n
+
+libxml_longWrap: val = %ld\n
+
+libxml_doubleWrap: val = %f\n
+
+libxml_xmlcharPtrWrap: str = %s\n
+
+libxml_xmlcharPtrWrap: str = %s\n
+
+libxml_xmlCharPtrWrap: str = %s\n
+
+libxml_xmlCharPtrWrap: str = %s\n
+
+libxml_xmlcharPtrWrap: str = %s\n
+
+libxml_xmlCharPtrWrap: str = %s\n
+
+libxml_xmlDocPtrWrap: doc = %p\n
+
+xmlDocPtr
+
+libxml_xmlNodePtrWrap: node = %p\n
+
+xmlNodePtr
+
+libxml_xmlURIPtrWrap: uri = %p\n
+
+xmlURIPtr
+
+libxml_xmlNsPtrWrap: node = %p\n
+
+xmlNsPtr
+
+libxml_xmlAttrNodePtrWrap: attr = %p\n
+
+xmlAttrPtr
+
+libxml_xmlAttributePtrWrap: attr = %p\n
+
+xmlAttributePtr
+
+libxml_xmlElementNodePtrWrap: elem = %p\n
+
+xmlElementPtr
+
+libxml_xmlXPathContextPtrWrap: ctxt = %p\n
+
+xmlXPathContextPtr
+
+libxml_xmlXPathParserContextPtrWrap: ctxt = %p\n
+
+xmlXPathParserContextPtr
+
+libxml_xmlParserCtxtPtrWrap: ctxt = %p\n
+
+xmlParserCtxtPtr
+
+libxml_xmlXPathDestructNsNode called %p\n
+
+libxml_xmlXPathObjectPtrWrap: ctxt = %p\n
+
+xmlNsPtr
+
+Unable to convert XPath object type %d\n
+
+libxml_xmlXPathObjectPtrConvert: obj = %p\n
+
+Got a CObject\n
+
+xmlNode
+
+_o
+
+Unknown object in Python return list\n
+
+Unable to convert Python Object to XPath
+
+libxml_xmlValidCtxtPtrWrap: valid = %p\n
+
+xmlValidCtxtPtr
+
+libxml_xmlNodePtrWrap: catal = %p\n
+
+xmlCatalogPtr
+
+libxml_xmlOutputBufferPtrWrap: buffer = %p\n
+
+xmlOutputBufferPtr
+
+libxml_xmlParserInputBufferPtrWrap: buffer = %p\n
+
+xmlParserInputBufferPtr
+
+libxml_xmlRegexpPtrWrap: regexp = %p\n
+
+xmlRegexpPtr
+
+libxml_xmlTextReaderPtrWrap: reader = %p\n
+
+xmlTextReaderPtr
+
+libxml_xmlTextReaderLocatorPtrWrap: locator = %p\n
+
+xmlTextReaderLocatorPtr
+
+libxml_xmlRelaxNGPtrWrap: ctxt = %p\n
+
+xmlRelaxNGPtr
+
+libxml_xmlRelaxNGParserCtxtPtrWrap: ctxt = %p\n
+
+xmlRelaxNGParserCtxtPtr
+
+libxml_xmlRelaxNGValidCtxtPtrWrap: valid = %p\n
+
+xmlRelaxNGValidCtxtPtr
+
+libxml_xmlSchemaPtrWrap: ctxt = %p\n
+
+xmlSchemaPtr
+
+libxml_xmlSchemaParserCtxtPtrWrap: ctxt = %p\n
+
+xmlSchemaParserCtxtPtr
+
+libxml_xmlSchemaValidCtxtPtrWrap: valid = %p\n
+
+xmlSchemaValidCtxtPtr
+
+libxml_xmlErrorPtrWrap: error = %p\n
+
+xmlErrorPtr
+

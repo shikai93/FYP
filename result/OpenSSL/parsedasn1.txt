@@ -1,0 +1,326 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL licenses, (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at https://www.openssl.org/source/license.html or in the file LICENSE in the source distribution.
+
+Fuzz ASN.1 parsing for various data structures. Specify which on the command line: asn1 <data structure>
+
+SN1_ITEM_ref(TS_RESP), want to do this, but type is hidden, however d2i exists...
+
+www.openssl.org/source/license.html
+
+License
+
+fuzzer.h
+
+rand.inc
+
+0x10200000L
+
+0x10200000L
+
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+ompa
+
+let the recipient choose
+
+used in ASN1_TYPE
+
+used in ASN1 template code
+
+ASN.1 tag values
+
+
+
+
+
+alias
+
+
+
+
+
+
+
+
+
+alias
+
+
+
+
+
+NB the constants below are used internally by ASN1_INTEGER and ASN1_ENUMERATED to indicate the sign. They are not on the wire tag values.
+
+For use with d2i_ASN1_type_bytes()
+
+For use with ASN1_mbstring_copy()
+
+Set if 0x07 has bits left value
+
+This indicates that the ASN1_STRING is not a real value but just a place holder for the location where indefinite length constructed data should be inserted in the memory buffer
+
+This flag is used by the CMS code to indicate that a string is not complete and is a place holder for content when it had all been accessed. The flag will be reset when content has been written to it.
+
+This flag is used by ASN1 code to indicate an ASN1_STRING is an MSTRING type.
+
+String is embedded and only content should be freed
+
+String should be parsed in RFC 5280's time format
+
+This is the base type that holds just about everything :-)
+
+The value of the following field depends on the type being held. It is mostly being used for BIT_STRING so if the input data has a non-zero 'unused bits' value, it will be handled correctly
+
+ASN1_ENCODING structure: this is used to save the received encoding of an ASN1 type. This is useful to get round problems with invalid encodings which can break signatures.
+
+DER encoding
+
+Length of encoding
+
+set to 1 if 'enc' is invalid
+
+Used with ASN1 LONG type: if a long is set to this it is omitted
+
+A zero passed to ASN1_STRING_TABLE_new_add for the flags is interpreted as "don't change" and STABLE_FLAGS_MALLOC is always set. By setting STABLE_FLAGS_MALLOC only we can clear the existing value. Use the alias STABLE_FLAGS_CLEAR to reflect this.
+
+size limits: this stuff is taken straight from RFC2459
+
+Declarations for template structures: for full definitions see asn1t.h
+
+This is just an opaque pointer
+
+Declare ASN1 functions: the implement macro in in asn1t.h
+
+The following macros and typedefs allow an ASN1_ITEM to be embedded in a structure and referenced. Since the ASN1_ITEM pointers need to be globally accessible (possibly from shared libraries) they may exist in different forms. On platforms that support it the ASN1_ITEM structure itself will be globally exported. Other platforms will export a function that returns an ASN1_ITEM pointer. To handle both cases transparently the macros below should be used instead of hard coding an ASN1_ITEM pointer in a structure. The structure will look like this: typedef struct SOMETHING_st { ... ASN1_ITEM_EXP iptr; ... } SOMETHING; It would be initialised as e.g.: SOMETHING somevar = {...,ASN1_ITEM_ref(X509),...}; and the actual pointer extracted with: const ASN1_ITEM it = ASN1_ITEM_ptr(somevar.iptr); Finally an ASN1_ITEM pointer can be extracted from an appropriate reference with: ASN1_ITEM_rptr(X509). This would be used when a function takes an ASN1_ITEM argument.
+
+ASN1_ITEM pointer exported type
+
+Macro to obtain ASN1_ITEM pointer from exported type
+
+Macro to include ASN1_ITEM pointer from base type
+
+Platforms that can't easily handle shared global variables are declared as functions returning ASN1_ITEM pointers.
+
+ASN1_ITEM pointer exported type
+
+Macro to obtain ASN1_ITEM pointer from exported type
+
+Macro to include ASN1_ITEM pointer from base type
+
+Parameters used by ASN1_STRING_print_ex()
+
+These determine which characters to escape: RFC2253 special characters, control characters and MSB set characters
+
+This flag determines how we do escaping: normally RC2253 backslash only, set this to use backslash and quote.
+
+These three flags are internal use only.
+
+Character is a valid PrintableString character
+
+Character needs escaping if it is the first character
+
+Character needs escaping if it is the last character
+
+NB the internal flags are safely reused below by flags handled at the top level.
+
+If this is set we convert all character strings to UTF8 first
+
+If this is set we don't attempt to interpret content: just assume all strings are 1 byte per character. This will produce some pretty odd looking output!
+
+If this is set we include the string type in the output
+
+This determines which strings to display and which to 'dump' (hex dump of content octets or DER encoding). We can only dump non character strings or everything. If we don't dump 'unknown' they are interpreted as character strings with 1 octet per character and are subject to the usual escaping options.
+
+These determine what 'dumping' does, we can dump the content octets or the DER encoding: both use the RFC2253 #XXXXX notation.
+
+This flag specifies that RC2254 escaping shall be performed.
+
+All the string flags consistent with RFC2253, escaping control characters isn't essential in RFC2253 but it is advisable anyway.
+
+set and sequence are left complete and still contain the set or sequence bytes
+
+This is used to contain a list of bit names
+
+Since this is used to store all sorts of things, via macros, for now, make its data void
+
+General
+
+given a string, return the correct type, max is the maximum length
+
+SPECIALS
+
+Used to implement other functions
+
+ASN1 alloc/free macros for when a type is only used internally
+
+Used to load and write Netscape format cert
+
+ASN1 template functions
+
+Old API compatible functions
+
+ASN1 Print flags
+
+Indicate missing OPTIONAL fields
+
+Mark start and end of SEQUENCE
+
+Mark start and end of SEQUENCE/SET OF
+
+Show the ASN1 type of primitives
+
+Don't show ASN1 type of ANY
+
+Don't show ASN1 type of MSTRINGs
+
+Don't show field names in SEQUENCE
+
+Show structure names of each SEQUENCE field
+
+Don't show structure name even at top level
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+s time format */ # define ASN1_STRING_FLAG_X509_TIME 0x100 /* This is the base type that holds just about everything :-) */ struct asn1_string_st { int length; int type; unsigned char *data; /* * The value of the following field depends on the type being held. It * is mostly being used for BIT_STRING so if the input data has a * non-zero
+
+value, it will be handled correctly */ long flags; }; /* * ASN1_ENCODING structure: this is used to save the received encoding of an * ASN1 type. This is useful to get round problems with invalid encodings * which can break signatures. */ typedef struct ASN1_ENCODING_st { unsigned char *enc; /* DER encoding */ long len; /* Length of encoding */ int modified; /* set to 1 if
+
+is invalid */ } ASN1_ENCODING; /* Used with ASN1 LONG type: if a long is set to this it is omitted */ # define ASN1_LONG_UNDEF 0x7fffffffL # define STABLE_FLAGS_MALLOC 0x01 /* * A zero passed to ASN1_STRING_TABLE_new_add for the flags is interpreted * as "don
+
+t easily handle shared global variables are declared as * functions returning ASN1_ITEM pointers. */ /* ASN1_ITEM pointer exported type */ typedef const ASN1_ITEM *ASN1_ITEM_EXP (void); /* Macro to obtain ASN1_ITEM pointer from exported type */ # define ASN1_ITEM_ptr(iptr) (iptr()) /* Macro to include ASN1_ITEM pointer from base type */ # define ASN1_ITEM_ref(iptr) (iptr##_it) # define ASN1_ITEM_rptr(ref) (ref##_it()) # define DECLARE_ASN1_ITEM(name) \ const ASN1_ITEM * name##_it(void); # endif /* Parameters used by ASN1_STRING_print_ex() */ /* * These determine which characters to escape: RFC2253 special characters, * control characters and MSB set characters */ # define ASN1_STRFLGS_ESC_2253 1 # define ASN1_STRFLGS_ESC_CTRL 2 # define ASN1_STRFLGS_ESC_MSB 4 /* * This flag determines how we do escaping: normally RC2253 backslash only, * set this to use backslash and quote. */ # define ASN1_STRFLGS_ESC_QUOTE 8 /* These three flags are internal use only. */ /* Character is a valid PrintableString character */ # define CHARTYPE_PRINTABLESTRING 0x10 /* Character needs escaping if it is the first character */ # define CHARTYPE_FIRST_ESC_2253 0x20 /* Character needs escaping if it is the last character */ # define CHARTYPE_LAST_ESC_2253 0x40 /* * NB the internal flags are safely reused below by flags handled at the top * level. */ /* * If this is set we convert all character strings to UTF8 first */ # define ASN1_STRFLGS_UTF8_CONVERT 0x10 /* * If this is set we don
+
+dump
+
+t dump
+
+they are interpreted as character * strings with 1 octet per character and are subject to the usual escaping * options. */ # define ASN1_STRFLGS_DUMP_ALL 0x80 # define ASN1_STRFLGS_DUMP_UNKNOWN 0x100 /* * These determine what
+
+does, we can dump the content octets or the * DER encoding: both use the RFC2253 #XXXXX notation. */ # define ASN1_STRFLGS_DUMP_DER 0x200 /* * This flag specifies that RC2254 escaping shall be performed. */ #define ASN1_STRFLGS_ESC_2254 0x400 /* * All the string flags consistent with RFC2253, escaping control characters * isn
+
+t show ASN1 type of ANY */ # define ASN1_PCTX_FLAGS_NO_ANY_TYPE 0x010 /* Don
+
+t show field names in SEQUENCE */ # define ASN1_PCTX_FLAGS_NO_FIELD_NAME 0x040 /* Show structure names of each SEQUENCE field */ # define ASN1_PCTX_FLAGS_SHOW_FIELD_STRUCT_NAME 0x080 /* Don
+
+0x10100000L
+
+0x00
+
+0x40
+
+0x80
+
+0xc0
+
+0x20
+
+0x1f
+
+0x100
+
+0x0001
+
+0x0002
+
+0x0004
+
+0x0004
+
+0x0008
+
+0x0010
+
+0x0020
+
+0x0040
+
+0x0040
+
+0x0080
+
+0x0100
+
+0x0200
+
+0x0400
+
+0x0800
+
+0x1000
+
+0x2000
+
+0x4000
+
+0x8000
+
+0x10000
+
+0x1000
+
+0x400
+
+0x800
+
+0x1000
+
+0x08/*
+
+0x07
+
+0x010
+
+0x020
+
+0x040
+
+0x080
+
+0x100
+
+0x7fffffffL
+
+0x01
+
+0x02
+
+0x10
+
+0x20
+
+0x40
+
+0x10
+
+0x20
+
+0x40
+
+0x80
+
+0x100
+
+0x200
+
+0x400
+
+0x001
+
+0x002
+
+0x004
+
+0x008
+
+0x010
+
+0x020
+
+0x040
+
+0x080
+
+0x100
+

@@ -1,0 +1,24 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+NB: The caller is specifically setting a method, so it's not up to us to deal with which ENGINE it comes from.
+
+early default init
+
+If the fields p and g in d are NULL, the corresponding input parameters MUST be non-NULL. q may remain NULL.
+
+If the field pub_key in dh is NULL, the corresponding input parameters MUST be non-NULL. The priv_key field may be left NULL.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/refcount.h
+
+dh_locl.h
+
+DH
+
+DH
+

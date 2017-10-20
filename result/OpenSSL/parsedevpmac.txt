@@ -1,0 +1,44 @@
+www.openssl.org/source/license.html
+
+License
+
+Hi There
+
+Jefe
+
+what do ya want for nothing?
+
+Sample message for keylen=blocklen
+
+Sample message for keylen<blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen<blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen<blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen<blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen=blocklen
+
+Sample message for keylen<blocklen
+
+Sample message for keylen=blocklen
+
+The Poly1305-AES message-authentication code
+
+significant
+

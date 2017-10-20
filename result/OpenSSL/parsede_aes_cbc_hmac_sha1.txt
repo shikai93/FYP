@@ -1,0 +1,140 @@
+Copyright 2011-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+AAD length in decrypt case
+
+13 used
+
+handy when benchmarking
+
+n4x is 1 or 2
+
+ask for IVs in bulk
+
+align
+
+populate descriptors with pointers and IVs
+
+5+16 is place for header and explicit IV
+
+fix seqnum
+
+fix length
+
+hash 13-byte headers and first 64-13 bytes of inputs
+
+hash bulk inputs
+
+goal is to minimize pressure on L1 cache by moving in shorter steps, so that hashed data is still in the cache by the time we encrypt it
+
+remainder actually
+
+64 is HMAC header
+
+convert to bits
+
+hash input tails and finalize
+
+finalize MACs
+
+write MAC
+
+pad
+
+account for explicit iv
+
+arrange header
+
+explicit IV in TLS 1.1 and later
+
+"TLS" mode of operation
+
+calculate HMAC and append it to payload
+
+pad the payload|hmac
+
+encrypt HMAC|padding at once
+
+arrange cache line alignment
+
+"TLS" mode of operation
+
+omit explicit iv
+
+decrypt last block
+
+decrypt HMAC|padding at once
+
+figure out payload length
+
+If pad is invalid then we will fail the above test but we must continue anyway because we are in constant time code. However, we'll use the maxpad value instead of the supplied pad to make sure we perform well defined pointer arithmetic.
+
+calculate HMAC
+
+at most 18 bits
+
+see original reference version in #else
+
+amend mac
+
+but pretend as if we hashed padded payload
+
+at most 18 bits
+
+j is not incremented yet
+
+pre-lucky-13 reference version of above
+
+but pretend as if we hashed padded payload
+
+verify HMAC
+
+see original reference version in #else
+
+... and padding
+
+pre-lucky-13 reference version of above
+
+verify padding
+
+decrypt HMAC|padding at once
+
+ipad
+
+opad
+
+too short
+
+AVX2
+
+not yet
+
+www.openssl.org/source/license.html
+
+License
+
+modes_lcl.h
+
+internal/evp_int.h
+
+internal/constant_time_locl.h
+
+MAXCHUNKSIZE is not divisible by 64
+
+TLS
+
+TLS
+
+0x80;
+
+0x80;
+
+0x80;
+
+0x80
+
+0x36;
+
+0x36
+
+0x5c;
+

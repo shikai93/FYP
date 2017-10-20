@@ -1,0 +1,148 @@
+list.c: lists handling implementation Copyright (C) 2000 Gary Pennington and Daniel Veillard. Permission to use, copy, modify, and distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies. THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE AUTHORS AND CONTRIBUTORS ACCEPT NO RESPONSIBILITY IN ANY CONCEIVABLE MANNER. Author: Gary.Pennington@uk.sun.com
+
+Type definition are kept internal
+
+Interfaces
+
+xmlLinkDeallocator: @l: a list @lk: a link Unlink and deallocate @lk from list @l
+
+xmlLinkCompare: @data0: first data @data1: second data Compares two arbitrary data Returns -1, 0 or 1 depending on whether data1 is greater equal or smaller than data0
+
+xmlListLowerSearch: @l: a list @data: a data Search data in the ordered list walking from the beginning Returns the link containing the data or NULL
+
+xmlListHigherSearch: @l: a list @data: a data Search data in the ordered list walking backward from the end Returns the link containing the data or NULL
+
+xmlListSearch: @l: a list @data: a data Search data in the list Returns the link containing the data or NULL
+
+xmlListLinkReverseSearch: @l: a list @data: a data Search data in the list processing backward Returns the link containing the data or NULL
+
+xmlListCreate: @deallocator: an optional deallocator function @compare: an optional comparison function Create a new list Returns the new list or NULL in case of error
+
+Initialize the list to NULL
+
+Add the sentinel
+
+If there is a link deallocator, use it
+
+If there is a link comparator, use it
+
+Use our own
+
+xmlListSearch: @l: a list @data: a search value Search the list for an existing value of @data Returns the value associated to @data or NULL in case of error
+
+xmlListReverseSearch: @l: a list @data: a search value Search the list in reverse order for an existing value of @data Returns the value associated to @data or NULL in case of error
+
+xmlListInsert: @l: a list @data: the data Insert data in the ordered list at the beginning for this value Returns 0 in case of success, 1 in case of failure
+
+Add the new link
+
+xmlListAppend: @l: a list @data: the data Insert data in the ordered list at the end for this value Returns 0 in case of success, 1 in case of failure
+
+Add the new link
+
+xmlListDelete: @l: a list Deletes the list and its associated data
+
+xmlListRemoveFirst: @l: a list @data: list data Remove the first instance associated to data in the list Returns 1 if a deallocation occured, or 0 if not found
+
+ind the first instance of this data
+
+xmlListRemoveLast: @l: a list @data: list data Remove the last instance associated to data in the list Returns 1 if a deallocation occured, or 0 if not found
+
+ind the last instance of this data
+
+xmlListRemoveAll: @l: a list @data: list data Remove the all instance associated to data in the list Returns the number of deallocation, or 0 if not found
+
+xmlListClear: @l: a list Remove the all data in the list
+
+xmlListEmpty: @l: a list Is the list empty ? Returns 1 if the list is empty, 0 if not empty and -1 in case of error
+
+xmlListFront: @l: a list Get the first element in the list Returns the first element in the list, or NULL
+
+xmlListEnd: @l: a list Get the last element in the list Returns the last element in the list, or NULL
+
+xmlListSize: @l: a list Get the number of elements in the list Returns the number of elements in the list or -1 in case of error
+
+TODO: keep a counter in xmlList instead
+
+xmlListPopFront: @l: a list Removes the first element in the list
+
+xmlListPopBack: @l: a list Removes the last element in the list
+
+xmlListPushFront: @l: a list @data: new data add the new data at the beginning of the list Returns 1 if successful, 0 otherwise
+
+Add the new link
+
+xmlListPushBack: @l: a list @data: new data add the new data at the end of the list Returns 1 if successful, 0 otherwise
+
+Add the new link
+
+xmlLinkGetData: @lk: a link See Returns. Returns a pointer to the data referenced from this link
+
+xmlListReverse: @l: a list Reverse the order of the elements in the list
+
+Fix up the last node
+
+xmlListSort: @l: a list Sort all the elements in the list
+
+I think that the real answer is to implement quicksort, the alternative is to implement some list copying procedure which would be based on a list copy followed by a clear followed by an insert. This is slow...
+
+xmlListWalk: @l: a list @walker: a processing function @user: a user parameter passed to the walker function Walk all the element of the first from first to last and apply the walker function to it
+
+xmlListReverseWalk: @l: a list @walker: a processing function @user: a user parameter passed to the walker function Walk all the element of the list in reverse order and apply the walker function to it
+
+xmlListMerge: @l1: the original list @l2: the new list include all the elements of the second list in the first one and clear the second list
+
+xmlListDup: @old: the list Duplicate the list Returns a new copy of the list or NULL in case of error
+
+Hmmm, how to best deal with allocation issues when copying lists. If there is a de-allocator, should responsibility lie with the new list or the old list. Surely not both. I'll arbitrarily set it to be the old list for the time being whilst I work out the answer
+
+xmlListCopy: @cur: the new list @old: the old list Move all the element from the old list in the new list Returns 0 in case of success 1 in case of error
+
+Walk the old tree and insert the data into the new one
+
+xmlListUnique()
+
+xmlListSwap
+
+
+
+libxml.h
+
+Cannot initialize memory for list
+
+Cannot initialize memory for sentinel
+
+Cannot initialize memory for new link
+
+Cannot initialize memory for new link
+
+Cannot initialize memory for new link
+
+Cannot initialize memory for new link
+
+elfgcchack.h
+
+Summary: lists interfaces Description: this module implement the list support used in various place in the library. Copy: See Copyright for the status of this software. Author: Gary Pennington <Gary.Pennington@uk.sun.com>
+
+xmlListDeallocator: @lk: the data to deallocate Callback function used to free data from a list.
+
+xmlListDataCompare: @data0: the first data @data1: the second data Callback function used to compare 2 data. Returns 0 is equality, -1 or 1 otherwise depending on the ordering.
+
+xmlListWalker: @data: the data found in the list @user: extra user provided data to the walker Callback function used when walking a list with xmlListWalk(). Returns 0 to stop walking the list, 1 otherwise.
+
+Creation/Deletion
+
+Basic Operators
+
+Advanced Operators
+
+Link operators
+
+xmlListUnique()
+
+xmlListSwap
+
+__XML_LINK_INCLUDE__
+
+C
+

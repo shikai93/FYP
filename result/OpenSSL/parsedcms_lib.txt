@@ -1,0 +1,36 @@
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Never detached
+
+If content detached data goes nowhere: create NULL BIO
+
+If content not detached and created return memory BIO
+
+Else content was read in: return read only BIO for it
+
+If embedded content find memory BIO and set content
+
+Set bio as read only so its content can't be clobbered
+
+Nothing to do
+
+Return an OCTET STRING pointer to content. This allows it to be accessed or set later.
+
+Return an ASN1_OBJECT pointer to content type. This allows it to be accessed or set later.
+
+NB: special flag to show content is created and not read in.
+
+Create a digest BIO from an X509_ALGOR structure
+
+Locate a message digest content from a BIO chain based on SignerInfo
+
+Look for digest type to match signature
+
+Workaround for broken implementations that use signature algorithm OID instead of digest.
+
+www.openssl.org/source/license.html
+
+License
+
+cms_lcl.h
+

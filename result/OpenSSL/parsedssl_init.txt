@@ -1,0 +1,66 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Not actually used for SSL/TLS but this makes PKCS#12 work if an application only calls SSL_library_init().
+
+RSA with sha1
+
+This will initialise the built-in compression algorithms. The value returned is a STACK_OF(SSL_COMP), but that can be discarded safely
+
+initialize cipher/digest methods table
+
+We ignore an error return here. Not much we can do - but not that bad either. We can still safely continue.
+
+OPENSSL_NO_AUTOERRINIT is provided here to prevent at compile time pulling in all the error strings during static linking
+
+Do nothing in this case
+
+Might be explicitly called and also by atexit
+
+If both crypto and ssl error strings are inited we will end up calling err_free_strings_int() twice - but that's ok. The second time will be a no-op. It's easier to do that than to try and track between the two libraries whether they have both been inited.
+
+If this function is called with a non NULL settings value then it must be called prior to any threads making calls to any OpenSSL functions, i.e. passing a non-null settings value is assumed to be single-threaded.
+
+We only ever set this once to avoid getting into an infinite loop where the error system keeps trying to init and fails so sets an error etc
+
+www.openssl.org/source/license.html
+
+License
+
+e_os.h
+
+internal/err.h
+
+ssl_locl.h
+
+internal/thread_once.h
+
+OPENSSL_INIT: ossl_init_ssl_base:
+
+Adding SSL ciphers and digests\n
+
+ssl3-md5
+
+ssl3-sha1
+
+OPENSSL_INIT: ossl_init_ssl_base:
+
+SSL_COMP_get_compression_methods()\n
+
+OPENSSL_INIT: ossl_init_ssl_base:
+
+SSL_add_ssl_module()\n
+
+OPENSSL_INIT: ossl_init_load_ssl_strings:
+
+ERR_load_SSL_strings()\n
+
+OPENSSL_INIT: ssl_library_stop:
+
+ssl_comp_free_compression_methods_int()\n
+
+OPENSSL_INIT: ssl_library_stop:
+
+err_free_strings_int()\n
+
+s ok. The second * time will be a no-op. It
+

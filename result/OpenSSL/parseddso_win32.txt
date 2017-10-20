@@ -1,0 +1,126 @@
+Copyright 2000-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Part of the hack in "win32_load" ...
+
+ctrl
+
+init
+
+finish
+
+pathbyaddr
+
+For this DSO_METHOD, our meth_data STACK will contain; (i) a pointer to the handle (HINSTANCE) returned from LoadLibrary(), and copied.
+
+See applicable comments from dso_dl.c
+
+Success
+
+Cleanup !
+
+We should push the value back onto the stack in case of a retry.
+
+Cleanup
+
+2 for starting \\
+
+1 for ending \
+
+1 for ending :
+
+1 for ending \
+
+1 for ending \
+
+Fill in into filespec1_split
+
+We will convert this to "%s.dll"
+
+We will simply duplicate filename
+
+unmask the ASCII version!
+
+We take the rest for granted...
+
+DSO_WIN32
+
+www.openssl.org/source/license.html
+
+License
+
+e_os.h
+
+dso_locl.h
+
+win32_load
+
+OpenSSL 'win32' shared library method
+
+filename(
+
+)
+
+symname(
+
+)
+
+\\
+
+\\
+
+/
+
+/
+
+:
+
+\\
+
+/
+
+\0
+
+\\\\
+
+\\
+
+:
+
+/
+
+\\
+
+/
+
+\\
+
+\0
+
+\\
+
+/
+
+/
+
+\\
+
+:
+
+%s.dll
+
+%s.dll
+
+%s
+
+TOOLHELP.DLL
+
+KERNEL32.DLL
+
+CreateToolhelp32Snapshot
+
+CloseToolhelp32Snapshot
+
+Module32First
+
+Module32Next
+

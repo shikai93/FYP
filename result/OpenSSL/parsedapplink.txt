@@ -1,0 +1,22 @@
+Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+should not be used
+
+solely for completeness
+
+to be used with below
+
+formally can't be used, as flags can vary
+
+always same as last macro
+
+__stdcall appears to be the only way to get the name decoration right with Borland C. Otherwise it works purely incidentally, as we pass no parameters.
+
+www.openssl.org/source/license.html
+
+License
+
+t be used, as flags can vary */ #define APPLINK_READ 19 #define APPLINK_WRITE 20 #define APPLINK_LSEEK 21 #define APPLINK_CLOSE 22 #define APPLINK_MAX 22 /* always same as last macro */ #ifndef APPMACROS_ONLY # include <stdio.h> # include <io.h> # include <fcntl.h> static void *app_stdin(void) { return stdin; } static void *app_stdout(void) { return stdout; } static void *app_stderr(void) { return stderr; } static int app_feof(FILE *fp) { return feof(fp); } static int app_ferror(FILE *fp) { return ferror(fp); } static void app_clearerr(FILE *fp) { clearerr(fp); } static int app_fileno(FILE *fp) { return _fileno(fp); } static int app_fsetmod(FILE *fp, char mod) { return _setmode(_fileno(fp), mod ==
+
+C
+

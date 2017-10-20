@@ -1,0 +1,18 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Can't use IMPLEMENT_BLOCK_CIPHER because IDEA_ecb_encrypt is different
+
+NB IDEA_ecb_encrypt doesn't take an 'encrypt' argument so we treat it as a special case
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/evp_int.h
+
+t use IMPLEMENT_BLOCK_CIPHER because IDEA_ecb_encrypt is different */ typedef struct { IDEA_KEY_SCHEDULE ks; } EVP_IDEA_KEY; static int idea_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key, const unsigned char *iv, int enc); /* * NB IDEA_ecb_encrypt doesn
+
+encrypt
+

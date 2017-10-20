@@ -1,0 +1,68 @@
+Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The Whirlpool hashing function. <P> <b>References</b> <P> The Whirlpool algorithm was developed by <a href="mailto:pbarreto@scopus.com.br">Paulo S. L. M. Barreto</a> and <a href="mailto:vincent.rijmen@cryptomathic.com">Vincent Rijmen</a>. See P.S.L.M. Barreto, V. Rijmen, ``The Whirlpool hashing function,'' NESSIE submission, 2000 (tweaked version, 2001), <https://www.cosic.esat.kuleuven.ac.be/nessie/workshop/submissions/whirlpool.zip> Based on "@version 3.0 (2003.03.12)" by Paulo S.L.M. Barreto and Vincent Rijmen. Lookup "reference implementations" on <http://planeta.terra.com.br/informatica/paulobarreto/> ============================================================================= THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+OpenSSL-specific implementation notes. WHIRLPOOL_Update as well as one-stroke WHIRLPOOL both expect number of bytes as input length argument. Bit-oriented routine as specified by authors is called WHIRLPOOL_BitUpdate[!] and does not have one-stroke counterpart. WHIRLPOOL_BitUpdate implements byte-oriented loop, essentially to serve WHIRLPOOL_Update. This is done for performance. Unlike authors' reference implementation, block processing routine whirlpool_block is designed to operate on multi-block input. This is done for performance.
+
+Well, largest suitable chunk size actually is (1<<(sizeof(size_t)8-3))-64, but below number is large enough for not to care about excessive calls to WHIRLPOOL_BitUpdate...
+
+This 256-bit increment procedure relies on the size_t being natural size of CPU register, so that we don't have to mask the value in order to detect overflows.
+
+overflow
+
+byte-oriented loop
+
+re-use bitrem
+
+bit-oriented loop
+
+inp | +-------+-------+------- ||||||||||||||||||||| +-------+-------+------- +-------+-------+-------+-------+------- |||||||||||||| c->data +-------+-------+-------+-------+------- | c->bitoff/8
+
+bitoff%8
+
+bits%8
+
+remaining less than or equal to 8 bits
+
+pad with zeros
+
+smash 256-bit c->bitlen in big-endian order
+
+last byte in c->data
+
+www.openssl.org/source/license.html
+
+www.cosic.esat.kuleuven.ac.be/nessie/workshop/submissions/whirlpool.zip>
+
+planeta.terra.com.br/informatica/paulobarreto/>
+
+License
+
+mailto:pbarreto@scopus.com.br
+
+mailto:vincent.rijmen@cryptomathic.com
+
+
+
+@version 3.0 (2003.03.12)
+
+reference implementations
+
+
+
+
+
+reference implementation, block processing * routine whirlpool_block is designed to operate on multi-block * input. This is done for performance. */ #include <openssl/crypto.h> #include "wp_locl.h" #include <string.h> int WHIRLPOOL_Init(WHIRLPOOL_CTX *c) { memset(c, 0, sizeof(*c)); return (1); } int WHIRLPOOL_Update(WHIRLPOOL_CTX *c, const void *_inp, size_t bytes) { /* * Well, largest suitable chunk size actually is * (1<<(sizeof(size_t)*8-3))-64, but below number is large enough for not * to care about excessive calls to WHIRLPOOL_BitUpdate... */ size_t chunk = ((size_t)1) << (sizeof(size_t) * 8 - 4); const unsigned char *inp = _inp; while (bytes >= chunk) { WHIRLPOOL_BitUpdate(c, inp, chunk * 8); bytes -= chunk; inp += chunk; } if (bytes) WHIRLPOOL_BitUpdate(c, inp, bytes * 8); return (1); } void WHIRLPOOL_BitUpdate(WHIRLPOOL_CTX *c, const void *_inp, size_t bits) { size_t n; unsigned int bitoff = c->bitoff, bitrem = bitoff % 8, inpgap = (8 - (unsigned int)bits % 8) & 7; const unsigned char *inp = _inp; /* * This 256-bit increment procedure relies on the size_t being natural * size of CPU register, so that we don
+
+0xff
+
+0xff;
+
+0xff;
+
+0x80
+
+0x80;
+
+0xff);
+

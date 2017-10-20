@@ -1,0 +1,28 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The input and output are loaded in multiples of 8 bits. What this means is that if you have numbits=12 and length=2 the first 12 bits will be retrieved from the first byte and half the second. The second 12 bits will come from the 3rd and half the 4th byte.
+
+&& num != 64
+
+num < 32
+
+www.openssl.org/source/license.html
+
+License
+
+des_locl.h
+
+0xffffffffL;
+
+0xffffffffL;
+
+0x00000000L;
+
+0xffffffffL;
+
+0xffffffffL;
+
+0xffffffffL;
+
+0xffffffffL;
+

@@ -1,0 +1,38 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright 2005 Nokia. All rights reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Utility functions for i2d_SSL_SESSION
+
+Initialise OCTET STRING from buffer and length
+
+Initialise OCTET STRING from string
+
+OPENSSL_NO_PSK
+
+OPENSSL_NO_SRP
+
+Utility functions for d2i_SSL_SESSION
+
+OPENSSL_strndup an OCTET STRING
+
+Copy an OCTET STRING, return error if it exceeds maximum length
+
+ASN.1 code returns suitable error
+
+NB: this defaults to zero which is X509_V_OK
+
+OPENSSL_NO_SRP
+
+Flags defaults to zero which is fine
+
+www.openssl.org/source/license.html
+
+License
+
+ssl_locl.h
+
+0xff;
+
+0xff;
+
+0x03000000L
+

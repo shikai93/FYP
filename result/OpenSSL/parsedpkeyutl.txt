@@ -1,0 +1,208 @@
+Copyright 2006-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Read the input data
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+in
+
+<
+
+Input file - default stdin
+
+out
+
+>
+
+Output file - default stdout
+
+pubin
+
+-
+
+Input is a public key
+
+certin
+
+-
+
+Input is a cert with a public key
+
+asn1parse
+
+-
+
+asn1parse the output data
+
+hexdump
+
+-
+
+Hex dump output
+
+sign
+
+-
+
+Sign input data with private key
+
+verify
+
+-
+
+Verify with public key
+
+verifyrecover
+
+-
+
+Verify with public key, recover original data
+
+rev
+
+-
+
+Reverse the order of the input buffer
+
+encrypt
+
+-
+
+Encrypt input data with public key
+
+decrypt
+
+-
+
+Decrypt input data with private key
+
+derive
+
+-
+
+Derive shared secret
+
+kdf
+
+s
+
+Use KDF algorithm
+
+kdflen
+
+p
+
+KDF algorithm output length
+
+sigfile
+
+<
+
+Signature file (verify operation only)
+
+inkey
+
+s
+
+Input private key file
+
+peerkey
+
+s
+
+Peer key file used in key derivation
+
+passin
+
+s
+
+Input file pass phrase source
+
+peerform
+
+E
+
+Peer key format - default PEM
+
+keyform
+
+E
+
+Private key format - default PEM
+
+pkeyopt
+
+s
+
+Public key options as opt:value
+
+engine
+
+s
+
+Use engine, possibly a hardware device
+
+engine_impl
+
+-
+
+Also use engine given by -engine for crypto operations
+
+%s: Use -help for summary.\n
+
+out of memory\n
+
+%s: Error initializing context\n
+
+%s: Error setting up peer key\n
+
+%s: Can't set parameter:\n
+
+%s: Signature file specified for non verify\n
+
+%s: No signature file specified for verify\n
+
+r
+
+w
+
+rb
+
+Can't open signature file %s\n
+
+Error reading signature data\n
+
+Error reading input Data\n
+
+Signature Verified Successfully\n
+
+Signature Verification Failure\n
+
+buffer output
+
+Public Key operation error\n
+
+A private key is needed for this operation\n
+
+Error getting password\n
+
+Private Key
+
+Public Key
+
+Certificate
+
+Peer Key
+
+Error reading peer key %s\n
+

@@ -1,0 +1,34 @@
+Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Support for Thawte strong extranet extension
+
+NBB: this is used for testing only. It should not be used for anything else because it will just take static IDs from the configuration file and they should really be separate values for each user.
+
+Strong Extranet utility functions
+
+Add an id given the zone as an ASCII number
+
+Add an id given the zone as an unsigned long
+
+Add an id given the zone as an ASN1_INTEGER. Note this version uses the passed integer and doesn't make a copy so don't free it up afterwards.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ext_dat.h
+
+%*sVersion: %ld (0x%lX)
+
+
+
+\n%*sZone: %s, User:
+
+
+
+t make a copy so don
+
+0x%lX)",
+

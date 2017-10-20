@@ -1,0 +1,78 @@
+Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Custom extension utility functions
+
+Provide thin wrapper callbacks which convert new style arguments to old style
+
+Find a custom extension from the list. The |role| param is there to support the legacy API where custom extensions for client and server could be set independently on the same SSL_CTX. It is set to ENDPOINT_SERVER if we are trying to find a method relevant to the server, ENDPOINT_CLIENT for the client, or ENDPOINT_BOTH for either
+
+Initialise custom extensions flags to indicate neither sent nor received.
+
+Pass received custom extension data to the application for parsing.
+
+If not found return success
+
+Check if extension is defined for our protocol. If not, skip
+
+If it's ServerHello or EncryptedExtensions we can't have any extensions not sent in ClientHello.
+
+Extensions received in the ClientHello are marked with the SSL_EXT_FLAG_RECEIVED. This is so we know to add the equivalent extensions in the ServerHello/EncryptedExtensions message
+
+If no parse function set return success
+
+Request custom extension data from the application and add to the return buffer.
+
+Only send extensions present in ClientHello.
+
+We skip it if the callback is absent - except for a ClientHello where we add an empty extension.
+
+error
+
+skip this extension
+
+We can't send duplicates: code logic should prevent this.
+
+Indicate extension has been sent: this is both a sanity check to ensure we don't send duplicate extensions and indicates that it is not an error if the extension is present in ServerHello.
+
+Copy the flags from src to dst for any extensions that exist in both
+
+Copy table of custom extensions
+
+We have found an old style API wrapper. We need to copy the arguments too.
+
+Old style API wrapper. Need to free the arguments too
+
+Return true if a client custom extension exists, false otherwise
+
+Check application error: if add_cb is not set free_cb will never be called.
+
+We don't want applications registering callbacks for SCT extensions whilst simultaneously using the built-in SCT validation features, as these two things may not play well together.
+
+Don't add if extension supported internally, but make exception for extension types that previously were not supported, but now are.
+
+Extension type must fit in 16 bits
+
+Search for duplicate
+
+Application level functions to add the old custom extension callbacks
+
+Internally supported extensions.
+
+www.openssl.org/source/license.html
+
+License
+
+../ssl_locl.h
+
+internal/cryptlib.h
+
+statem_locl.h
+
+s ServerHello or EncryptedExtensions we can
+
+t send duplicates: code logic should prevent this. */ if (!ossl_assert((meth->ext_flags & SSL_EXT_FLAG_SENT) == 0)) { *al = SSL_AD_INTERNAL_ERROR; return 0; } /* * Indicate extension has been sent: this is both a sanity check to * ensure we don
+
+t want applications registering callbacks for SCT extensions * whilst simultaneously using the built-in SCT validation features, as * these two things may not play well together. */ if (ext_type == TLSEXT_TYPE_signed_certificate_timestamp && (context & SSL_EXT_CLIENT_HELLO) != 0 && SSL_CTX_ct_is_enabled(ctx)) return 0; #endif /* * Don
+
+0xffff)
+

@@ -1,0 +1,46 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Number of octets per line
+
+Maximum indent
+
+Use colon separators for each octet for compatibility as this function is used to print out key components.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/bn_int.h
+
+\n
+
+%02x%s
+
+
+
+:
+
+\n
+
+-
+
+
+
+%s 0\n
+
+%s %s%lu (%s0x%lx)\n
+
+%s%s\n
+
+-
+
+(Negative)
+
+
+
+0x%lx)\n",
+
+0x80)
+

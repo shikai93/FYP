@@ -1,0 +1,22 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This works like d2i_PrivateKey() except it automatically works out the type
+
+Dirty trick: read in the ASN1 data into a STACK_OF(ASN1_TYPE): by analyzing it we can determine the passed structure: this assumes the input is surrounded by an ASN1 SEQUENCE.
+
+Since we only need to discern "traditional format" RSA and DSA keys we can just count the elements.
+
+This seems to be PKCS8, not traditional format
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+internal/evp_int.h
+
+traditional format
+

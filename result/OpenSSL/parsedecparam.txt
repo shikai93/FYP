@@ -1,0 +1,266 @@
+Copyright 2002-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+workaround for the SECG curve names secp192r1 and secp256r1 (which are the same as the curves prime192v1 and prime256v1 defined in X9.62)
+
+build generator
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+inform
+
+F
+
+Input format - default PEM (DER or PEM)
+
+outform
+
+F
+
+Output format - default PEM
+
+in
+
+<
+
+Input file - default stdin
+
+out
+
+>
+
+Output file - default stdout
+
+text
+
+-
+
+Print the ec parameters in text form
+
+C
+
+-
+
+Print a 'C' function creating the parameters
+
+check
+
+-
+
+Validate the ec parameters
+
+list_curves
+
+-
+
+Prints a list of all curve 'short names'
+
+no_seed
+
+-
+
+If 'explicit' parameters are chosen do not use the seed
+
+noout
+
+-
+
+Do not print the ec parameter
+
+name
+
+s
+
+Use the ec parameters with specified 'short name'
+
+conv_form
+
+s
+
+Specifies the point conversion form
+
+param_enc
+
+s
+
+Specifies the way the ec parameters are encoded
+
+genkey
+
+-
+
+Generate ec key
+
+engine
+
+s
+
+Use engine, possibly a hardware device
+
+compressed
+
+uncompressed
+
+hybrid
+
+named_curve
+
+explicit
+
+%s: Use -help for summary.\n
+
+r
+
+list curves
+
+CURVE DESCRIPTION NOT AVAILABLE
+
+
+
+%-10s:
+
+%s\n
+
+secp192r1
+
+using curve name prime192v1
+
+instead of secp192r1\n
+
+secp256r1
+
+using curve name prime256v1
+
+instead of secp256r1\n
+
+unknown curve name (%s)\n
+
+unable to create curve (%s)\n
+
+unable to load elliptic curve parameters\n
+
+checking elliptic curve parameters:
+
+failed\n
+
+ok\n
+
+Can't allocate BN
+
+Can only handle X9.62 prime fields\n
+
+BN buffer
+
+EC_GROUP *get_ec_group_%d(void)\n{\n
+
+ec_p
+
+ec_a
+
+ec_b
+
+ec_gen
+
+ec_order
+
+ec_cofactor
+
+int ok = 0;\n
+
+EC_GROUP *group = NULL;\n
+
+EC_POINT *point = NULL;\n
+
+BIGNUM *tmp_1 = NULL;\n
+
+BIGNUM *tmp_2 = NULL;\n
+
+BIGNUM *tmp_3 = NULL;\n
+
+\n
+
+if ((tmp_1 = BN_bin2bn(ec_p_%d, sizeof (ec_p_%d), NULL)) == NULL)\n
+
+goto err;\n
+
+if ((tmp_2 = BN_bin2bn(ec_a_%d, sizeof (ec_a_%d), NULL)) == NULL)\n
+
+goto err;\n
+
+if ((tmp_3 = BN_bin2bn(ec_b_%d, sizeof (ec_b_%d), NULL)) == NULL)\n
+
+goto err;\n
+
+if ((group = EC_GROUP_new_curve_GFp(tmp_1, tmp_2, tmp_3, NULL)) == NULL)\n
+
+goto err;\n
+
+\n
+
+/* build generator */\n
+
+if ((tmp_1 = BN_bin2bn(ec_gen_%d, sizeof (ec_gen_%d), tmp_1)) == NULL)\n
+
+goto err;\n
+
+point = EC_POINT_bn2point(group, tmp_1, NULL, NULL);\n
+
+if (point == NULL)\n
+
+goto err;\n
+
+if ((tmp_2 = BN_bin2bn(ec_order_%d, sizeof (ec_order_%d), tmp_2)) == NULL)\n
+
+goto err;\n
+
+if ((tmp_3 = BN_bin2bn(ec_cofactor_%d, sizeof (ec_cofactor_%d), tmp_3)) == NULL)\n
+
+goto err;\n
+
+if (!EC_GROUP_set_generator(group, point, tmp_2, tmp_3))\n
+
+goto err;\n
+
+ok = 1;
+
+\n
+
+err:\n
+
+BN_free(tmp_1);\n
+
+BN_free(tmp_2);\n
+
+BN_free(tmp_3);\n
+
+EC_POINT_free(point);\n
+
+if (!ok) {\n
+
+EC_GROUP_free(group);\n
+
+return NULL;\n
+
+}\n
+
+return (group);\n
+
+}\n
+
+unable to write elliptic
+
+curve parameters\n
+
+unable to set group when generating key\n
+
+unable to generate key\n
+

@@ -1,0 +1,32 @@
+Copyright 1998-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+like BN_mod, but returns non-negative remainder (i.e., 0 <= r < |d| always holds)
+
+now -|d| < r < 0, so we have to set r := r + |d|
+
+BN_mod_add variant that may be used if both a and b are non-negative and less than m
+
+BN_mod_sub variant that may be used if both a and b are non-negative and less than m
+
+slow but works
+
+r->neg == 0, thus we don't need BN_nnmod
+
+BN_mod_lshift1 variant that may be used if a is non-negative and less than m
+
+BN_mod_lshift variant that may be used if a is non-negative and less than m
+
+0 < r < m
+
+max_shift >= 0
+
+BN_num_bits(r) <= BN_num_bits(m)
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+bn_lcl.h
+

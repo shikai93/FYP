@@ -1,0 +1,64 @@
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2017, Oracle and/or its affiliates. All rights reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The macros below generate unused functions which error out one of the clang builds. We disable this check here.
+
+To force collisions
+
+insert
+
+num_items
+
+retrieve
+
+replace
+
+do_all
+
+do_all_arg
+
+delete
+
+error
+
+insert
+
+num_items
+
+delete in a different order
+
+www.openssl.org/source/license.html
+
+License
+
+internal/nelem.h
+
+testutil.h
+
+-Wunused-function
+
+int insert %d
+
+lhash int retrieve value %d
+
+lhash int retrieve address %d
+
+lhash int doall %d
+
+lhash int doall arg %d
+
+lhash int delete %d
+
+lhash stress out of memory %d
+
+hash full statistics:
+
+hash full node usage:
+
+lhash stress delete %d\n
+
+lhash stress bad value %d
+
+hash empty statistics:
+
+hash empty node usage:
+

@@ -1,0 +1,202 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+ASN1_BMPSTRING bmp=NULL;
+
+Because we know BIO_dump_indent()
+
+if j == 0x21 it is a constructed indefinite length object
+
+do the BMP thang
+
+testing whether the octet string is printable
+
+printable string
+
+not printable => print octet string as hex dump
+
+print the normal dump
+
+End of sequence
+
+0-4
+
+5-9
+
+10-13
+
+15-17
+
+18-20
+
+21-24
+
+25-27
+
+28-30
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+%-18s
+
+cons:
+
+prim:
+
+priv [ %d ]
+
+cont [ %d ]
+
+appl [ %d ]
+
+<ASN1 %d>
+
+BAD RECURSION DEPTH\n
+
+Error in encoding\n
+
+%5ld:
+
+d=%-2d hl=%ld l=%4ld
+
+d=%-2d hl=%ld l=inf
+
+\n
+
+length is greater than %ld\n
+
+\n
+
+:
+
+:
+
+:BAD OBJECT
+
+:BAD BOOLEAN
+
+:%u
+
+
+
+\n
+
+\r
+
+\t
+
+~
+
+:
+
+[HEX DUMP]:
+
+%02X
+
+\n
+
+:
+
+-
+
+%02X
+
+00
+
+:BAD INTEGER
+
+:
+
+-
+
+%02X
+
+00
+
+:BAD ENUMERATED
+
+\n
+
+:[
+
+%02X
+
+]
+
+\n
+
+EOC
+
+BOOLEAN
+
+INTEGER
+
+BIT STRING
+
+OCTET STRING
+
+NULL
+
+OBJECT
+
+OBJECT DESCRIPTOR
+
+EXTERNAL
+
+REAL
+
+ENUMERATED
+
+<ASN1 11>
+
+UTF8STRING
+
+<ASN1 13>
+
+<ASN1 14>
+
+<ASN1 15>
+
+SEQUENCE
+
+SET
+
+NUMERICSTRING
+
+PRINTABLESTRING
+
+T61STRING
+
+VIDEOTEXSTRING
+
+IA5STRING
+
+UTCTIME
+
+GENERALIZEDTIME
+
+GRAPHICSTRING
+
+VISIBLESTRING
+
+GENERALSTRING
+
+UNIVERSALSTRING
+
+<ASN1 29>
+
+BMPSTRING
+
+(unknown)
+
+0x80)
+
+0x21
+
+0x21)
+
+0x100;
+

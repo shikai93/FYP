@@ -1,0 +1,72 @@
+Copyright 2009-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+defined even on post-5.3
+
+There used to be [optional] call to bn_mul_mont_fpu64 here, but above subroutine is faster on contemporary processors. Formulation means that there might be old processors where FPU code path would be faster, POWER6 perhaps, but there was no opportunity to figure it out...
+
+Use a weak reference to getauxval() so we can use it if it is available but don't break the build if it is not. Note that this is link-time feature detection, not run-time. In other words if we link with symbol present, it's expected to be present even at run-time.
+
+I wish <sys/auxv.h> was universally available
+
+AT_HWCAP
+
+AT_HWCAP2
+
+Value used in __power_set is a single-bit 1<<n one denoting specific processor class. Incidentally 0xffffffff<<n can be used to denote specific processor and its successors.
+
+In 32-bit case PPC_FPU64 is always fastest [if option]
+
+POWER5 and later
+
+In 64-bit case PPC_FPU64 is fastest only on POWER6
+
+POWER6
+
+POWER6 and later
+
+POWER8 and later
+
+POWER9 and later
+
+In 32-bit case PPC_FPU64 is always fastest [if option]
+
+In 64-bit case PPC_FPU64 is fastest only on POWER6
+
+Wanted code detecting POWER6 CPU and setting PPC_FPU64
+
+www.openssl.org/source/license.html
+
+License
+
+ppc_arch.h
+
+t break the build if it is not. Note that this is *link-time* * feature detection, not *run-time*. In other words if we link with * symbol present, it
+
+OPENSSL_ppccap
+
+hw.optional.64bitops
+
+hw.optional.altivec
+
+ppc64
+
+0x0000000000000003U,
+
+0xfffffffbffffffffU,
+
+0xfffffffffffffffeU,
+
+0x00000004fffffffdU
+
+0xffffffff<<n
+
+0xffffffffU<<13))
+
+0x1U<<14))
+
+0xffffffffU<<14))
+
+0xffffffffU<<16))
+
+0xffffffffU<<17))
+

@@ -1,0 +1,56 @@
+testSAX.c : a small tester program for parsing using the SAX API. See Copyright for the status of this software. daniel@veillard.com
+
+Process all nodes in sequence
+
+Done, cleanup and status
+
+LIBXML_READER_ENABLED
+
+libxml.h
+
+Usage : %s [options] XMLfiles ...\n
+
+\tParse the XML files using the xmlTextReader API\n
+
+\t --count: count the number of attribute and elements\n
+
+\t --valid: validate the document\n
+
+\t --consumed: count the number of bytes consumed\n
+
+%ld bytes consumed by parser\n
+
+%s : failed to parse\n
+
+%s : %d elements, %d attributes\n
+
+Unable to open %s\n
+
+-debug
+
+--debug
+
+-dump
+
+--dump
+
+-count
+
+--count
+
+-consumed
+
+--consumed
+
+-valid
+
+--valid
+
+-noent
+
+--noent
+
+-
+
+%s : xmlReader parser support not compiled in\n
+

@@ -1,0 +1,40 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+From "Message Authentication" R.R. Jueneman, S.M. Matyas, C.H. Meyer IEEE Communications Magazine Sept 1985 Vol. 23 No. 9 p 29-40 This module in only based on the code in this paper and is almost definitely not the same as the MIT implementation.
+
+bug fix for dos - 7/6/91 - Larry hughes@logos.ucs.indiana.edu
+
+used to scramble things a bit
+
+Got the value MIT uses via brute force :-) 2/10/90 eay
+
+add
+
+square, well sort of square
+
+The MIT library assumes that the checksum is composed of 2out_count 32 bit ints
+
+www.openssl.org/source/license.html
+
+License
+
+Message Authentication
+
+des_locl.h
+
+0xffffffffL;
+
+0xffffffffL)
+
+0xffffffffL))
+
+0xffffffffL)
+
+0x7fffffffL;
+
+0xffffffffL))
+
+0xffffffffL)
+
+0x7fffffffL;
+

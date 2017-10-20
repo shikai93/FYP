@@ -1,0 +1,4 @@
+Define if IPV6 support is there
+
+Define if getaddrinfo is there
+

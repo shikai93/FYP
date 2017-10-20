@@ -1,0 +1,28 @@
+Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Set cache entry according to CertificatePolicies extension. Note: this destroys the passed CERTIFICATEPOLICIES structure.
+
+Duplicate policy OIDs are illegal: reject if matches found.
+
+Handle requireExplicitPolicy first. Need to process this even if we don't have any policies.
+
+Process CertificatePolicies
+
+If no CertificatePolicies extension or problem decoding then there is no point continuing because the valid policies will be NULL.
+
+If not absent some problem with extension
+
+NB: ext_cpols freed by policy_cache_set_policies
+
+If not absent some problem with extension
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/x509_int.h
+
+pcy_int.h
+

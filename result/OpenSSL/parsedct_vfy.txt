@@ -1,0 +1,22 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Update encoding for SCT signature verification/generation to supplied EVP_MD_CTX.
+
+digitally-signed struct { (1 byte) Version sct_version; (1 byte) SignatureType signature_type = certificate_timestamp; (8 bytes) uint64 timestamp; (2 bytes) LogEntryType entry_type; (? bytes) select(entry_type) { case x509_entry: ASN.1Cert; case precert_entry: PreCert; } signed_entry; (2 bytes + sct->ext_len) CtExtensions extensions; }
+
+If no encoding available, fatal error
+
+Include length first
+
+Add any extensions
+
+Verify signature
+
+If ret < 0 some other error: fall through without setting error
+
+www.openssl.org/source/license.html
+
+License
+
+ct_locl.h
+

@@ -1,0 +1,30 @@
+Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Currently two options: keyid: use the issuers subject keyid, the value 'always' means its is an error if the issuer certificate doesn't have a key id. issuer: use the issuers cert issuer and serial number. The default is to only use this if keyid is not present. With the option 'always' this is always included.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ext_dat.h
+
+keyid
+
+serial
+
+always
+
+t have a key id. * issuer: use the issuers cert issuer and serial number. The default is * to only use this if keyid is not present. With the option
+
+keyid
+
+always
+
+issuer
+
+always
+
+name=
+

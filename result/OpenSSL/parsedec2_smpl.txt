@@ -1,0 +1,92 @@
+Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+set_Jprojective_coordinates_GFp
+
+get_Jprojective_coordinates_GFp
+
+the following three method functions are defined in ec2_mult.c
+
+field_encode
+
+field_decode
+
+field_set_to_one
+
+set private
+
+keycopy
+
+keyfinish
+
+Initialize a GF(2^m)-based EC_GROUP structure. Note that all other members are handled by EC_GROUP_new.
+
+Free a GF(2^m)-based EC_GROUP structure. Note that all other members are handled by EC_GROUP_free.
+
+Clear and free a GF(2^m)-based EC_GROUP structure. Note that all other members are handled by EC_GROUP_clear_free.
+
+Copy a GF(2^m)-based EC_GROUP structure. Note that all other members are handled by EC_GROUP_copy.
+
+Set the curve parameters of an EC_GROUP structure.
+
+group->field
+
+group->a
+
+group->b
+
+Get the curve parameters of an EC_GROUP structure. If p, a, or b are NULL then there values will not be set but the method will return with success.
+
+Gets the degree of the field. For a curve over GF(2^m) this is the value m.
+
+Checks the discriminant of the curve. y^2 + xy = x^3 + ax^2 + b is an elliptic curve <=> b != 0 (mod p)
+
+check the discriminant: y^2 + xy = x^3 + ax^2 + b is an elliptic curve <=> b != 0 (mod p)
+
+Initializes an EC_POINT.
+
+Frees an EC_POINT.
+
+Clears and frees an EC_POINT.
+
+Copy the contents of one EC_POINT into another. Assumes dest is initialized.
+
+Set an EC_POINT to the point at infinity. A point at infinity is represented by having Z=0.
+
+Set the coordinates of an EC_POINT using affine coordinates. Note that the simple implementation only uses affine coordinates.
+
+Gets the affine coordinates of an EC_POINT. Note that the simple implementation only uses affine coordinates.
+
+Computes a + b and stores the result in r. r could be a or b, a could be b. Uses algorithm A.10.2 of IEEE P1363.
+
+Computes 2 a and stores the result in r. r could be a. Uses algorithm A.10.2 of IEEE P1363.
+
+point is its own inverse
+
+Indicates whether the given point is the point at infinity.
+
+Determines whether the given EC_POINT is an actual point on the curve defined in the EC_GROUP. A point is valid if it satisfies the Weierstrass equation: y^2 + xy = x^3 + ax^2 + b.
+
+only support affine coordinates
+
+We have a curve defined by a Weierstrass equation y^2 + xy = x^3 + ax^2 + b. <=> x^3 + ax^2 + xy + b + y^2 = 0 <=> ((x + a) x + y ) x + b + y^2 = 0
+
+Indicates whether two points are equal. Return values: -1 error 0 equal (in affine coordinates) 1 not equal
+
+Forces the given EC_POINT to internally use affine coordinates.
+
+Forces each of the EC_POINTs in the given array to use affine coordinates.
+
+Wrapper to simple binary polynomial field multiplication implementation.
+
+Wrapper to simple binary polynomial field squaring implementation.
+
+Wrapper to simple binary polynomial field division implementation.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/bn_int.h
+
+ec_lcl.h
+

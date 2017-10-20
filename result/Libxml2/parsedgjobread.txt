@@ -1,0 +1,116 @@
+gjobread.c : a small test program for gnome jobs XML format See Copyright for the status of this software. Daniel.Veillard@w3.org
+
+This example should compile and run indifferently with libxml-1.8.8 + and libxml2-2.1.0 + Check the COMPAT comments below
+
+COMPAT using xml-config --cflags to get the include path this will work with both
+
+A person record an xmlChar is really an UTF8 encoded char string (0 terminated)
+
+And the code needed to parse it
+
+allocate the struct
+
+We don't care what the top level element name is
+
+COMPAT xmlChildrenNode is a macro unifying libxml1 and libxml2 names
+
+and to print it
+
+a Description for a Job
+
+using dynamic alloc is left as an exercise
+
+And the code needed to parse it
+
+allocate the struct
+
+We don't care what the top level element name is
+
+and to print it
+
+A pool of Gnome Jobs
+
+using dynamic alloc is left as an exercise
+
+build an XML tree from a the file;
+
+the library has been compiled without some of the old interfaces
+
+LIBXML_SAX1_ENABLED
+
+Check the document is of the right kind
+
+Allocate the structure to be returned.
+
+Now, walk the tree.
+
+First level we expect just Jobs
+
+LIBXML_OUTPUT_ENABLED
+
+Second level is a list of Job, but be laxist
+
+Do whatever you want and free the structure.
+
+COMPAT: Do not genrate nodes for formatting spaces
+
+Clean up everything else before quitting.
+
+www.gnome.org/some-location");
+
+parsePerson\n
+
+out of memory\n
+
+t care what the top level element name is */ /* COMPAT xmlChildrenNode is a macro unifying libxml1 and libxml2 names */ cur = cur->xmlChildrenNode; while (cur != NULL) { if ((!xmlStrcmp(cur->name, (const xmlChar *)"Person")) && (cur->ns == ns)) ret->name = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1); if ((!xmlStrcmp(cur->name, (const xmlChar *)"Email")) && (cur->ns == ns)) ret->email = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1); cur = cur->next; } return(ret); } /* * and to print it */ static void printPerson(personPtr cur) { if (cur == NULL) return; printf("------ Person\n"); if (cur->name) printf(" name: %s\n", cur->name); if (cur->email) printf(" email: %s\n", cur->email); if (cur->company) printf(" company: %s\n", cur->company); if (cur->organisation) printf(" organisation: %s\n", cur->organisation); if (cur->smail) printf(" smail: %s\n", cur->smail); if (cur->webPage) printf(" Web: %s\n", cur->webPage); if (cur->phone) printf(" phone: %s\n", cur->phone); printf("------\n"); } /* * a Description for a Job */ typedef struct job { xmlChar *projectID; xmlChar *application; xmlChar *category; personPtr contact; int nbDevelopers; personPtr developers[100]; /* using dynamic alloc is left as an exercise */ } job, *jobPtr; /* * And the code needed to parse it */ static jobPtr parseJob(xmlDocPtr doc, xmlNsPtr ns, xmlNodePtr cur) { jobPtr ret = NULL; DEBUG("parseJob\n"); /* * allocate the struct */ ret = (jobPtr) malloc(sizeof(job)); if (ret == NULL) { fprintf(stderr,"out of memory\n"); return(NULL); } memset(ret, 0, sizeof(job)); /* We don
+
+Project
+
+ID
+
+Project has no ID\n
+
+Application
+
+Category
+
+Contact
+
+======= Job\n
+
+projectID: %s\n
+
+application: %s\n
+
+category: %s\n
+
+%d developers\n
+
+======= \n
+
+empty document\n
+
+http://www.gnome.org/some-location
+
+document of the wrong type, GJob Namespace not found\n
+
+Helping
+
+document of the wrong type, root node != Helping
+
+out of memory\n
+
+Jobs
+
+document of the wrong type, was '%s', Jobs expected
+
+xmlDocDump follows\n
+
+xmlDocDump finished\n
+
+Job
+
+%d Jobs registered\n
+
+Error parsing file '%s'\n
+

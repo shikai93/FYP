@@ -1,0 +1,46 @@
+Copyright 2005-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Negative sLen has special meanings: -1 sLen == hLen -2 salt length is autorecovered from signature -3 salt length is maximized -N reserved
+
+sLen can be small negative
+
+Negative sLen has special meanings: -1 sLen == hLen -2 salt length is maximized -3 same as above (on signing) -N reserved
+
+Generate dbMask in place then perform XOR on it
+
+Initial PS XORs with all zeroes which is a NOP so just update pointer. Note from a test above this value is guaranteed to be non-negative.
+
+H is already in place so just set final 0xbc
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+rsa_locl.h
+
+g
+
+
+
+0x7;
+
+0xFF
+
+0xbc)
+
+0xFF
+
+0x1)
+
+0x7;
+
+0x1;
+
+0xFF
+
+0xbc
+
+0xbc;
+

@@ -1,0 +1,40 @@
+Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+First case: no fd added or removed
+
+Second case: one fd added
+
+Third case: all fd removed
+
+Last case: fd added and immediately removed
+
+On first run we're not expecting any wait fds
+
+On second run we're expecting one added fd
+
+Assign to something else
+
+On third run we expect one deleted fd
+
+On last run we are not expecting any wait fd
+
+www.openssl.org/source/license.html
+
+License
+
+test_ASYNC_init_thread() failed\n
+
+test_ASYNC_start_job() failed\n
+
+test_ASYNC_get_current_job() failed\n
+
+re not expecting any wait fds */ || ASYNC_start_job(&job, waitctx, &funcret, waitfd, NULL, 0) != ASYNC_PAUSE || !ASYNC_WAIT_CTX_get_all_fds(waitctx, NULL, &numfds) || numfds != 0 || !ASYNC_WAIT_CTX_get_changed_fds(waitctx, NULL, &numfds, NULL, &numdelfds) || numfds != 0 || numdelfds != 0 /* On second run we
+
+test_ASYNC_get_wait_fd() failed\n
+
+test_ASYNC_block_pause() failed\n
+
+OpenSSL build is not ASYNC capable - skipping async tests\n
+
+PASS\n
+

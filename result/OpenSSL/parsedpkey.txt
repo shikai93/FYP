@@ -1,0 +1,108 @@
+Copyright 2006-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+inform
+
+f
+
+Input format (DER or PEM)
+
+outform
+
+F
+
+Output format (DER or PEM)
+
+passin
+
+s
+
+Input file pass phrase source
+
+passout
+
+s
+
+Output file pass phrase source
+
+in
+
+s
+
+Input key
+
+out
+
+>
+
+Output file
+
+pubin
+
+-
+
+Read public key from input (default is private key)
+
+pubout
+
+-
+
+Output public key, not private
+
+text_pub
+
+-
+
+Only output public key components
+
+text
+
+-
+
+Output in plaintext as well
+
+noout
+
+-
+
+Don't output the key
+
+
+
+-
+
+Any supported cipher
+
+traditional
+
+-
+
+Use traditional format for private keys
+
+engine
+
+s
+
+Use engine, possibly a hardware device
+
+%s: Use -help for summary.\n
+
+Error getting passwords\n
+
+Public Key
+
+key
+
+Bad format specified for key\n
+

@@ -1,0 +1,200 @@
+runsuite.c: C program to run libxml2 againts published testsuites See Copyright for the status of this software. daniel@veillard.com
+
+http://lists.w3.org/Archives/Public/public-xml-testsuite/2008Jul/0000.html
+
+File name and path utilities
+
+Libxml2 specific routines
+
+We need to trap calls to the resolver to not account memory for the catalog and not rely on any external resources.
+
+Trapping the error messages at the generic level to grab the equivalent of stderr messages on CLI tools.
+
+buffer is full
+
+Deactivate the cache if created; otherwise we have to create/free it for every test, since it will confuse the memory leak detection. Note that normally this need not be done, since the cache is not created until set explicitely with xmlXPathContextSetCache(); but for test purposes it is sometimes usefull to activate the cache by default for the whole library.
+
+Run the xmlconf test if found
+
+invalidity should be reported both in the context and in the document
+
+validity should be reported both in the context and in the document
+
+In case of Namespace errors, libxml2 will still parse the document but log a Namesapce error.
+
+test limited to all versions before 5th
+
+Reset errors and check memory usage before the test
+
+Reset errors and check memory usage after the test
+
+look only at elements we ignore everything else
+
+look only at elements we ignore everything else
+
+The driver for the tests
+
+! LIBXML_XPATH_ENABLED
+
+lists.w3.org/Archives/Public/public-xml-testsuite/2008Jul/0000.html */
+
+www.w3.org/XML/Test/xmlts20080205.tar.gz\n");
+
+www.w3.org/XML/Test/ for informations\n");
+
+libxml.h
+
+runxmlconf.log
+
+rmt-ns10-035
+
+%s/%s
+
+\n------------\n
+
+%s
+
+%s:%d: %s\n
+
+entity
+
+test %s : %s out of memory\n
+
+test %s : %s invalid document turned not well-formed too\n
+
+test %s : %s failed to detect invalid document\n
+
+test %s : %s out of memory\n
+
+test %s : %s failed to parse a valid document\n
+
+test %s : %s failed to validate a valid document\n
+
+test %s : %s failed to parse the XML\n
+
+test %s : %s failed to detect namespace error\n
+
+test %s : %s failed to detect not well formedness\n
+
+ID
+
+test missing ID, line %ld\n
+
+Skipping test %s from skipped list\n
+
+TYPE
+
+test %s missing TYPE\n
+
+URI
+
+test %s missing URI\n
+
+test %s missing file %s \n
+
+NULL
+
+VERSION
+
+ENTITIES
+
+none
+
+RECOMMENDATION
+
+XML1.0
+
+XML1.0-errata2e
+
+XML1.0-errata3e
+
+XML1.0-errata4e
+
+1.0
+
+Skipping test %s for %s\n
+
+NS1.0
+
+NS1.0-errata1e
+
+Skipping test %s for REC %s\n
+
+EDITION
+
+5
+
+not-wf
+
+valid
+
+invalid
+
+error
+
+Skipping error test %s \n
+
+test %s unknown TYPE value %s\n
+
+test %s : %s leaked %d bytes\n
+
+PROFILE
+
+Test cases: %s\n
+
+TESTCASES
+
+TEST
+
+Unhandled element %s\n
+
+Test cases: %d tests\n
+
+PROFILE
+
+Test suite: %s\n
+
+Test suite\n
+
+TESTCASES
+
+Unhandled element %s\n
+
+you need to fetch and extract the\n
+
+latest XML Conformance Test Suites\n
+
+http://www.w3.org/XML/Test/xmlts20080205.tar.gz\n
+
+see http://www.w3.org/XML/Test/ for informations\n
+
+xmlconf/xmlconf.xml
+
+%s is missing \n
+
+%s is corrupted \n
+
+TESTSUITE
+
+Unexpected format %s\n
+
+w
+
+Could not open the log file, running in verbose mode\n
+
+-v
+
+Ran %d tests, no errors\n
+
+Ran %d tests, %d errors, %d leaks\n
+
+Total %d tests, no errors\n
+
+Total %d tests, %d errors, %d leaks\n
+
+See %s for detailed output\n
+
+%d errors were expected\n
+
+%s need XPath support\n
+

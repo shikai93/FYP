@@ -1,0 +1,32 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+On Windows 7 or higher use BCrypt instead of the legacy CryptoAPI
+
+Intel hardware RNG CSP -- available from http://developer.intel.com/design/security/rng/redist_license.htm
+
+poll the CryptoAPI PRNG
+
+poll the Pentium PRG with CryptoAPI
+
+www.openssl.org/source/license.html
+
+developer.intel.com/design/security/rng/redist_license.htm
+
+License
+
+internal/cryptlib.h
+
+rand_lcl.h
+
+Unsupported seeding method configured; must be os
+
+bcrypt.lib
+
+Intel Hardware Cryptographic Service Provider
+
+0x0601
+
+0x00000000L)
+
+0x10100000L
+

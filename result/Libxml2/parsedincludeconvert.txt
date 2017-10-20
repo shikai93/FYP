@@ -1,0 +1,18 @@
+ull terminating ou
+
+conversion wasn't successful.\n
+
+conversion wasn't successful. converted: %i octets.\n
+
+no mem\n
+
+ISO-8859-1
+
+Usage: %s content\n
+
+1.0
+
+root
+
+-
+

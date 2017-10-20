@@ -1,0 +1,32 @@
+section: xmlReader synopsis: Parse multiple XML files reusing an xmlReader purpose: Demonstrate the use of xmlReaderForFile() and xmlReaderNewFile to parse XML files while reusing the reader object and parser context. (Note that the XMLReader functions require libxml2 version later than 2.6.) usage: reader4 <filename> [ filename ... ] test: reader4 test1.xml test2.xml test3.xml > reader4.tmp ; diff reader4.tmp reader4.res ; rm reader4.tmp author: Graham Bennett copy: see Copyright for the status of this software.
+
+One can obtain the document pointer to get insteresting information about the document like the URL, but one must also be sure to clean it up at the end (see below).
+
+this initialises the library and check potential ABI mismatches between the version it was compiled for and the actual shared library used.
+
+Create a new reader for the first file and process the document.
+
+The reader can be reused for subsequent files.
+
+Since we've called xmlTextReaderCurrentDoc, we now have to clean up after ourselves. We only have to do this the last time, because xmlReaderNewFile calls xmlCtxtReset which takes care of it.
+
+Clean up the reader.
+
+Cleanup function for the XML library.
+
+this is to debug memory for regression tests
+
+failed to obtain document\n
+
+Failed to obtain URL\n
+
+%s: Failed to parse\n
+
+%s: Processed ok\n
+
+%s: failed to create reader\n
+
+%s: failed to create reader\n
+
+xmlReader support not compiled in\n
+

@@ -1,0 +1,62 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Convert a certificate and its issuer to an OCSP_CERTID
+
+Calculate the issuerKey hash, excluding tag and length
+
+Parse a URL and split it up into host, port and path components and whether it is SSL.
+
+dup the buffer since we are going to mess with it
+
+Check for initial colon
+
+Check for double slash
+
+Check for trailing part of path
+
+Set start of path to 0 so hostname is valid
+
+ipv6 literal
+
+Look for optional ':' for port number
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ocsp_lcl.h
+
+:
+
+\0
+
+http
+
+80
+
+https
+
+443
+
+/
+
+/
+
+/
+
+/
+
+\0
+
+[
+
+]
+
+\0
+
+:
+
+:
+

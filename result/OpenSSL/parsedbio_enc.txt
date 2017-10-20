@@ -1,0 +1,50 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+<= 0 when finished
+
+bad decrypt
+
+buf is larger than ENC_BLOCK_SIZE because EVP_DecryptUpdate can return up to a block more data than is presented to it
+
+TODO: Convert to new style write function
+
+TODO: Convert to new style read function
+
+enc_puts,
+
+enc_gets,
+
+First check if there are bytes decoded/encoded
+
+At this point, we have room of outl bytes and an empty buffer, so we should read in some more.
+
+time to read more data
+
+Should be continue next time we are called?
+
+Depending on flags block cipher decrypt can write one extra block and then back off, i.e. output buffer has to accommodate extra block...
+
+Note: it is possible for EVP_CipherUpdate to decrypt zero bytes because this is or looks like the final block: if this happens we should retry and either read more data or decrypt the final block
+
+at this point all pending data has been written
+
+More to read
+
+More to read in buffer
+
+do a final write
+
+push out the bytes
+
+Finally flush the underlying BIO
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/bio.h
+
+cipher
+

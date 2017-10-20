@@ -1,0 +1,60 @@
+Copyright 2000-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Custom primitive type for long handling. This converts between an ASN1_INTEGER and a long directly.
+
+Clear should set to initial value
+
+Originally BN_num_bits_word was called to perform this operation, but trouble is that there is no guarantee that sizeof(long) equals to sizeof(BN_ULONG). BN_ULONG is a configurable type that can be as wide as long, but also double or half...
+
+It is argued that on average constant counter loop performs not worse [if not better] than one with conditional break or mask-n-table-lookup-style, because of branch misprediction penalties.
+
+Convert the long to positive: we subtract one if negative so we can cleanly handle the padding if only the MSB of the leading octet is set.
+
+If MSB of leading octet set we need to pad
+
+Convert number of bits to number of octets
+
+Check possible pad byte. Worst case, we're skipping past actual content, but since that's only with 0x00 and 0xff and we set neg accordingly, the result will be correct in the end anyway.
+
+Is it negative?
+
+same sign bit?
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+LONG
+
+ZLONG
+
+re skipping past actual * content, but since that
+
+%ld\n
+
+0x10200000L)
+
+0xff;
+
+0x7))
+
+0x100;
+
+0x00
+
+0xff
+
+0xff:
+
+0xff;
+
+0x100)
+
+0x80))
+
+0xff;
+
+0x80)
+

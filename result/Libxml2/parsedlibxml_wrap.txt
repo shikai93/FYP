@@ -1,0 +1,14 @@
+ATTRIBUTE_UNUSED: Macro used to signal to GCC unused function parameters Repeated here since the definition is not available when compiled outside the libxml2 build tree.
+
+ATTRIBUTE_UNUSED
+
+LIBXML_REGEXP_ENABLED
+
+FILE have their own internal representation
+
+LIBXML_SCHEMAS_ENABLED
+
+LIBXML_REGEXP_ENABLED
+
+LIBXML_SCHEMAS_ENABLED
+

@@ -1,0 +1,56 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+If there is 0 or 1 byte left, the length check should pick things up
+
+high-tag
+
+Set this so that even if things are not long enough the values are set correctly
+
+Decode a length field. The short form is a single byte defining a length 0 - 127. The long form is a byte 0 - 127 with the top bit set and this indicates the number of following octets that contain the length. These octets are stored most significant digit first.
+
+Skip leading zeroes
+
+class 0 is constructed constructed == 2 for indefinite length constructed
+
+Copy flags but preserve embed value
+
+an allowance for strings :-)
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+asn1_locl.h
+
+\0
+
+0x80)
+
+0x7f;
+
+0x7f;
+
+0x80;
+
+0x80;
+
+0x80)
+
+0x7f;
+
+0x80)
+
+0x7f;
+
+0x80;
+
+0x80;
+
+0x80;
+
+0xff;
+
+0x10100000L
+

@@ -1,0 +1,266 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+first check the program name
+
+It must be large enough for a base64 encoded line
+
+Note that str is NULL if a key was passed on the command line, so we get no salt in that case. Is this a bug?
+
+Salt handling: if encrypting generate a salt and write to output BIO. If decrypting read salt from input BIO.
+
+If -P option then don't bother writing
+
+zero the complete buffer or the string passed from the command line bug picked up by Larry J. Hughes Jr. <hughes@indiana.edu>
+
+No IV was explicitly set and no IV was generated during EVP_BytesToKey. Hence the IV is undefined, making correct decryption impossible.
+
+Since we may be changing parameters work on the encryption context rather than calling BIO_set_cipher().
+
+Only encrypt/decrypt as we write the file
+
+Filter out ciphers that we cannot use
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+ciphers
+
+-
+
+List ciphers
+
+in
+
+<
+
+Input file
+
+out
+
+>
+
+Output file
+
+pass
+
+s
+
+Passphrase source
+
+e
+
+-
+
+Encrypt
+
+d
+
+-
+
+Decrypt
+
+p
+
+-
+
+Print the iv/key
+
+P
+
+-
+
+Print the iv/key and exit
+
+v
+
+-
+
+Verbose output
+
+nopad
+
+-
+
+Disable standard block padding
+
+salt
+
+-
+
+Use salt in the KDF (default)
+
+nosalt
+
+-
+
+Do not use salt in the KDF
+
+debug
+
+-
+
+Print debug info
+
+a
+
+-
+
+Base64 encode/decode, depending on encryption flag
+
+base64
+
+-
+
+Same as option -a
+
+A
+
+-
+
+Used with -[base64|a] to specify base64 buffer as a single line
+
+bufsize
+
+s
+
+Buffer size
+
+k
+
+s
+
+Passphrase
+
+kfile
+
+<
+
+Read passphrase from file
+
+K
+
+s
+
+Raw key, in hex
+
+S
+
+s
+
+Salt, in hex
+
+iv
+
+s
+
+IV in hex
+
+md
+
+s
+
+Use specified digest to create a key from the passphrase
+
+none
+
+-
+
+Don't encrypt
+
+
+
+-
+
+Any supported cipher
+
+z
+
+-
+
+Use zlib as the 'encryption'
+
+engine
+
+s
+
+Use engine, possibly a hardware device
+
+Salted__
+
+base64
+
+zlib
+
+enc
+
+%s is not a known cipher\n
+
+%s: Use -help for summary.\n
+
+Supported ciphers:\n
+
+\n
+
+k
+
+\0
+
+r
+
+%s Can't read key from %s\n
+
+\r
+
+\n
+
+\0
+
+%s: zero length password\n
+
+Extra arguments given.\n
+
+%s: AEAD ciphers not supported\n
+
+%s XTS ciphers not supported\n
+
+bufsize=%d\n
+
+strbuf
+
+evp buffer
+
+r
+
+Error getting password\n
+
+enter %s %s password:
+
+encryption
+
+decryption
+
+\0
+
+\0
+
+bad password read\n
+
+password required\n
+
+w
+
+invalid hex salt value\n
+
+t bother writing */ if ((printkey != 2) && (BIO_write(wbio, magic, sizeof magic - 1) != sizeof magic - 1 || BIO_write(wbio, (char *)salt, sizeof salt) != sizeof salt)) { BIO_printf(bio_err, "error writing output file\n"); goto end; } } else if (BIO_read(rbio, mbuf, sizeof mbuf) != sizeof mbuf || BIO_read(rbio, (unsigned char *)salt, sizeof salt) != sizeof salt) { BIO_printf(bio_err, "error reading input file\n"); goto end; } else if (memcmp(mbuf, magic, sizeof magic - 1)) { BIO_printf(bio_err, "bad magic number\n"); goto end; } sptr = salt; } if (!EVP_BytesToKey(cipher, dgst, sptr, (unsigned char *)str, str_len, 1, key, iv)) { BIO_printf(bio_err, "EVP_BytesToKey failed\n"); goto end; } /* * zero the complete buffer or the string passed from the command * line bug picked up by Larry J. Hughes Jr. <hughes@indiana.edu> */ if (str == strbuf) OPENSSL_cleanse(str, SIZE); else OPENSSL_cleanse(str, str_len); } if (hiv != NULL) { int siz = EVP_CIPHER_iv_length(cipher); if (siz == 0) { BIO_printf(bio_err, "warning: iv not use by this cipher\n"); } else if (!set_hex(hiv, iv, sizeof iv)) { BIO_printf(bio_err, "invalid hex iv value\n"); goto end; } } if ((hiv == NULL) && (str == NULL) && EVP_CIPHER_iv_length(cipher) != 0) { /* * No IV was explicitly set and no IV was generated during * EVP_BytesToKey. Hence the IV is undefined, making correct * decryption impossible. */ BIO_printf(bio_err, "iv undefined\n"); goto end; } if ((hkey != NULL) && !set_hex(hkey, key, EVP_CIPHER_key_length(cipher))) { BIO_printf(bio_err, "invalid hex key value\n"); goto end; } if ((benc = BIO_new(BIO_f_cipher())) == NULL) goto end; /* * Since we may be changing parameters work on the encryption context * rather than calling BIO_set_cipher(). */ BIO_get_cipher_ctx(benc, &ctx); if (!EVP_CipherInit_ex(ctx, cipher, NULL, NULL, NULL, enc)) { BIO_printf(bio_err, "Error setting cipher %s\n", EVP_CIPHER_name(cipher)); ERR_print_errors(bio_err); goto end; } if (nopad) EVP_CIPHER_CTX_set_padding(ctx, 0); if (!EVP_CipherInit_ex(ctx, NULL, NULL, key, iv, enc)) { BIO_printf(bio_err, "Error setting cipher %s\n", EVP_CIPHER_name(cipher)); ERR_print_errors(bio_err); goto end; } if (debug) { BIO_set_callback(benc, BIO_debug_callback); BIO_set_callback_arg(benc, (char *)bio_err); } if (printkey) { if (!nosalt) { printf("salt="); for (i = 0; i < (int)sizeof(salt); i++) printf("%02X", salt[i]); printf("\n"); } if (EVP_CIPHER_key_length(cipher) > 0) { printf("key="); for (i = 0; i < EVP_CIPHER_key_length(cipher); i++) printf("%02X", key[i]); printf("\n"); } if (EVP_CIPHER_iv_length(cipher) > 0) { printf("iv ="); for (i = 0; i < EVP_CIPHER_iv_length(cipher); i++) printf("%02X", iv[i]); printf("\n"); } if (printkey == 2) { ret = 0; goto end; } } } /* Only encrypt/decrypt as we write the file */ if (benc != NULL) wbio = BIO_push(benc, wbio); for (;;) { inl = BIO_read(rbio, (char *)buff, bsize); if (inl <= 0) break; if (BIO_write(wbio, (char *)buff, inl) != inl) { BIO_printf(bio_err, "error writing output file\n"); goto end; } } if (!BIO_flush(wbio)) { BIO_printf(bio_err, "bad decrypt\n"); goto end; } ret = 0; if (verbose) { BIO_printf(bio_err, "bytes read : %8ju\n", BIO_number_read(in)); BIO_printf(bio_err, "bytes written: %8ju\n", BIO_number_written(out)); } end: ERR_print_errors(bio_err); OPENSSL_free(strbuf); OPENSSL_free(buff); BIO_free(in); BIO_free_all(out); BIO_free(benc); BIO_free(b64); #ifdef ZLIB BIO_free(bzl); #endif release_engine(e); OPENSSL_free(pass); return ret; } static void show_ciphers(const OBJ_NAME *name, void *arg) { struct doall_enc_ciphers *dec = (struct doall_enc_ciphers *)arg; const EVP_CIPHER *cipher; if (!islower((unsigned char)*name->name)) return; /* Filter out ciphers that we cannot use */ cipher = EVP_get_cipherbyname(name->name); if (cipher == NULL || (EVP_CIPHER_flags(cipher) & EVP_CIPH_FLAG_AEAD_CIPHER) != 0 || EVP_CIPHER_mode(cipher) == EVP_CIPH_XTS_MODE) return; BIO_printf(dec->bio, "-%-25s", name->name); if (++dec->n == 3) { BIO_printf(dec->bio, "\n"); dec->n = 0; } else BIO_printf(dec->bio, " "); } static int set_hex(char *in, unsigned char *out, int size) { int i, n; unsigned char j; n = strlen(in); if (n > (size * 2)) { BIO_printf(bio_err, "hex string is too long\n"); return 0; } memset(out, 0, size); for (i = 0; i < n; i++) { j = (unsigned char)*in; *(in++) =
+
+non-hex digit\n
+

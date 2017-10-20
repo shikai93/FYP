@@ -1,0 +1,222 @@
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This module is meant to be used as template for non-x87 floating- point assembly modules. The template itself is x86_64-specific though, as it was debugged on x86_64. So that implementor would have to recognize platform-specific parts, UxTOy and inline asm, and act accordingly. Huh? x86_64-specific code as template for non-x87? Note seven, which is not a typo, but reference to 80-bit precision. This module on the other hand relies on 64-bit precision operations, which are default for x86_64 code. And since we are at it, just for sense of it, large-block performance in cycles per processed byte for this code is: gcc-4.8icc-15.0clang-3.4() Westmere4.965.094.37 Sandy Bridge4.954.904.17 Haswell4.924.873.78 Bulldozer4.674.494.68 VIA Nano7.077.055.98 Silvermont10.69.6112.6 ()clang managed to discover parallelism and deployed SIMD; And for range of other platforms with unspecified gcc versions: Freescale e30012.5 PPC74x010.8 POWER64.92 POWER74.50 POWER84.10 z1011.2 z196+7.30 UltraSPARC III16.0 SPARC T416.1
+
+"round toward zero (truncate), mask all exceptions"
+
+h = 0, biased
+
+set "truncate" rounding mode
+
+r &= 0xffffffc0ffffffc0ffffffc0fffffff
+
+base 2^32 -> base 2^16
+
+restore original FPU control register
+
+set "truncate" rounding mode
+
+load base 2^32 and de-bias
+
+note that there are multiple ways to accumulate input, e.g. one can as well accumulate to h0lo-h1lo-h1hi-h2hi...
+
+carries that cross 32n-bit (and 130-bit) boundaries
+
+base 2^48 -> base 2^32 with last reduction step
+
+base 2^32 base 2^16 = base 2^48
+
+carries that cross 32n-bit (and 130-bit) boundaries
+
+base 2^48 -> base 2^32 with last reduction step
+
+store base 2^32, with bias
+
+restore original FPU control register
+
+thanks to bias masking exponent gives integer result
+
+can be partially reduced, so reduce...
+
+compute h + -p
+
+if there was carry, select g0-g3
+
+mac = (h + nonce) % (2^128)
+
+www.openssl.org/source/license.html
+
+License
+
+this is gcc-specific template
+
+lwbrx %0,0,%1
+
+=r
+
+b
+
+stwbrx %0,0,%1
+
+r
+
+b
+
+memory
+
+lrv %0,%1
+
+=d
+
+m
+
+strv %1,%0
+
+=m
+
+d
+
+round toward zero (truncate), mask all exceptions
+
+unrecognized platform
+
+truncate
+
+stmxcsr %0
+
+=m
+
+ldmxcsr %0
+
+m
+
+mffs %0
+
+=f
+
+mtfsf 255,%0
+
+f
+
+stfpc %0
+
+=m
+
+lfpc %0
+
+m
+
+stx %%fsr,%0
+
+=m
+
+ldx %0,%%fsr
+
+m
+
+ldmxcsr %0
+
+m
+
+mtfsf 255,%0
+
+f
+
+lfpc %0
+
+m
+
+ldx %0,%%fsr
+
+m
+
+truncate
+
+stmxcsr %0
+
+=m
+
+ldmxcsr %0
+
+m
+
+mffs %0
+
+=f
+
+mtfsf 255,%0
+
+f
+
+stfpc %0
+
+=m
+
+lfpc %0
+
+m
+
+stx %%fsr,%0
+
+=m
+
+ldx %0,%%fsr
+
+m
+
+ldmxcsr %0
+
+m
+
+mtfsf 255,%0
+
+f
+
+lfpc %0
+
+m
+
+ldx %0,%%fsr
+
+m
+
+0x__)
+
+0x7f80;
+
+0x__)
+
+0x__)
+
+0xffffffc0ffffffc0ffffffc0fffffff
+
+0x0fffffff);
+
+0x0ffffffc);
+
+0x0ffffffc);
+
+0x0ffffffc);
+
+0x__)
+
+0x__)
+
+0x__)
+
+0x000fffffffffffffULL;
+
+0x000fffffffffffffULL;
+
+0x000fffffffffffffULL;
+
+0x000fffffffffffffULL;
+
+0xffffffffU;
+
+0xffffffffU;
+
+0xffffffffU;
+
+0xffffffffU;
+

@@ -1,0 +1,100 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+BIO bio; moved to the BIO structure
+
+used to find the start when decoding
+
+If true, scan until '\n'
+
+have we started decoding yet?
+
+<= 0 when finished
+
+TODO: Convert to new style write function
+
+TODO: Convert to new style read function
+
+b64_gets,
+
+First check if there are bytes decoded/encoded
+
+At this point, we have room of outl bytes and an empty buffer, so we should read in some more.
+
+Should we continue next time we are called?
+
+If buffer empty break
+
+Fall through and process what we have
+
+else we retry and add more data to buffer
+
+We need to scan, a line at a time until we have a valid line if we are starting.
+
+ctx->start=1;
+
+due to a previous very long line, we need to keep on scanning for a '\n' before we even start looking for base64 encoded stuff.
+
+we fell off the end without starting
+
+Is this is one long chunk?, if so, keep on reading until a new line.
+
+Check buffer full
+
+finished on a '\n'
+
+else finished on a '\n'
+
+If buffer isn't full and we can retry then restart to read in more data.
+
+process per 4
+
+z is now number of output bytes and jj is the number consumed
+
+BIO_clear_retry_flags(b);
+
+at this point all pending data has been written
+
+There's a theoretical possibility for this
+
+Since we're now done using the temporary buffer, the length should be 0'd
+
+More to read
+
+More to write in buffer
+
+More to read in buffer
+
+do a final write
+
+push out the bytes
+
+Finally flush the underlying BIO
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/bio.h
+
+\n
+
+base64 encoding
+
+\n
+
+\n
+
+\n
+
+\n
+
+t full and we can retry then restart to read in * more data. */ continue; } if (BIO_get_flags(b) & BIO_FLAGS_BASE64_NO_NL) { int z, jj; jj = i & ~3; /* process per 4 */ z = EVP_DecodeBlock((unsigned char *)ctx->buf, (unsigned char *)ctx->tmp, jj); if (jj > 2) { if (ctx->tmp[jj - 1] ==
+
+) { z--; if (ctx->tmp[jj - 2] ==
+
+) z--; } } /* * z is now number of output bytes and jj is the number consumed */ if (jj != i) { memmove(ctx->tmp, &ctx->tmp[jj], i - jj); ctx->tmp_len = i - jj; } ctx->buf_len = 0; if (z > 0) { ctx->buf_len = z; } i = z; } else { i = EVP_DecodeUpdate(ctx->base64, (unsigned char *)ctx->buf, &ctx->buf_len, (unsigned char *)ctx->tmp, i); ctx->tmp_len = 0; } ctx->buf_off = 0; if (i < 0) { ret_code = 0; ctx->buf_len = 0; break; } if (ctx->buf_len <= outl) i = ctx->buf_len; else i = outl; memcpy(out, ctx->buf, i); ret += i; ctx->buf_off = i; if (ctx->buf_off == ctx->buf_len) { ctx->buf_len = 0; ctx->buf_off = 0; } outl -= i; out += i; } /* BIO_clear_retry_flags(b); */ BIO_copy_next_retry(b); return ((ret == 0) ? ret_code : ret); } static int b64_write(BIO *b, const char *in, int inl) { int ret = 0; int n; int i; BIO_B64_CTX *ctx; BIO *next; ctx = (BIO_B64_CTX *)BIO_get_data(b); next = BIO_next(b); if ((ctx == NULL) || (next == NULL)) return 0; BIO_clear_retry_flags(b); if (ctx->encode != B64_ENCODE) { ctx->encode = B64_ENCODE; ctx->buf_len = 0; ctx->buf_off = 0; ctx->tmp_len = 0; EVP_EncodeInit(ctx->base64); } OPENSSL_assert(ctx->buf_off < (int)sizeof(ctx->buf)); OPENSSL_assert(ctx->buf_len <= (int)sizeof(ctx->buf)); OPENSSL_assert(ctx->buf_len >= ctx->buf_off); n = ctx->buf_len - ctx->buf_off; while (n > 0) { i = BIO_write(next, &(ctx->buf[ctx->buf_off]), n); if (i <= 0) { BIO_copy_next_retry(b); return (i); } OPENSSL_assert(i <= n); ctx->buf_off += i; OPENSSL_assert(ctx->buf_off <= (int)sizeof(ctx->buf)); OPENSSL_assert(ctx->buf_len >= ctx->buf_off); n -= i; } /* at this point all pending data has been written */ ctx->buf_off = 0; ctx->buf_len = 0; if ((in == NULL) || (inl <= 0)) return (0); while (inl > 0) { n = (inl > B64_BLOCK_SIZE) ? B64_BLOCK_SIZE : inl; if (BIO_get_flags(b) & BIO_FLAGS_BASE64_NO_NL) { if (ctx->tmp_len > 0) { OPENSSL_assert(ctx->tmp_len <= 3); n = 3 - ctx->tmp_len; /* * There
+
+re now done using the temporary buffer, the * length should be 0
+

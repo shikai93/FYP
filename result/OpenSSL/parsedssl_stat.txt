@@ -1,0 +1,290 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright 2005 Nokia. All rights reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+ssl_locl.h
+
+error
+
+SSLv3/TLS read certificate status
+
+SSLv3/TLS write next proto
+
+SSLv3/TLS read next proto
+
+SSLv3/TLS write certificate status
+
+before SSL initialization
+
+SSL negotiation finished successfully
+
+SSLv3/TLS write client hello
+
+SSLv3/TLS read server hello
+
+SSLv3/TLS read server certificate
+
+SSLv3/TLS read server key exchange
+
+SSLv3/TLS read server certificate request
+
+SSLv3/TLS read server session ticket
+
+SSLv3/TLS read server done
+
+SSLv3/TLS write client certificate
+
+SSLv3/TLS write client key exchange
+
+SSLv3/TLS write certificate verify
+
+SSLv3/TLS write change cipher spec
+
+SSLv3/TLS write finished
+
+SSLv3/TLS read change cipher spec
+
+SSLv3/TLS read finished
+
+SSLv3/TLS read client hello
+
+SSLv3/TLS write hello request
+
+SSLv3/TLS write server hello
+
+SSLv3/TLS write certificate
+
+SSLv3/TLS write key exchange
+
+SSLv3/TLS write certificate request
+
+SSLv3/TLS write session ticket
+
+SSLv3/TLS write server done
+
+SSLv3/TLS read client certificate
+
+SSLv3/TLS read client key exchange
+
+SSLv3/TLS read certificate verify
+
+DTLS1 read hello verify request
+
+DTLS1 write hello verify request
+
+unknown state
+
+SSLERR
+
+TRNP
+
+TWST
+
+TWCS
+
+TRCS
+
+TRST
+
+TWNP
+
+PINIT
+
+SSLOK
+
+TWCH
+
+TRSH
+
+TRSC
+
+TRSKE
+
+TRCR
+
+TRSD
+
+TWCC
+
+TWCKE
+
+TWCV
+
+TWCCS
+
+TWFIN
+
+TRCCS
+
+TRFIN
+
+TWHR
+
+TRCH
+
+TWSH
+
+TWSC
+
+TWSKE
+
+TWCR
+
+TWSD
+
+TRCC
+
+TRCKE
+
+TRCV
+
+DRCHV
+
+DWCHV
+
+UNKWN
+
+warning
+
+fatal
+
+unknown
+
+W
+
+F
+
+U
+
+CN
+
+UM
+
+BM
+
+DF
+
+HF
+
+NC
+
+BC
+
+UC
+
+CR
+
+CE
+
+CU
+
+IP
+
+DC
+
+RO
+
+CA
+
+AD
+
+DE
+
+CY
+
+ER
+
+PV
+
+IS
+
+IE
+
+US
+
+NR
+
+UE
+
+CO
+
+UN
+
+BR
+
+BH
+
+UP
+
+UK
+
+close notify
+
+unexpected_message
+
+bad record mac
+
+decompression failure
+
+handshake failure
+
+no certificate
+
+bad certificate
+
+unsupported certificate
+
+certificate revoked
+
+certificate expired
+
+certificate unknown
+
+illegal parameter
+
+decryption failed
+
+record overflow
+
+unknown CA
+
+access denied
+
+decode error
+
+decrypt error
+
+export restriction
+
+protocol version
+
+insufficient security
+
+internal error
+
+user canceled
+
+no renegotiation
+
+unsupported extension
+
+certificate unobtainable
+
+unrecognized name
+
+bad certificate status response
+
+bad certificate hash value
+
+unknown PSK identity
+
+no application protocol
+
+unknown
+
+0xff)
+
+0xff)
+

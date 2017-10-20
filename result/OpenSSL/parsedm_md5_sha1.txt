@@ -1,0 +1,26 @@
+Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+SSLv3 client auth handling: see RFC-6101 5.6.8
+
+At this point hash contains all handshake messages, update with master secret and pad_1.
+
+Set padtmp to pad_1 value
+
+Reinitialise context
+
+Set padtmp to pad_2 value
+
+Now when ctx is finalised it will return the SSL v3 hash value
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/evp_int.h
+
+0x36,
+
+0x5c,
+

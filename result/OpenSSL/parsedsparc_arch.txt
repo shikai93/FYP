@@ -1,0 +1,84 @@
+Copyright 2012-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+reserved
+
+VIS1 block copy
+
+Fujitsu SPARC64 X AES
+
+Fujitsu SPARC64 X DES, reserved
+
+Fujitsu HPC-ACE, reserved
+
+reserved
+
+reserved
+
+OPENSSL_sparcv9cap_P[1] is copy of Compatibility Feature Register, %asr26, SPARC-T4 and later. There is no SPARCV9_CFR bit in OPENSSL_sparcv9cap_P[0], as %cfr copy is sufficient...
+
+Supports AES opcodes
+
+Supports DES opcodes
+
+Supports KASUMI opcodes
+
+Supports CAMELLIA opcodes
+
+Supports MD5 opcodes
+
+Supports SHA1 opcodes
+
+Supports SHA256 opcodes
+
+Supports SHA512 opcodes
+
+Supports MPMUL opcodes
+
+Supports MONTMUL opcodes
+
+Supports MONTSQR opcodes
+
+Supports CRC32C opcodes
+
+Supports XMPMUL opcodes
+
+Supports XMONTMUL opcodes
+
+Supports XMONTSQR opcodes
+
+__SPARC_ARCH_H__
+
+www.openssl.org/source/license.html
+
+License
+
+0x00000001/*
+
+0x00000002/*
+
+0x00000004/*
+
+0x00000008/*
+
+0x00000010/*
+
+0x00000020/*
+
+0x00000040/*
+
+0x00000080/*
+
+0x00000100/*
+
+0x00000200/*
+
+0x00000400/*
+
+0x00000800/*
+
+0x00001000/*
+
+0x00002000/*
+
+0x00004000/*
+

@@ -1,0 +1,44 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+make a random number and set the top and bottom bits
+
+generate patterns that are more likely to trigger BN library bugs
+
+set bottom bit if requested
+
+random number r: 0 <= r < range
+
+n > 0
+
+BN_is_bit_set(range, n - 1) always holds
+
+range = 100..._2, so 3range (= 11..._2) is exactly one bit longer than range
+
+If r < 3range, use r := r MOD range (which is either r, r - range, or r - 2range). Otherwise, iterate once more. Since 3range = 11..._2, each iteration succeeds with probability >= .75.
+
+range = 11..._2 or range = 101..._2
+
+BN_generate_dsa_nonce generates a random number 0 <= out < range. Unlike BN_rand_range, it also includes the contents of |priv| and |message| in the generation so that an RNG failure isn't fatal as long as |priv| remains secret. This is intended for use in DSA and ECDSA where an RNG weakness leads directly to private key exposure unless this function is used.
+
+We use 512 bits of random data per iteration to ensure that we have at least |range| bits of randomness.
+
+We generate |range|+8 bytes of random output.
+
+We copy |priv| into a local buffer to avoid exposing its length.
+
+No reasonable DSA or ECDSA key should have a private key this large and we don't handle this case in order to avoid leaking the length of the private key.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+bn_lcl.h
+
+t fatal as long as |priv| * remains secret. This is intended for use in DSA and ECDSA where an RNG * weakness leads directly to private key exposure unless this function is * used. */ int BN_generate_dsa_nonce(BIGNUM *out, const BIGNUM *range, const BIGNUM *priv, const unsigned char *message, size_t message_len, BN_CTX *ctx) { SHA512_CTX sha; /* * We use 512 bits of random data per iteration to ensure that we have at * least |range| bits of randomness. */ unsigned char random_bytes[64]; unsigned char digest[SHA512_DIGEST_LENGTH]; unsigned done, todo; /* We generate |range|+8 bytes of random output. */ const unsigned num_k_bytes = BN_num_bytes(range) + 8; unsigned char private_bytes[96]; unsigned char *k_bytes; int ret = 0; k_bytes = OPENSSL_malloc(num_k_bytes); if (k_bytes == NULL) goto err; /* We copy |priv| into a local buffer to avoid exposing its length. */ todo = sizeof(priv->d[0]) * priv->top; if (todo > sizeof(private_bytes)) { /* * No reasonable DSA or ECDSA key should have a private key this * large and we don
+
+0xff
+
+0x80;
+

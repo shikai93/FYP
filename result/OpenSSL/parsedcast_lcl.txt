@@ -1,0 +1,132 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+NOTE - c is not incremented as per c2l
+
+NOTE - c is not incremented as per l2c
+
+NOTE - c is not incremented as per n2l
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+NOTE - c is not incremented as per l2n
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+left shift
+
+The rotate has an extra 16 added to it to help the x86 asm
+
+www.openssl.org/source/license.html
+
+License
+
+0xff),
+
+0xff),
+
+0xff),
+
+0xff))
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xff),
+
+0xff),
+
+0xff),
+
+0xff))
+
+0xffffffffL)|((a)>>((32-(n))&31)))
+
+0x3fc
+
+0xffffffffL;
+
+0xffffffffL)
+
+0xffffffffL)
+
+0xffffffffL;
+
+0xffffffffL;
+
+0xffffffffL;\
+
+0xffffffffL);\
+
+0xffffffffL);\
+
+0xffffffff);
+
+0xffffffff;
+
+0xff];
+
+0xff];
+
+0xff];
+
+0xff];
+
+0xffffffffL)
+
+0xffffffffL)
+
+0xffffffffL;
+

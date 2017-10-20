@@ -1,0 +1,74 @@
+Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+this ensures even sizeof(EVP_CHACHA_KEY)%8==0
+
+1<<28 is just a not-so-small yet not-so-large number... Below condition is practically never met, but it has to be checked for code correctness.
+
+As ChaCha20_ctr32 operates on 32-bit counter, caller has to handle overflow. 'if' below detects the overflow, which is then handled by limiting the amount of blocks to the exact overflow point...
+
+block_size
+
+key_len
+
+iv_len, 128-bit counter in the context
+
+pad on the left
+
+aad or text
+
+aad
+
+plain- or ciphertext
+
+wrap up aad
+
+plaintext
+
+ciphertext
+
+explicit final
+
+or tls mode
+
+wrap up aad
+
+tls mode
+
+discount attached tag
+
+merge record sequence number as per RFC7905
+
+tag length
+
+no-op
+
+block_size
+
+key_len
+
+iv_len, 96-bit nonce in the context
+
+0 moves context-specific structure allocation to ctrl
+
+set_asn1_parameters
+
+get_asn1_parameters
+
+app_data
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+evp_locl.h
+
+internal/evp_int.h
+
+internal/chacha.h
+
+if
+
+internal/poly1305.h
+

@@ -1,0 +1,38 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+A 10k maximum should be enough for most purposes
+
+#define DEBUG
+
+TODO: Convert to new style write function
+
+TODO: Convert to new style read function
+
+the output char array
+
+how big is the output buffer
+
+how many bytes are in it
+
+If a NL was found and we already have text in the save buffer, concatenate them and write
+
+Now that the save buffer is emptied, let's write the input buffer if a NL was found and there is anything to write.
+
+We've written as much as we can. The rest of the input buffer, if any, is text that doesn't and with a NL and therefore needs to be saved for the next trip.
+
+www.openssl.org/source/license.html
+
+License
+
+bio_lcl.h
+
+internal/cryptlib.h
+
+linebuffer
+
+\n
+
+\n
+
+s write the input buffer * if a NL was found and there is anything to write. */ if ((foundnl || p - in > ctx->obuf_size) && p - in > 0) { i = BIO_write(b->next_bio, in, p - in); if (i <= 0) { BIO_copy_next_retry(b); if (i < 0) return ((num > 0) ? num : i); if (i == 0) return (num); } num += i; in += i; inl -= i; } } while (foundnl && inl > 0); /* * We
+

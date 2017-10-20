@@ -1,0 +1,18 @@
+Copyright 2001-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Exposed API function to get a functional reference from the implementation table (ie. try to get a functional reference from the tabled structural references) for a given cipher 'nid'
+
+Obtains a cipher implementation from an ENGINE functional reference
+
+Gets the cipher callback from an ENGINE structure
+
+Sets the cipher callback in an ENGINE structure
+
+www.openssl.org/source/license.html
+
+License
+
+eng_int.h
+
+nid
+

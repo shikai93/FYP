@@ -1,0 +1,90 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+ReadAll reads |len| bytes from |bio| into |out|. It returns 1 on success and
+
+0 or -1 on error.
+
+Write the header.
+
+Write the buffer.
+
+Check if the read deadline has passed.
+
+Read the opcode.
+
+The caller is required to advance any pending timeouts before
+
+continuing.
+
+Process the timeout.
+
+Convert nanoseconds to microseconds.
+
+Send an ACK to the peer.
+
+Signal to the caller to retry the read, after advancing the clock.
+
+Read the length prefix.
+
+namespace
+
+License
+
+packeted_bio.h
+
+P
+
+T
+
+t
+
+Unprocessed timeout!\n
+
+Unknown opcode, %u\n
+
+Packeted BIO was truncated\n
+
+packeted bio
+
+0xff;
+
+0xff;
+
+0xff;
+
+0xff;
+
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+PacketedBioCreate creates a filter BIO which implements a reliable in-order
+
+blocking datagram socket. It internally maintains a clock and honors
+
+|BIO_CTRL_DGRAM_SET_NEXT_TIMEOUT| based on it.
+
+
+
+During a |BIO_read|, the peer may signal the filter BIO to simulate a
+
+timeout. If |advance_clock| is true, it automatically advances the clock and
+
+continues reading, subject to the read deadline. Otherwise, it fails
+
+immediately. The caller must then call |PacketedBioAdvanceClock| before
+
+retrying |BIO_read|.
+
+PacketedBioGetClock returns the current time for |bio|.
+
+PacketedBioAdvanceClock advances |bio|'s internal clock and returns true if
+
+there is a pending timeout. Otherwise, it returns false.
+
+HEADER_PACKETED_BIO
+
+License
+

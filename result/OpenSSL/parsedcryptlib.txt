@@ -1,0 +1,158 @@
+Copyright 1998-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+|(1<<10) sets a reserved bit to signal that variable was initialized already... This is to avoid interference with cpuid snippets in ELF .init segment.
+
+paranoia
+
+paranoia
+
+paranoia
+
+paranoia
+
+This doesn't cover "interactive" services [working with real WinSta0's] nor programs started non-interactively by Task Scheduler [those are working with SAWinSta].
+
+This covers all non-interactive programs such as services.
+
+First check if it's a console application, in which case the error message would be printed to standard error. Windows CE does not have a concept of a console application, so we need to guard the check.
+
+must be console application
+
+this -------------v--- guards NT-specific calls
+
+We are in a situation where we tried to report a critical error and this failed for some reason. As a last resort, in debug builds, send output to the debugger or any other tool like DebugView which can monitor the output.
+
+Win32 abort() customarily shows a dialog, but we just did that...
+
+The volatile is used to to ensure that the compiler generates code that reads all values from the array and doesn't try to optimize this away. The standard doesn't actually require this behavior if the original data pointed to is not volatile, but compilers do this in practice anyway. There are also assembler versions of this function.
+
+www.openssl.org/source/license.html
+
+License
+
+e_os.h
+
+internal/cryptlib_int.h
+
+OPENSSL_ia32cap
+
+~
+
+%I64i
+
+%lli
+
+:
+
+:
+
+~
+
+_OPENSSL_isservice
+
+\0
+
+t cover "interactive" services [working with real * WinSta0
+
+Service-0x
+
+WinSta0
+
+s a console application, in which case the * error message would be printed to standard error. * Windows CE does not have a concept of a console application, * so we need to guard the check. */ # ifdef STD_ERROR_HANDLE HANDLE h; if ((h = GetStdHandle(STD_ERROR_HANDLE)) != NULL && GetFileType(h) != FILE_TYPE_UNKNOWN) { /* must be console application */ int len; DWORD out; va_start(ap, fmta); len = _vsnprintf((char *)buf, sizeof(buf), fmta, ap); WriteFile(h, buf, len < 0 ? sizeof(buf) : (DWORD) len, &out, NULL); va_end(ap); return; } # endif if (sizeof(TCHAR) == sizeof(char)) fmt = (const TCHAR *)fmta; else do { int keepgoing; size_t len_0 = strlen(fmta) + 1, i; WCHAR *fmtw; fmtw = (WCHAR *)alloca(len_0 * sizeof(WCHAR)); if (fmtw == NULL) { fmt = (const TCHAR *)L"no stack?"; break; } if (!MultiByteToWideChar(CP_ACP, 0, fmta, len_0, fmtw, len_0)) for (i = 0; i < len_0; i++) fmtw[i] = (WCHAR)fmta[i]; for (i = 0; i < len_0; i++) { if (fmtw[i] == L
+
+) do { keepgoing = 0; switch (fmtw[i + 1]) { case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: case L
+
+: i++; keepgoing = 1; break; case L
+
+: fmtw[i + 1] = L
+
+; break; case L
+
+: fmtw[i + 1] = L
+
+; break; case L
+
+: fmtw[i + 1] = L
+
+; break; case L
+
+: fmtw[i + 1] = L
+
+; break; } } while (keepgoing); } fmt = (const TCHAR *)fmtw; } while (0); va_start(ap, fmta); _vsntprintf(buf, OSSL_NELEM(buf) - 1, fmt, ap); buf[OSSL_NELEM(buf) - 1] = _T(
+
+); va_end(ap); # if defined(_WIN32_WINNT) && _WIN32_WINNT>=0x0333 /* this -------------v--- guards NT-specific calls */ if (check_winnt() && OPENSSL_isservice() > 0) { HANDLE hEventLog = RegisterEventSource(NULL, _T("OpenSSL")); if (hEventLog != NULL) { const TCHAR *pmsg = buf; if (!ReportEvent(hEventLog, EVENTLOG_ERROR_TYPE, 0, 0, NULL, 1, 0, &pmsg, NULL)) { #if defined(DEBUG) /* * We are in a situation where we tried to report a critical * error and this failed for some reason. As a last resort, * in debug builds, send output to the debugger or any other * tool like DebugView which can monitor the output. */ OutputDebugString(pmsg); #endif } (void)DeregisterEventSource(hEventLog); } } else # endif MessageBox(NULL, buf, _T("OpenSSL: FATAL"), MB_OK | MB_ICONERROR); } #else void OPENSSL_showfatal(const char *fmta, ...) { #ifndef OPENSSL_NO_STDIO va_list ap; va_start(ap, fmta); vfprintf(stderr, fmta, ap); va_end(ap); #endif } int OPENSSL_isservice(void) { return 0; } #endif void OPENSSL_die(const char *message, const char *file, int line) { OPENSSL_showfatal("%s:%d: OpenSSL internal error: %s\n", file, line, message); #if !defined(_WIN32) || defined(__CYGWIN__) abort(); #else /* * Win32 abort() customarily shows a dialog, but we just did that... */ # if !defined(_WIN32_WCE) raise(SIGABRT); # endif _exit(3); #endif } #if !defined(OPENSSL_CPUID_OBJ) /* * The volatile is used to to ensure that the compiler generates code that reads * all values from the array and doesn
+
+0x0333
+
+0x"))
+
+0x0333
+
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+size of string representations
+
+www.openssl.org/source/license.html
+
+License
+
+ms/uplink.h
+
+internal/nelem.h
+
+C
+
+Assertion failed:
+
+openssl.cnf
+
+/certs
+
+/cert.pem
+
+/private
+
+/ct_log_list.cnf
+
+OSSL$DATAROOT:[000000]
+
+OSSL$DATAROOT:[CERTS]
+
+OSSL$DATAROOT:[000000]cert.pem
+
+OSSL$DATAROOT:[PRIVATE]
+
+OSSL$DATAROOT:[000000]ct_log_list.cnf
+
+SSL_CERT_DIR
+
+SSL_CERT_FILE
+
+CTLOG_FILE
+
+0x8000
+

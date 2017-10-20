@@ -1,0 +1,46 @@
+Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+EME-OAEP as defined in RFC 2437 (PKCS #1 v2.0)
+
+See Victor Shoup, "OAEP reconsidered," Nov. 2000, <URL: http://www.shoup.net/papers/oaep.ps.Z> for problems with the security proof for the original OAEP scheme, which EME-OAEP is based on. A new proof can be found in E. Fujisaki, T. Okamoto, D. Pointcheval, J. Stern, "RSA-OEAP is Still Alive!", Dec. 2000, <URL: http://eprint.iacr.org/2000/061/>. The new proof has stronger requirements for the underlying permutation: "partial-one-wayness" instead of one-wayness. For the RSA function, this is an equivalent notion.
+
+|em| is the encoded message, zero-padded to exactly |num| bytes: em = Y || maskedSeed || maskedDB
+
+|num| is the length of the modulus; |flen| is the length of the encoded message. Therefore, for any |from| that was obtained by decrypting a ciphertext, we must have |flen| <= |num|. Similarly, num < 2 mdlen + 2 must hold for the modulus irrespective of the ciphertext, see PKCS #1 v2.2, section 7.1.2. This does not leak any side-channel information.
+
+Always do this zero-padding copy (even when num == flen) to avoid leaking that information. The copy still leaks some side-channel information, but it's impossible to have a fixed memory access pattern since we can't read out of the bounds of |from|. TODO(emilia): Consider porting BN_bn2bin_padded from BoringSSL.
+
+The first byte must be zero, however we must not leak if this is true. See James H. Manger, "A Chosen Ciphertext Attack on RSA Optimal Asymmetric Encryption Padding (OAEP) [...]", CRYPTO 2001).
+
+Padding consists of a number of 0-bytes, followed by a 1.
+
+At this point |good| is zero unless the plaintext was valid, so plaintext-awareness ensures timing side-channels are no longer a concern.
+
+To avoid chosen ciphertext attacks, the error message should not reveal which kind of decoding error happened.
+
+www.openssl.org/source/license.html
+
+www.shoup.net/papers/oaep.ps.Z> for problems with the security
+
+eprint.iacr.org/2000/061/>. The new proof has stronger requirements
+
+License
+
+OAEP reconsidered,
+
+RSA-OEAP is Still Alive!
+
+partial-one-wayness
+
+internal/constant_time_locl.h
+
+internal/cryptlib.h
+
+rsa_locl.h
+
+s impossible to have a fixed memory access * pattern since we can
+
+A Chosen Ciphertext Attack on RSA * Optimal Asymmetric Encryption Padding (OAEP) [...]
+
+0x01;
+

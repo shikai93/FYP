@@ -1,0 +1,156 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright 2005 Nokia. All rights reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+SSL_get_session() and SSL_get1_session() are problematic in TLS1.3 because, unlike in earlier protocol versions, the session ticket may not have been sent yet even though a handshake has finished. The session ticket data could come in sometime later...or even change if multiple session ticket messages are sent from the server. The preferred way for applications to obtain a resumable session is to use SSL_CTX_sess_set_new_cb().
+
+aka SSL_get0_session; gets 0 objects, just returns a copy of the pointer
+
+variant of SSL_get_session: caller really gets something
+
+Need to lock this all up rather than just use CRYPTO_add so that somebody doesn't free ssl->session between when we check it's non-null and when we up the reference count.
+
+avoid 0 (= X509_V_OK) just in case
+
+5 minute timeout by default
+
+Create a new SSL_SESSION and duplicate the contents of |src| into it. If ticket == 0 then no ticket information is duplicated, otherwise it is.
+
+Set the various pointers to NULL so that we can call SSL_SESSION_free in the case of an error whilst halfway through constructing dest
+
+We deliberately don't copy the prev and next pointers
+
+SSLv3/TLSv1 has 32 bytes (256 bits) of session ID space. As such, filling the ID with random junk repeatedly until we have no conflict is going to complete in one iteration pretty much "most" of the time (btw: understatement). So, if it takes us 10 iterations and we still can't avoid a conflict - well that's a reasonable point to call it quits. Either the RAND code is broken or someone is trying to open roughly very close to 2^256 SSL sessions to our server. How you might store that many sessions is perhaps a more interesting question ...
+
+else - woops a session_id match
+
+XXX We should also check the external cache -- but the probability of a collision is negligible, and we could not prevent the concurrent creation of sessions with identical IDs since we currently don't have means to atomically check whether a session ID already exists and make a reservation for it if it does not (this problem applies to the internal cache as well).
+
+This gets used by clients and servers.
+
+If the context has a default timeout, use it
+
+If RFC5077 ticket, use empty session ID (as server). Note that: (a) ssl_get_prev_session() does lookahead into the ClientHello extensions to find the session ticket. When ssl_get_prev_session() fails, statem_srvr.c calls ssl_get_new_session() in tls_process_client_hello(). At that point, it has not yet parsed the extensions, however, because of the lookahead, it already knows whether a ticket is expected or not. (b) statem_clnt.c calls ssl_get_new_session() before parsing ServerHello extensions, and before recording the session ID received from the server, so this block is a noop.
+
+Choose which callback will set the session ID
+
+Choose a session ID
+
+The callback failed
+
+Don't allow the callback to set the session length to zero. nor set it higher than it was.
+
+The callback set an illegal length
+
+Finally, check for a conflict
+
+If client supports extended master secret set it in session
+
+ssl_get_prev attempts to find an SSL_SESSION to be used to resume this connection. It is only called by servers. hello: The parsed ClientHello data Returns: -1: fatal error 0: no session found 1: a session may have been found. Side effects: - If a session is found then s->session is pointed at it (after freeing an existing session if need be) and s->verify_result is set from the session. - Both for new and resumed sessions, s->ext.ticket_expected is set to 1 if the server should issue a new session ticket (to 0 otherwise).
+
+This is used only by servers.
+
+sets s->ext.ticket_expected
+
+don't allow other threads to steal it:
+
+Increment reference count now if the session callback asks us to do so (note that if the session structures returned by the callback are shared between threads, it must handle the reference count itself [i.e. copy == 0], or things won't be thread-safe).
+
+Add the externally cached session to the internal cache as well if and only if we are supposed to.
+
+Either return value of SSL_CTX_add_session should not interrupt the session resumption process. The return value is intentionally ignored.
+
+Now ret is non-NULL and we own one of its reference counts.
+
+Check TLS version consistency
+
+We have the session requested by the client, but we don't want to use it in this context.
+
+treat like cache miss
+
+We can't be sure if this session is being used out of context, which is especially important for SSL_VERIFY_PEER. The application should have used SSL[_CTX]_set_session_id_context. For this error case, we generate an error instead of treating the event like a cache miss (otherwise it would be easy for applications to effectively disable the session cache by accident without anyone noticing).
+
+timeout
+
+session was from the cache, so remove it
+
+Check extended master secret extension consistency
+
+If old session includes extms, but new does not: abort handshake
+
+If new session includes extms, but old does not: do not resume
+
+We already did this for TLS1.3
+
+In TLSv1.3 s->session was already set to ret, so we NULL it out
+
+The session was from a ticket, so we should issue a ticket for the new session
+
+add just 1 reference count for the SSL_CTX's session cache even though it has two ways of access: each session is in a doubly linked list and an lhash
+
+if session c is in already in cache, we take back the increment later
+
+s != NULL iff we already had a session with the given PID. In this case, s == c should hold (then we did not really modify ctx->sessions), or we're in trouble.
+
+We are in trouble ...
+
+... so pretend the other session did not exist in cache (we cannot handle two SSL_SESSION structures with identical session ID in the same cache, which could happen e.g. when two threads concurrently obtain the same session from an external cache)
+
+s == NULL can also mean OOM error in lh_SSL_SESSION_insert ...
+
+... so take back the extra reference and also don't add the session to the SSL_SESSION_list at this time
+
+Put at the head of the queue unless it is already in the cache
+
+existing cache entry -- decrement previously incremented reference count because it already takes into account the cache
+
+s == c
+
+new cache entry -- remove old ones if cache has become too large
+
+OPENSSL_NO_EC
+
+In the case of EAP-FAST, we can have a pre-shared "ticket" without a session ID.
+
+timeout
+
+The reason we don't call SSL_CTX_remove_session() is to save on locking overhead
+
+locked by SSL_CTX in the calling function
+
+last element in list
+
+only one element in list
+
+first element in list
+
+middle of list
+
+www.openssl.org/source/license.html
+
+License
+
+internal/refcount.h
+
+ssl_locl.h
+
+statem/statem_locl.h
+
+t free ssl->session between when we check it
+
+t copy the prev and next pointers */ dest->prev = NULL; dest->next = NULL; dest->references = 1; dest->lock = CRYPTO_THREAD_lock_new(); if (dest->lock == NULL) goto err; if (!CRYPTO_new_ex_data(CRYPTO_EX_INDEX_SSL_SESSION, dest, &dest->ex_data)) goto err; if (src->peer != NULL) { if (!X509_up_ref(src->peer)) goto err; dest->peer = src->peer; } if (src->peer_chain != NULL) { dest->peer_chain = X509_chain_up_ref(src->peer_chain); if (dest->peer_chain == NULL) goto err; } #ifndef OPENSSL_NO_PSK if (src->psk_identity_hint) { dest->psk_identity_hint = OPENSSL_strdup(src->psk_identity_hint); if (dest->psk_identity_hint == NULL) { goto err; } } if (src->psk_identity) { dest->psk_identity = OPENSSL_strdup(src->psk_identity); if (dest->psk_identity == NULL) { goto err; } } #endif if (src->ciphers != NULL) { dest->ciphers = sk_SSL_CIPHER_dup(src->ciphers); if (dest->ciphers == NULL) goto err; } if (!CRYPTO_dup_ex_data(CRYPTO_EX_INDEX_SSL_SESSION, &dest->ex_data, &src->ex_data)) { goto err; } if (src->ext.hostname) { dest->ext.hostname = OPENSSL_strdup(src->ext.hostname); if (dest->ext.hostname == NULL) { goto err; } } #ifndef OPENSSL_NO_EC if (src->ext.ecpointformats) { dest->ext.ecpointformats = OPENSSL_memdup(src->ext.ecpointformats, src->ext.ecpointformats_len); if (dest->ext.ecpointformats == NULL) goto err; } if (src->ext.supportedgroups) { dest->ext.supportedgroups = OPENSSL_memdup(src->ext.supportedgroups, src->ext.supportedgroups_len); if (dest->ext.supportedgroups == NULL) goto err; } #endif if (ticket != 0 && src->ext.tick != NULL) { dest->ext.tick = OPENSSL_memdup(src->ext.tick, src->ext.ticklen); if (dest->ext.tick == NULL) goto err; } else { dest->ext.tick_lifetime_hint = 0; dest->ext.ticklen = 0; } if (src->ext.alpn_selected) { dest->ext.alpn_selected = (unsigned char*)OPENSSL_strndup((char*)src->ext.alpn_selected, src->ext.alpn_selected_len); if (dest->ext.alpn_selected == NULL) { goto err; } } if (src->ext.tick_nonce != NULL) { dest->ext.tick_nonce = OPENSSL_memdup(src->ext.tick_nonce, src->ext.tick_nonce_len); if (dest->ext.tick_nonce == NULL) goto err; } #ifndef OPENSSL_NO_SRP if (src->srp_username) { dest->srp_username = OPENSSL_strdup(src->srp_username); if (dest->srp_username == NULL) { goto err; } } #endif return dest; err: SSLerr(SSL_F_SSL_SESSION_DUP, ERR_R_MALLOC_FAILURE); SSL_SESSION_free(dest); return NULL; } const unsigned char *SSL_SESSION_get_id(const SSL_SESSION *s, unsigned int *len) { if (len) *len = (unsigned int)s->session_id_length; return s->session_id; } const unsigned char *SSL_SESSION_get0_id_context(const SSL_SESSION *s, unsigned int *len) { if (len != NULL) *len = (unsigned int)s->sid_ctx_length; return s->sid_ctx; } unsigned int SSL_SESSION_get_compress_id(const SSL_SESSION *s) { return s->compress_meth; } /* * SSLv3/TLSv1 has 32 bytes (256 bits) of session ID space. As such, filling * the ID with random junk repeatedly until we have no conflict is going to * complete in one iteration pretty much "most" of the time (btw: * understatement). So, if it takes us 10 iterations and we still can
+
+s a reasonable point to call it quits. Either the * RAND code is broken or someone is trying to open roughly very close to * 2^256 SSL sessions to our server. How you might store that many sessions * is perhaps a more interesting question ... */ #define MAX_SESS_ID_ATTEMPTS 10 static int def_generate_session_id(SSL *ssl, unsigned char *id, unsigned int *id_len) { unsigned int retry = 0; do if (ssl_randbytes(ssl, id, *id_len) <= 0) return 0; while (SSL_has_matching_session_id(ssl, id, *id_len) && (++retry < MAX_SESS_ID_ATTEMPTS)) ; if (retry < MAX_SESS_ID_ATTEMPTS) return 1; /* else - woops a session_id match */ /* * XXX We should also check the external cache -- but the probability of * a collision is negligible, and we could not prevent the concurrent * creation of sessions with identical IDs since we currently don
+
+t allow the callback to set the session length to zero. nor * set it higher than it was. */ if (tmp == 0 || tmp > ss->session_id_length) { /* The callback set an illegal length */ SSLerr(SSL_F_SSL_GET_NEW_SESSION, SSL_R_SSL_SESSION_ID_HAS_BAD_LENGTH); SSL_SESSION_free(ss); return (0); } ss->session_id_length = tmp; /* Finally, check for a conflict */ if (SSL_has_matching_session_id(s, ss->session_id, (unsigned int)ss->session_id_length)) { SSLerr(SSL_F_SSL_GET_NEW_SESSION, SSL_R_SSL_SESSION_ID_CONFLICT); SSL_SESSION_free(ss); return (0); } sess_id_done: if (s->ext.hostname) { ss->ext.hostname = OPENSSL_strdup(s->ext.hostname); if (ss->ext.hostname == NULL) { SSLerr(SSL_F_SSL_GET_NEW_SESSION, ERR_R_INTERNAL_ERROR); SSL_SESSION_free(ss); return 0; } } } else { ss->session_id_length = 0; } if (s->sid_ctx_length > sizeof ss->sid_ctx) { SSLerr(SSL_F_SSL_GET_NEW_SESSION, ERR_R_INTERNAL_ERROR); SSL_SESSION_free(ss); return 0; } memcpy(ss->sid_ctx, s->sid_ctx, s->sid_ctx_length); ss->sid_ctx_length = s->sid_ctx_length; s->session = ss; ss->ssl_version = s->version; ss->verify_result = X509_V_OK; /* If client supports extended master secret set it in session */ if (s->s3->flags & TLS1_FLAGS_RECEIVED_EXTMS) ss->flags |= SSL_SESS_FLAG_EXTMS; return (1); } /*- * ssl_get_prev attempts to find an SSL_SESSION to be used to resume this * connection. It is only called by servers. * * hello: The parsed ClientHello data * * Returns: * -1: fatal error * 0: no session found * 1: a session may have been found. * * Side effects: * - If a session is found then s->session is pointed at it (after freeing an * existing session if need be) and s->verify_result is set from the session. * - Both for new and resumed sessions, s->ext.ticket_expected is set to 1 * if the server should issue a new session ticket (to 0 otherwise). */ int ssl_get_prev_session(SSL *s, CLIENTHELLO_MSG *hello, int *al) { /* This is used only by servers. */ SSL_SESSION *ret = NULL; int fatal = 0; int try_session_cache = 0; TICKET_RETURN r; if (SSL_IS_TLS13(s)) { if (!tls_parse_extension(s, TLSEXT_IDX_psk_kex_modes, SSL_EXT_CLIENT_HELLO, hello->pre_proc_exts, NULL, 0, al) || !tls_parse_extension(s, TLSEXT_IDX_psk, SSL_EXT_CLIENT_HELLO, hello->pre_proc_exts, NULL, 0, al)) return -1; ret = s->session; } else { /* sets s->ext.ticket_expected */ r = tls_get_ticket_from_client(s, hello, &ret); switch (r) { case TICKET_FATAL_ERR_MALLOC: case TICKET_FATAL_ERR_OTHER: fatal = 1; goto err; case TICKET_NONE: case TICKET_EMPTY: if (hello->session_id_len > 0) try_session_cache = 1; break; case TICKET_NO_DECRYPT: case TICKET_SUCCESS: case TICKET_SUCCESS_RENEW: break; } } if (try_session_cache && ret == NULL && !(s->session_ctx->session_cache_mode & SSL_SESS_CACHE_NO_INTERNAL_LOOKUP)) { SSL_SESSION data; data.ssl_version = s->version; memcpy(data.session_id, hello->session_id, hello->session_id_len); data.session_id_length = hello->session_id_len; CRYPTO_THREAD_read_lock(s->session_ctx->lock); ret = lh_SSL_SESSION_retrieve(s->session_ctx->sessions, &data); if (ret != NULL) { /* don
+
+t be * thread-safe). */ if (copy) SSL_SESSION_up_ref(ret); /* * Add the externally cached session to the internal cache as * well if and only if we are supposed to. */ if (! (s->session_ctx->session_cache_mode & SSL_SESS_CACHE_NO_INTERNAL_STORE)) { /* * Either return value of SSL_CTX_add_session should not * interrupt the session resumption process. The return * value is intentionally ignored. */ SSL_CTX_add_session(s->session_ctx, ret); } } } if (ret == NULL) goto err; /* Now ret is non-NULL and we own one of its reference counts. */ /* Check TLS version consistency */ if (ret->ssl_version != s->version) goto err; if (ret->sid_ctx_length != s->sid_ctx_length || memcmp(ret->sid_ctx, s->sid_ctx, ret->sid_ctx_length)) { /* * We have the session requested by the client, but we don
+
+t be sure if this session is being used out of context, * which is especially important for SSL_VERIFY_PEER. The application * should have used SSL[_CTX]_set_session_id_context. For this error * case, we generate an error instead of treating the event like a * cache miss (otherwise it would be easy for applications to * effectively disable the session cache by accident without anyone * noticing). */ SSLerr(SSL_F_SSL_GET_PREV_SESSION, SSL_R_SESSION_ID_CONTEXT_UNINITIALIZED); fatal = 1; goto err; } if (ret->timeout < (long)(time(NULL) - ret->time)) { /* timeout */ s->session_ctx->stats.sess_timeout++; if (try_session_cache) { /* session was from the cache, so remove it */ SSL_CTX_remove_session(s->session_ctx, ret); } goto err; } /* Check extended master secret extension consistency */ if (ret->flags & SSL_SESS_FLAG_EXTMS) { /* If old session includes extms, but new does not: abort handshake */ if (!(s->s3->flags & TLS1_FLAGS_RECEIVED_EXTMS)) { SSLerr(SSL_F_SSL_GET_PREV_SESSION, SSL_R_INCONSISTENT_EXTMS); ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_ILLEGAL_PARAMETER); fatal = 1; goto err; } } else if (s->s3->flags & TLS1_FLAGS_RECEIVED_EXTMS) { /* If new session includes extms, but old does not: do not resume */ goto err; } if (!SSL_IS_TLS13(s)) { /* We already did this for TLS1.3 */ SSL_SESSION_free(s->session); s->session = ret; } s->session_ctx->stats.sess_hit++; s->verify_result = s->session->verify_result; return 1; err: if (ret != NULL) { SSL_SESSION_free(ret); /* In TLSv1.3 s->session was already set to ret, so we NULL it out */ if (SSL_IS_TLS13(s)) s->session = NULL; if (!try_session_cache) { /* * The session was from a ticket, so we should issue a ticket for * the new session */ s->ext.ticket_expected = 1; } } if (fatal) { *al = SSL_AD_INTERNAL_ERROR; return -1; } return 0; } int SSL_CTX_add_session(SSL_CTX *ctx, SSL_SESSION *c) { int ret = 0; SSL_SESSION *s; /* * add just 1 reference count for the SSL_CTX
+
+re in trouble. */ if (s != NULL && s != c) { /* We *are* in trouble ... */ SSL_SESSION_list_remove(ctx, s); SSL_SESSION_free(s); /* * ... so pretend the other session did not exist in cache (we cannot * handle two SSL_SESSION structures with identical session ID in the * same cache, which could happen e.g. when two threads concurrently * obtain the same session from an external cache) */ s = NULL; } else if (s == NULL && lh_SSL_SESSION_retrieve(ctx->sessions, c) == NULL) { /* s == NULL can also mean OOM error in lh_SSL_SESSION_insert ... */ /* * ... so take back the extra reference and also don
+
+SSL_SESSION
+
+SSL_SESSION
+
+ticket
+

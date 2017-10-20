@@ -1,0 +1,60 @@
+Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+For 'ossl_inline'
+
+The boolean methods return a bitmask of all ones (0xff...f) for true and 0 for false. This is useful for choosing a value based on the result of a conditional in constant time. For example, if (a < b) { c = a; } else { c = b; } can be written as unsigned int lt = constant_time_lt(a, b); c = constant_time_select(lt, a, b);
+
+Returns the given value with the MSB copied to all the other bits. Uses the fact that arithmetic shift shifts-in the sign bit. However, this is not ensured by the C standard so you may need to replace this with something else on odd CPUs.
+
+Convenience method for uint64_t.
+
+Returns 0xff..f if a < b and 0 otherwise.
+
+Convenience method for getting an 8-bit mask.
+
+Convenience method for uint64_t.
+
+Returns 0xff..f if a >= b and 0 otherwise.
+
+Convenience method for getting an 8-bit mask.
+
+Returns 0xff..f if a == 0 and 0 otherwise.
+
+Convenience method for getting an 8-bit mask.
+
+Returns 0xff..f if a == b and 0 otherwise.
+
+Convenience method for getting an 8-bit mask.
+
+Signed integers.
+
+Convenience method for getting an 8-bit mask.
+
+Returns (mask & a) | (~mask & b). When |mask| is all 1s or all 0s (as returned by the methods above), the select methods return either |a| (if |mask| is nonzero) or |b| (if |mask| is zero).
+
+Convenience method for unsigned chars.
+
+Convenience method for uint64_t.
+
+Convenience method for signed integers.
+
+HEADER_CONSTANT_TIME_LOCL_H
+
+www.openssl.org/source/license.html
+
+License
+
+ossl_inline
+
+C
+
+0xff...f)
+
+0xff..f
+
+0xff..f
+
+0xff..f
+
+0xff..f
+

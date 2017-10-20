@@ -1,0 +1,224 @@
+Copyright 2002-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Maximum number of iterations before BN_GF2m_mod_solve_quad_arr should fail.
+
+Platform-specific macros to accelerate squaring.
+
+Product of two polynomials a, b each with degree < BN_BITS2 - 1, result is a polynomial r with degree < 2 BN_BITS - 1 The caller MUST ensure that the variables have the right amount of space allocated.
+
+compensate for the top two bits of a
+
+compensate for the top three bits of a
+
+Product of two polynomials a, b each with degree < 2 BN_BITS2 - 1, result is a polynomial r with degree < 4 BN_BITS2 - 1 The caller MUST ensure that the variables have the right amount of space allocated.
+
+r[3] = h1, r[2] = h0; r[1] = l1; r[0] = l0
+
+Correction on m1 ^= l1 ^ h1; m0 ^= l0 ^ h0;
+
+h0 ^= m1 ^ l1 ^ h1;
+
+l1 ^= l0 ^ h0 ^ m0;
+
+Add polynomials a and b and store result in r; r could be a or b, a and b could be equal; r is the bitwise XOR of a and b.
+
+Some functions allow for representation of the irreducible polynomials as an int[], say p. The irreducible f(t) is then of the form: t^p[0] + t^p[1] + ... + t^p[k] where m = p[0] > p[1] > ... > p[k] = 0.
+
+Performs modular reduction of a and store result in r. r could be a.
+
+reduction mod 1 => return 0
+
+Since the algorithm does reduction in the r value, if a != r, copy the contents of a into r so we can do reduction in r.
+
+start reduction
+
+reducing component t^p[k]
+
+reducing component t^0
+
+final round of reduction
+
+clear up the top d1 bits
+
+reduction t^0 component
+
+reducing component t^p[k]
+
+Performs modular reduction of a by p and store result in r. r could be a. This function calls down to the BN_GF2m_mod_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_arr function.
+
+Compute the product of two polynomials a and b, reduce modulo p, and store the result in r. r could be a or b; a could be b.
+
+Compute the product of two polynomials a and b, reduce modulo p, and store the result in r. r could be a or b; a could equal b. This function calls down to the BN_GF2m_mod_mul_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_mul_arr function.
+
+Square a, reduce the result mod p, and store it in a. r could be a.
+
+Square a, reduce the result mod p, and store it in a. r could be a. This function calls down to the BN_GF2m_mod_sqr_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_sqr_arr function.
+
+Invert a, reduce modulo p, and store the result in r. r could be a. Uses Modified Almost Inverse Algorithm (Algorithm 10) from Hankerson, D., Hernandez, J.L., and Menezes, A. "Software Implementation of Elliptic Curve Cryptography Over Binary Fields".
+
+v is copy of p
+
+It pays off to "cache" ->d pointers, because it allows optimizer to be more aggressive. But we don't have to "cache" p->d, because p is declared 'const'...
+
+poly was reducible
+
+BN_CTX_end would complain about the expanded form
+
+Invert xx, reduce modulo p, and store the result in r. r could be xx. This function calls down to the BN_GF2m_mod_inv implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_inv function.
+
+Divide y by x, reduce modulo p, and store the result in r. r could be x or y, x could equal y.
+
+Divide y by x, reduce modulo p, and store the result in r. r could be x or y, x could equal y. Uses algorithm Modular_Division_GF(2^m) from Chang-Shantz, S. "From Euclid's GCD to Montgomery Multiplication to the Great Divide".
+
+reduce x and y mod p
+
+Divide yy by xx, reduce modulo p, and store the result in r. r could be xx or yy, xx could equal yy. This function calls down to the BN_GF2m_mod_div implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_div function.
+
+Compute the bth power of a, reduce modulo p, and store the result in r. r could be a. Uses simple square-and-multiply algorithm A.5.1 from IEEE P1363.
+
+Compute the bth power of a, reduce modulo p, and store the result in r. r could be a. This function calls down to the BN_GF2m_mod_exp_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_exp_arr function.
+
+Compute the square root of a, reduce modulo p, and store the result in r. r could be a. Uses exponentiation as in algorithm A.4.1 from IEEE P1363.
+
+reduction mod 1 => return 0
+
+Compute the square root of a, reduce modulo p, and store the result in r. r could be a. This function calls down to the BN_GF2m_mod_sqrt_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_sqrt_arr function.
+
+Find r such that r^2 + r = a mod p. r could be a. If no r exists returns 0. Uses algorithms A.4.7 and A.4.6 from IEEE P1363.
+
+reduction mod 1 => return 0
+
+m is odd
+
+compute half-trace of a
+
+m is even
+
+Find r such that r^2 + r = a mod p. r could be a. If no r exists returns 0. This function calls down to the BN_GF2m_mod_solve_quad_arr implementation; this wrapper function is only provided for convenience; for best performance, use the BN_GF2m_mod_solve_quad_arr function.
+
+Convert the bit-string representation of a polynomial ( \sum_{i=0}^n a_i x^i) into an array of integers corresponding to the bits with non-zero coefficient. Array is terminated with -1. Up to max elements of the array will be filled. Return value is total number of array elements that would be filled if array was large enough.
+
+skip word if a->d[i] == 0
+
+Convert the coefficient array representation of a polynomial to a bit-string. The array must be terminated by -1.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+bn_lcl.h
+
+Software Implementation of Elliptic * Curve Cryptography Over Binary Fields
+
+cache
+
+t have to "cache" * p->d, because *p is declared
+
+... */ while (1) { while (ubits && !(udp[0] & 1)) { BN_ULONG u0, u1, b0, b1, mask; u0 = udp[0]; b0 = bdp[0]; mask = (BN_ULONG)0 - (b0 & 1); b0 ^= p->d[0] & mask; for (i = 0; i < top - 1; i++) { u1 = udp[i + 1]; udp[i] = ((u0 >> 1) | (u1 << (BN_BITS2 - 1))) & BN_MASK2; u0 = u1; b1 = bdp[i + 1] ^ (p->d[i + 1] & mask); bdp[i] = ((b0 >> 1) | (b1 << (BN_BITS2 - 1))) & BN_MASK2; b0 = b1; } udp[i] = u0 >> 1; bdp[i] = b0 >> 1; ubits--; } if (ubits <= BN_BITS2) { if (udp[0] == 0) /* poly was reducible */ goto err; if (udp[0] == 1) break; } if (ubits < vbits) { i = ubits; ubits = vbits; vbits = i; tmp = u; u = v; v = tmp; tmp = b; b = c; c = tmp; udp = vdp; vdp = v->d; bdp = cdp; cdp = c->d; } for (i = 0; i < top; i++) { udp[i] ^= vdp[i]; bdp[i] ^= cdp[i]; } if (ubits == vbits) { BN_ULONG ul; int utop = (ubits - 1) / BN_BITS2; while ((ul = udp[utop]) == 0 && utop) utop--; ubits = utop * BN_BITS2 + BN_num_bits_word(ul); } } bn_correct_top(b); } # endif if (!BN_copy(r, b)) goto err; bn_check_top(r); ret = 1; err: # ifdef BN_DEBUG /* BN_CTX_end would complain about the * expanded form */ bn_correct_top(c); bn_correct_top(u); bn_correct_top(v); # endif BN_CTX_end(ctx); return ret; } /* * Invert xx, reduce modulo p, and store the result in r. r could be xx. * This function calls down to the BN_GF2m_mod_inv implementation; this * wrapper function is only provided for convenience; for best performance, * use the BN_GF2m_mod_inv function. */ int BN_GF2m_mod_inv_arr(BIGNUM *r, const BIGNUM *xx, const int p[], BN_CTX *ctx) { BIGNUM *field; int ret = 0; bn_check_top(xx); BN_CTX_start(ctx); if ((field = BN_CTX_get(ctx)) == NULL) goto err; if (!BN_GF2m_arr2poly(p, field)) goto err; ret = BN_GF2m_mod_inv(r, xx, field, ctx); bn_check_top(r); err: BN_CTX_end(ctx); return ret; } # ifndef OPENSSL_SUN_GF2M_DIV /* * Divide y by x, reduce modulo p, and store the result in r. r could be x * or y, x could equal y. */ int BN_GF2m_mod_div(BIGNUM *r, const BIGNUM *y, const BIGNUM *x, const BIGNUM *p, BN_CTX *ctx) { BIGNUM *xinv = NULL; int ret = 0; bn_check_top(y); bn_check_top(x); bn_check_top(p); BN_CTX_start(ctx); xinv = BN_CTX_get(ctx); if (xinv == NULL) goto err; if (!BN_GF2m_mod_inv(xinv, x, p, ctx)) goto err; if (!BN_GF2m_mod_mul(r, y, xinv, p, ctx)) goto err; bn_check_top(r); ret = 1; err: BN_CTX_end(ctx); return ret; } # else /* * Divide y by x, reduce modulo p, and store the result in r. r could be x * or y, x could equal y. Uses algorithm Modular_Division_GF(2^m) from * Chang-Shantz, S. "From Euclid
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0xF]
+
+0x3FFFFFFF);
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x7];
+
+0x1FFFFFFFFFFFFFFFULL);
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0xF];
+
+0x1)
+

@@ -1,0 +1,28 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+PKCS#7 ASN1 module
+
+This is the ANY DEFINED BY table for the top level PKCS#7 structure
+
+PKCS#7 streaming support
+
+fall thru
+
+Minor tweak to operation: free up EVP_PKEY
+
+NB this should be a SET OF but we use a SEQUENCE OF so the original order is retained when the structure is reencoded. Since the attributes are implicitly tagged this will not affect the encoding.
+
+Minor tweak to operation: free up X509
+
+Specials for authenticated attributes
+
+When signing attributes we want to reorder them to match the sorted encoding.
+
+When verifying attributes we need to use the received order. So we use SEQUENCE OF and tag it to SET OF
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+

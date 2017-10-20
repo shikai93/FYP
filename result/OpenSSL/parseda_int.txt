@@ -1,0 +1,124 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Compare signs
+
+This converts a big endian buffer and sign into its content encoding. This is used for INTEGER and ENUMERATED types. The internal representation is an ASN1_STRING whose data is a big endian representation of the value, ignoring the sign. The sign is determined by the type: if type & V_ASN1_NEG is true it is negative, otherwise positive. Positive integers are no problem: they are almost the same as the DER encoding, except if the first byte is >= 0x80 we need to add a zero pad. Negative integers are a bit trickier... The DER representation of negative integers is in 2s complement form. The internal form is converted by complementing each octet and finally adding one to the result. This can be done less messily with a little trick. If the internal form has trailing zeroes then they will become FF by the complement and 0 by the add one (due to carry) so just copy as many trailing zeros to the destination as there are in the source. The carry will add one to the last none zero octet: so complement this octet and add one and finally complement any left over until you get to the start of the string. Padding is a little trickier too. If the first bytes is > 0x80 then we pad with 0xff. However if the first byte is 0x80 and one of the following bytes is non-zero we pad with 0xff. The reason for this distinction is that 0x80 followed by optional zeros isn't padded.
+
+If |pad| is zero, the operation is effectively reduced to memcpy, and if |pad| is 0xff, then it performs two's complement, ~dst + 1. Note that in latter case sequence of zeros yields itself, and so does 0x80 followed by any number of zeros. These properties are used elsewhere below...
+
+Begin at the end of the encoding
+
+two's complement value: ~value + 1
+
+Special case [of minimal negative for given length]: if any other bytes non zero we pad, otherwise we don't.
+
+reduce '(b == NULL || blen == 0)' to '(blen == 0)'
+
+This magically handles all corner cases, such as '(b == NULL || blen == 0)', non-negative value, "negative" zero, 0x80 followed by any number of zeros...
+
+yes, p[0] can be written twice, but it's little price to pay for eliminated branches
+
+convert content octets into a big endian buffer. Returns the length of buffer or 0 on error: for malformed INTEGER. If output buffer is NULL just return length.
+
+Zero content length is illegal
+
+Handle common case where length is 1 octet separately
+
+Special case [of "one less minimal negative" for given length]: if any other bytes non zero it was padded, otherwise not.
+
+reject illegal padding: first two octets MSB can't match
+
+skip over pad
+
+Convert big endian buffer into uint64_t, return 0 on error
+
+Write uint64_t to big endian buffer and return offset to first written octet. In other words it returns offset in range from 0 to 7, with 0 denoting 8 written octets and 7 - one.
+
+Absolute value of INT64_MIN: we can't just use -INT64_MIN as gcc produces overflow warnings.
+
+signed version of asn1_get_uint64
+
+Most significant bit is guaranteed to be clear, negation is guaranteed to be meaningful in platform-neutral sense.
+
+This never happens if INT64_MAX == ABS_INT64_MIN, e.g. on ones'-complement system.
+
+Convert ASN1 INTEGER content octets to ASN1_INTEGER structure
+
+Most obvious '-r' triggers undefined behaviour for most common INT64_MIN. Even though below '0 - (uint64_t)r' can appear two's-complement centric, it does produce correct/ expected result even on one's-complement. This is because cast to unsigned has to change bit pattern...
+
+This is a version of d2i_ASN1_INTEGER that ignores the sign bit of ASN1 integers: some broken software can encode a positive INTEGER with its MSB set as negative (it doesn't add a padding zero).
+
+We must OPENSSL_malloc stuff, even for 0 bytes otherwise it signifies a missing NULL parameter.
+
+Correct zero case
+
+Internal functions used by x_int64.c
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/numbers.h
+
+asn1_locl.h
+
+t padded. */ /* * If |pad| is zero, the operation is effectively reduced to memcpy, * and if |pad| is 0xff, then it performs two
+
+s complement value: ~value + 1 */ while (len-- != 0) { *(--dst) = (unsigned char)(carry += *(--src) ^ pad); carry >>= 8; } } static size_t i2c_ibuf(const unsigned char *b, size_t blen, int neg, unsigned char **pp) { unsigned int pad = 0; size_t ret, i; unsigned char *p, pb = 0; if (b != NULL && blen) { ret = blen; i = b[0]; if (!neg && (i > 127)) { pad = 1; pb = 0; } else if (neg) { pb = 0xFF; if (i > 128) { pad = 1; } else if (i == 128) { /* * Special case [of minimal negative for given length]: * if any other bytes non zero we pad, otherwise we don
+
+(b == NULL || blen == 0)
+
+(blen == 0)
+
+(b == NULL || * blen == 0)
+
+negative
+
+s little * price to pay for eliminated branches */ twos_complement(p, b, blen, pb); *pp += ret; return ret; } /* * convert content octets into a big endian buffer. Returns the length * of buffer or 0 on error: for malformed INTEGER. If output buffer is * NULL just return length. */ static size_t c2i_ibuf(unsigned char *b, int *pneg, const unsigned char *p, size_t plen) { int neg, pad; /* Zero content length is illegal */ if (plen == 0) { ASN1err(ASN1_F_C2I_IBUF, ASN1_R_ILLEGAL_ZERO_CONTENT); return 0; } neg = p[0] & 0x80; if (pneg) *pneg = neg; /* Handle common case where length is 1 octet separately */ if (plen == 1) { if (b != NULL) { if (neg) b[0] = (p[0] ^ 0xFF) + 1; else b[0] = p[0]; } return 1; } pad = 0; if (p[0] == 0) { pad = 1; } else if (p[0] == 0xFF) { size_t i; /* * Special case [of "one less minimal negative" for given length]: * if any other bytes non zero it was padded, otherwise not. */ for (pad = 0, i = 1; i < plen; i++) pad |= p[i]; pad = pad != 0 ? 1 : 0; } /* reject illegal padding: first two octets MSB can
+
+t just use -INT64_MIN as gcc produces * overflow warnings. */ #define ABS_INT64_MIN ((uint64_t)INT64_MAX + (-(INT64_MIN + INT64_MAX))) /* signed version of asn1_get_uint64 */ static int asn1_get_int64(int64_t *pr, const unsigned char *b, size_t blen, int neg) { uint64_t r; if (asn1_get_uint64(&r, b, blen) == 0) return 0; if (neg) { if (r <= INT64_MAX) { /* Most significant bit is guaranteed to be clear, negation * is guaranteed to be meaningful in platform-neutral sense. */ *pr = -(int64_t)r; } else if (r == ABS_INT64_MIN) { /* This never happens if INT64_MAX == ABS_INT64_MIN, e.g. * on ones
+
+-r
+
+0 - (uint64_t)r
+
+s-complement centric, it does produce correct/ * expected result even on one
+
+0x80
+
+0x80
+
+0xff.
+
+0x80
+
+0xff.
+
+0x80
+
+0xff,
+
+0x80
+
+0xFF;
+
+0xffU
+
+0x80
+
+0x80;
+
+0xFF)
+
+0xFF)
+
+0x80)))
+
+0xffU
+
+0x80)
+
+0xffffffffL;
+

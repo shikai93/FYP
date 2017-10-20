@@ -1,0 +1,56 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Each structure type (sometimes called a class), that supports exdata has a stack of callbacks for each instance.
+
+Arbitrary long
+
+Arbitrary void
+
+The state for each class. This could just be a typedef, but a structure allows future changes.
+
+Return the EX_CALLBACKS from the |ex_data| array that corresponds to a given class. On success, holds the lock.
+
+This can happen in normal operation when using CRYPTO_mem_leaks(). The CRYPTO_mem_leaks() function calls OPENSSL_cleanup() which cleans up the locks. Subsequently the BIO that CRYPTO_mem_leaks() uses gets freed, which also attempts to free the ex_data. However CRYPTO_mem_leaks() ensures that the ex_data is freed early (i.e. before OPENSSL_cleanup() is called), so if we get here we can safely ignore this operation. We just treat it as an error.
+
+Release all "ex_data" state to prevent memory leaks. This can't be made thread-safe without overhauling a lot of stuff, and shouldn't really be called under potential race-conditions anyway (it's for program shutdown after all).
+
+Unregister a new index by replacing the callbacks with no-ops. Any in-use instances are leaked.
+
+Register a new index.
+
+We push an initial value on the stack because the SSL "app_data" routines use ex_data index zero. See RT 3710.
+
+Initialise a new CRYPTO_EX_DATA for use in a particular class - including calling new() callbacks for each index in the class used by this variable Thread-safe by copying a class's array of "EX_CALLBACK" entries in the lock, then using them outside the lock. Note this only applies to the global "ex_data" state (ie. class definitions), not 'ad' itself.
+
+Duplicate a CRYPTO_EX_DATA variable - including calling dup() callbacks for each index in the class used by this variable
+
+Nothing to copy over
+
+Make sure the ex_data stack is at least |mx| elements long to avoid issues in the for loop that follows; so go get the |mx|'th element (if it does not exist CRYPTO_get_ex_data() returns NULL), and assign to itself. This is normally a no-op; but ensures the stack is the proper size
+
+Cleanup a CRYPTO_EX_DATA variable - including calling free() callbacks for each index in the class used by this variable
+
+For a given CRYPTO_EX_DATA variable, set the value corresponding to a particular index in the class used by this variable
+
+For a given CRYPTO_EX_DATA_ variable, get the value corresponding to a particular index in the class used by this variable
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib_int.h
+
+internal/thread_once.h
+
+ex_data
+
+t be made * thread-safe without overhauling a lot of stuff, and shouldn
+
+s for program shutdown * after all). */ void crypto_cleanup_all_ex_data_int(void) { int i; for (i = 0; i < CRYPTO_EX_INDEX__COUNT; ++i) { EX_CALLBACKS *ip = &ex_data[i]; sk_EX_CALLBACK_pop_free(ip->meth, cleanup_cb); ip->meth = NULL; } CRYPTO_THREAD_lock_free(ex_data_lock); ex_data_lock = NULL; } /* * Unregister a new index by replacing the callbacks with no-ops. * Any in-use instances are leaked. */ static void dummy_new(void *parent, void *ptr, CRYPTO_EX_DATA *ad, int idx, long argl, void *argp) { } static void dummy_free(void *parent, void *ptr, CRYPTO_EX_DATA *ad, int idx, long argl, void *argp) { } static int dummy_dup(CRYPTO_EX_DATA *to, const CRYPTO_EX_DATA *from, void *from_d, int idx, long argl, void *argp) { return 1; } int CRYPTO_free_ex_index(int class_index, int idx) { EX_CALLBACKS *ip = get_and_lock(class_index); EX_CALLBACK *a; int toret = 0; if (ip == NULL) return 0; if (idx < 0 || idx >= sk_EX_CALLBACK_num(ip->meth)) goto err; a = sk_EX_CALLBACK_value(ip->meth, idx); if (a == NULL) goto err; a->new_func = dummy_new; a->dup_func = dummy_dup; a->free_func = dummy_free; toret = 1; err: CRYPTO_THREAD_unlock(ex_data_lock); return toret; } /* * Register a new index. */ int CRYPTO_get_ex_new_index(int class_index, long argl, void *argp, CRYPTO_EX_new *new_func, CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func) { int toret = -1; EX_CALLBACK *a; EX_CALLBACKS *ip = get_and_lock(class_index); if (ip == NULL) return -1; if (ip->meth == NULL) { ip->meth = sk_EX_CALLBACK_new_null(); /* We push an initial value on the stack because the SSL * "app_data" routines use ex_data index zero. See RT 3710. */ if (ip->meth == NULL || !sk_EX_CALLBACK_push(ip->meth, NULL)) { CRYPTOerr(CRYPTO_F_CRYPTO_GET_EX_NEW_INDEX, ERR_R_MALLOC_FAILURE); goto err; } } a = (EX_CALLBACK *)OPENSSL_malloc(sizeof(*a)); if (a == NULL) { CRYPTOerr(CRYPTO_F_CRYPTO_GET_EX_NEW_INDEX, ERR_R_MALLOC_FAILURE); goto err; } a->argl = argl; a->argp = argp; a->new_func = new_func; a->dup_func = dup_func; a->free_func = free_func; if (!sk_EX_CALLBACK_push(ip->meth, NULL)) { CRYPTOerr(CRYPTO_F_CRYPTO_GET_EX_NEW_INDEX, ERR_R_MALLOC_FAILURE); OPENSSL_free(a); goto err; } toret = sk_EX_CALLBACK_num(ip->meth) - 1; (void)sk_EX_CALLBACK_set(ip->meth, toret, a); err: CRYPTO_THREAD_unlock(ex_data_lock); return toret; } /* * Initialise a new CRYPTO_EX_DATA for use in a particular class - including * calling new() callbacks for each index in the class used by this variable * Thread-safe by copying a class
+
+EX_CALLBACK
+
+ex_data
+
+ad
+

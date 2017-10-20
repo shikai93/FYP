@@ -1,0 +1,26 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+version == 0
+
+No idea
+
+It seems several organisations had the same idea of including a list of extensions in a certificate request. There are at least two OIDs that are used and there may be more: so the list is configurable.
+
+Add a STACK_OF extensions to a certificate request: allow alternative OIDs in case we want to create a non standard one.
+
+Generate encoding of extensions
+
+This is the normal usage: use the "official" OID
+
+Request attribute functions
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/x509_int.h
+
+official
+

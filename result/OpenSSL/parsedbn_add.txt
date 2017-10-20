@@ -1,0 +1,28 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+r can == a or b
+
+a + b a+b a + -b a-b -a + b b-a -a + -b -(a+b)
+
+only one is negative
+
+we are now a - b
+
+unsigned add of b to a
+
+unsigned subtraction of b from a, a must be larger than b.
+
+hmm... should not be happening
+
+a - b a-b a - -b a+b -a - b -(a+b) -a - -b b-a
+
+We are actually doing a - b :-)
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+bn_lcl.h
+

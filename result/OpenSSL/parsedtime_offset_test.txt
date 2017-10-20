@@ -1,0 +1,74 @@
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+time_t/offset (+/-XXXX) tests for ASN1 and X509
+
+Test driver
+
++1 second
+
+-1 second
+
++1 second
+
+-1 second
+
+www.openssl.org/source/license.html
+
+License
+
+testutil.h
+
+internal/nelem.h
+
+20001201000000Z
+
+20001201010000+0100
+
+20001201050000+0500
+
+20001130230000-0100
+
+20001130190000-0500
+
+20001130190001-0500
+
+20001130185959-0500
+
+001201000000Z
+
+001201010000+0100
+
+001201050000+0500
+
+001130230000-0100
+
+001130190000-0500
+
+001201000000-0000
+
+001201000001-0000
+
+001130235959-0000
+
+20001201000000+0000
+
+20001201000000+0100
+
+001201000000+0100
+
+20001201000000-0100
+
+001201000000-0100
+
+20001201123400+1234
+
+20001130112600-1234
+
+20001201000000Z
+
+ASN1_TIME_diff() failed for %s\n
+
+ASN1_TIME_diff() test failed for %s day=%d sec=%d\n
+
+ASN1_UTCTIME_cmp_time_t() test failed for %s\n
+

@@ -1,0 +1,310 @@
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Define the character classes for each character in the seven bit ASCII character set. This is independent of the host's character set, characters are converted to ASCII before being used as an index in to this table. Characters outside of the seven bit ASCII range are detected before indexing.
+
+00 nul
+
+01 soh
+
+02 stx
+
+03 etx
+
+04 eot
+
+05 enq
+
+06 ack
+
+07 \a
+
+08 \b
+
+09 \t
+
+0A \n
+
+0B \v
+
+0C \f
+
+0D \r
+
+0E so
+
+0F si
+
+10 dle
+
+11 dc1
+
+12 dc2
+
+13 dc3
+
+14 dc4
+
+15 nak
+
+16 syn
+
+17 etb
+
+18 can
+
+19 em
+
+1A sub
+
+1B esc
+
+1C fs
+
+1D gs
+
+1E rs
+
+1F us
+
+20
+
+21 !
+
+22 "
+
+23 #
+
+24 $
+
+25 %
+
+26 &
+
+27 '
+
+28 (
+
+29 )
+
+2A
+
+2B +
+
+2C ,
+
+2D -
+
+2E .
+
+2F /
+
+30 0
+
+31 1
+
+32 2
+
+33 3
+
+34 4
+
+35 5
+
+36 6
+
+37 7
+
+38 8
+
+39 9
+
+3A :
+
+3B ;
+
+3C <
+
+3D =
+
+3E >
+
+3F ?
+
+40 @
+
+41 A
+
+42 B
+
+43 C
+
+44 D
+
+45 E
+
+46 F
+
+47 G
+
+48 H
+
+49 I
+
+4A J
+
+4B K
+
+4C L
+
+4D M
+
+4E N
+
+4F O
+
+50 P
+
+51 Q
+
+52 R
+
+53 S
+
+54 T
+
+55 U
+
+56 V
+
+57 W
+
+58 X
+
+59 Y
+
+5A Z
+
+5B [
+
+5C \
+
+5D ]
+
+5E ^
+
+5F _
+
+60 `
+
+61 a
+
+62 b
+
+63 c
+
+64 d
+
+65 e
+
+66 f
+
+67 g
+
+68 h
+
+69 i
+
+6A j
+
+6B k
+
+6C l
+
+6D m
+
+6E n
+
+6F o
+
+70 p
+
+71 q
+
+72 r
+
+73 s
+
+74 t
+
+75 u
+
+76 v
+
+77 w
+
+78 x
+
+79 y
+
+7A z
+
+7B {
+
+7C |
+
+7D }
+
+7E ~
+
+7F del
+
+Adjust negatively signed characters. This is not required for ASCII because any character that sign extends is not seven bit and all of the checks are on the seven bit characters. I.e. any check must fail on sign extension.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/ctype.h
+
+openssl/ebcdic.h
+
+s character set, characters * are converted to ASCII before being used as an index in to this table. * Characters outside of the seven bit ASCII range are detected before indexing. */ static const unsigned short ctype_char_map[128] = { /* 00 nul */ CTYPE_MASK_cntrl, /* 01 soh */ CTYPE_MASK_cntrl, /* 02 stx */ CTYPE_MASK_cntrl, /* 03 etx */ CTYPE_MASK_cntrl, /* 04 eot */ CTYPE_MASK_cntrl, /* 05 enq */ CTYPE_MASK_cntrl, /* 06 ack */ CTYPE_MASK_cntrl, /* 07 \a */ CTYPE_MASK_cntrl, /* 08 \b */ CTYPE_MASK_cntrl, /* 09 \t */ CTYPE_MASK_blank | CTYPE_MASK_cntrl | CTYPE_MASK_space, /* 0A \n */ CTYPE_MASK_cntrl | CTYPE_MASK_space, /* 0B \v */ CTYPE_MASK_cntrl | CTYPE_MASK_space, /* 0C \f */ CTYPE_MASK_cntrl | CTYPE_MASK_space, /* 0D \r */ CTYPE_MASK_cntrl | CTYPE_MASK_space, /* 0E so */ CTYPE_MASK_cntrl, /* 0F si */ CTYPE_MASK_cntrl, /* 10 dle */ CTYPE_MASK_cntrl, /* 11 dc1 */ CTYPE_MASK_cntrl, /* 12 dc2 */ CTYPE_MASK_cntrl, /* 13 dc3 */ CTYPE_MASK_cntrl, /* 14 dc4 */ CTYPE_MASK_cntrl, /* 15 nak */ CTYPE_MASK_cntrl, /* 16 syn */ CTYPE_MASK_cntrl, /* 17 etb */ CTYPE_MASK_cntrl, /* 18 can */ CTYPE_MASK_cntrl, /* 19 em */ CTYPE_MASK_cntrl, /* 1A sub */ CTYPE_MASK_cntrl, /* 1B esc */ CTYPE_MASK_cntrl, /* 1C fs */ CTYPE_MASK_cntrl, /* 1D gs */ CTYPE_MASK_cntrl, /* 1E rs */ CTYPE_MASK_cntrl, /* 1F us */ CTYPE_MASK_cntrl, /* 20 */ CTYPE_MASK_blank | CTYPE_MASK_print | CTYPE_MASK_space | CTYPE_MASK_asn1print, /* 21 ! */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 22 " */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 23 # */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 24 $ */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 25 % */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 26 & */ CTYPE_MASK_graph | CTYPE_MASK_print | CTYPE_MASK_punct, /* 27
+
+0x40;
+
+0x20;
+
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This version of ctype.h provides a standardised and platform independent implementation that supports seven bit ASCII characters. The specific intent is to not pass extended ASCII characters (> 127) even if the host operating system would. There is EBCDIC support included for machines which use this. However, there are a number of concerns about how well EBCDIC is supported throughout the rest of the source code. Refer to issue #4154 for details.
+
+The ascii mask assumes that any other classification implies that the character is ASCII and that there are no ASCII characters that aren't in any of the classifications. This assumption holds at the moment, but it might not in the future.
+
+www.openssl.org/source/license.html
+
+License
+
+0x1
+
+0x2
+
+0x4
+
+0x8
+
+0x10
+
+0x20
+
+0x40
+
+0x80
+
+0x100
+
+0x200
+
+0x400
+
+0x800
+

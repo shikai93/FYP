@@ -1,0 +1,982 @@
+debugXML.c : This is a set of routines used for debugging the tree produced by the XML parser. See Copyright for the status of this software. Daniel Veillard <daniel@veillard.com>
+
+the output file
+
+used for indenting
+
+current depth
+
+current document
+
+current node
+
+the doc dictionnary
+
+do just checkings
+
+number of errors found
+
+if the document has no dictionnary
+
+options
+
+remove the ATTRIBUTE_UNUSED when this is added
+
+xmlNsCheckScope: @node: the node @ns: the namespace node Check that a given namespace is in scope on a node. Returns 1 if in scope, -1 in case of argument error, -2 if the namespace is not in scope, and -3 if not on an ancestor node.
+
+the xml namespace may be declared on the document node
+
+xmlDebugErr: @ctxt: a debug context @error: the error code Handle a debug error.
+
+xmlCtxtNsCheckScope: @ctxt: the debugging context @node: the node @ns: the namespace node Report if a given namespace is is not in scope.
+
+xmlCtxtCheckString: @ctxt: the debug context @str: the string Do debugging on the string, currently it just checks the UTF-8 content
+
+xmlCtxtCheckName: @ctxt: the debug context @name: the name Do debugging on the name, for example the dictionnary status and conformance to the Name production.
+
+desactivated right now as it raises too many errors
+
+some case of entity substitution can lead to this
+
+TODO: check UTF8 content of the string
+
+Do a bit of checking
+
+Do a bit of checking
+
+Do a bit of checking
+
+Do a bit of checking
+
+xmlCtxtDumpAttr: @output: the FILE for the output @attr: the attribute @depth: the indentation level. Dumps debug information for the attribute
+
+Do a bit of checking
+
+xmlCtxtDumpAttrList: @output: the FILE for the output @attr: the attribute list @depth: the indentation level. Dumps debug information for the attribute list
+
+xmlCtxtDumpOneNode: @output: the FILE for the output @node: the node @depth: the indentation level. Dumps debug information for the element node, it is not recursive
+
+Do a bit of checking
+
+xmlCtxtDumpNode: @output: the FILE for the output @node: the node @depth: the indentation level. Dumps debug information for the element node, it is recursive
+
+xmlCtxtDumpNodeList: @output: the FILE for the output @node: the node list @depth: the indentation level. Dumps debug information for the list of element node, it is recursive
+
+xmlCtxtDumpDocumentHead: @output: the FILE for the output @doc: the document Dumps debug information cncerning the document, not recursive
+
+xmlCtxtDumpDocument: @output: the FILE for the output @doc: the document Dumps debug information for the document, it's recursive
+
+xmlCtxtDumpEntities: @output: the FILE for the output @doc: the document Dumps debug information for all the entities in use by the document
+
+xmlCtxtDumpDTD: @output: the FILE for the output @dtd: the DTD Dumps debug information for the DTD
+
+Public entry points for dump
+
+xmlDebugDumpString: @output: the FILE for the output @str: the string Dumps informations about the string, shorten it if necessary
+
+xmlDebugDumpAttr: @output: the FILE for the output @attr: the attribute @depth: the indentation level. Dumps debug information for the attribute
+
+xmlDebugDumpEntities: @output: the FILE for the output @doc: the document Dumps debug information for all the entities in use by the document
+
+xmlDebugDumpAttrList: @output: the FILE for the output @attr: the attribute list @depth: the indentation level. Dumps debug information for the attribute list
+
+xmlDebugDumpOneNode: @output: the FILE for the output @node: the node @depth: the indentation level. Dumps debug information for the element node, it is not recursive
+
+xmlDebugDumpNode: @output: the FILE for the output @node: the node @depth: the indentation level. Dumps debug information for the element node, it is recursive
+
+xmlDebugDumpNodeList: @output: the FILE for the output @node: the node list @depth: the indentation level. Dumps debug information for the list of element node, it is recursive
+
+xmlDebugDumpDocumentHead: @output: the FILE for the output @doc: the document Dumps debug information cncerning the document, not recursive
+
+xmlDebugDumpDocument: @output: the FILE for the output @doc: the document Dumps debug information for the document, it's recursive
+
+xmlDebugDumpDTD: @output: the FILE for the output @dtd: the DTD Dumps debug information for the DTD
+
+Public entry points for checkings
+
+xmlDebugCheckDocument: @output: the FILE for the output @doc: the document Check the document for potential content problems, and output the errors to @output Returns the number of errors found
+
+Helpers for Shell
+
+xmlLsCountNode: @node: the node to count Count the children of @node. Returns the number of children of @node.
+
+xmlLsOneNode: @output: the FILE for the output @node: the node to dump Dump to @output the type and name of @node.
+
+xmlBoolToText: @boolval: a bool to turn into text Convenient way to turn bool into text Returns a pointer to either "True" or "False"
+
+The XML shell related functions
+
+TODO: Improvement/cleanups for the XML shell - allow to shell out an editor on a subpart - cleanup function registrations (with help) and calling - provide registration routines
+
+xmlShellPrintXPathError: @errorType: valid xpath error id @arg: the argument that cause xpath to fail Print the xpath error to libxml default error channel
+
+xmlShellPrintNodeCtxt: @ctxt : a non-null shell context @node : a non-null node to print to the output FILE Print node to the output FILE
+
+xmlShellPrintNode: @node : a non-null node to print to the output FILE Print node to the output FILE
+
+LIBXML_OUTPUT_ENABLED
+
+xmlShellPrintXPathResultCtxt: @ctxt: a valid shell context @list: a valid result generated by an xpath evaluation Prints result to the output FILE
+
+LIBXML_OUTPUT_ENABLED
+
+xmlShellPrintXPathResult: @list: a valid result generated by an xpath evaluation Prints result to the output FILE
+
+xmlShellList: @ctxt: the shell context @arg: unused @node: a node @node2: unused Implements the XML shell function "ls" Does an Unix like listing of the given node (like a directory) Returns 0
+
+xmlShellBase: @ctxt: the shell context @arg: unused @node: a node @node2: unused Implements the XML shell function "base" dumps the current XML base of the node Returns 0
+
+xmlShellSetBase: @ctxt: the shell context @arg: the new base @node: a node @node2: unused Implements the XML shell function "setbase" change the current XML base of the node Returns 0
+
+xmlShellRegisterNamespace: @ctxt: the shell context @arg: a string in prefix=nsuri format @node: unused @node2: unused Implements the XML shell function "setns" register/unregister a prefix=namespace pair on the XPath context Returns 0 on success and a negative value otherwise.
+
+skip spaces
+
+hile((next) == ' ') next++
+
+find prefix
+
+find href
+
+do register namespace
+
+xmlShellRegisterRootNamespaces: @ctxt: the shell context @arg: unused @node: the root element @node2: unused Implements the XML shell function "setrootns" which registers all namespaces declarations found on the root element. Returns 0 on success and a negative value otherwise.
+
+xmlShellGrep: @ctxt: the shell context @arg: the string or regular expression to find @node: a node @node2: unused Implements the XML shell function "grep" dumps informations about the node (namespace, attributes, content). Returns 0
+
+Browse the full subtree, deep first
+
+deep first
+
+then siblings
+
+go up to parents->next if needed
+
+xmlShellDir: @ctxt: the shell context @arg: unused @node: a node @node2: unused Implements the XML shell function "dir" dumps informations about the node (namespace, attributes, content). Returns 0
+
+xmlShellSetContent: @ctxt: the shell context @value: the content as a string @node: a node @node2: unused Implements the XML shell function "dir" dumps informations about the node (namespace, attributes, content). Returns 0
+
+xmlShellRNGValidate: @ctxt: the shell context @schemas: the path to the Relax-NG schemas @node: a node @node2: unused Implements the XML shell function "relaxng" validating the instance against a Relax-NG schemas Returns 0
+
+xmlShellCat: @ctxt: the shell context @arg: unused @node: a node @node2: unused Implements the XML shell function "cat" dumps the serialization node content (XML or HTML). Returns 0
+
+LIBXML_HTML_ENABLED
+
+LIBXML_OUTPUT_ENABLED
+
+xmlShellLoad: @ctxt: the shell context @filename: the file name @node: unused @node2: unused Implements the XML shell function "load" loads a new document specified by the filename Returns 0 or -1 if loading failed
+
+LIBXML_HTML_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+xmlShellWrite: @ctxt: the shell context @filename: the file name @node: a node in the tree @node2: unused Implements the XML shell function "write" Write the current node to the filename, it saves the serialization of the subtree under the @node specified Returns 0 or -1 in case of error
+
+LIBXML_HTML_ENABLED
+
+xmlShellSave: @ctxt: the shell context @filename: the file name (optional) @node: unused @node2: unused Implements the XML shell function "save" Write the current document to the filename, or it's original name Returns 0 or -1 in case of error
+
+LIBXML_HTML_ENABLED
+
+LIBXML_OUTPUT_ENABLED
+
+xmlShellValidate: @ctxt: the shell context @dtd: the DTD URI (optional) @node: unused @node2: unused Implements the XML shell function "validate" Validate the document, if a DTD path is provided, then the validation is done against the given DTD. Returns 0 or -1 in case of error
+
+LIBXML_VALID_ENABLED
+
+xmlShellDu: @ctxt: the shell context @arg: unused @tree: a node defining a subtree @node2: unused Implements the XML shell function "du" show the structure of the subtree under node @tree If @tree is null, the command works on the current node. Returns 0 or -1 in case of error
+
+Browse the full subtree, deep first
+
+deep first
+
+then siblings
+
+go up to parents->next if needed
+
+exit condition
+
+xmlShellPwd: @ctxt: the shell context @buffer: the output buffer @node: a node @node2: unused Implements the XML shell function "pwd" Show the full path from the root to the node, if needed building thumblers when similar elements exists at a given ancestor level. The output is compatible with XPath commands. Returns 0 or -1 in case of error
+
+This test prevents buffer overflow, because this routine is only called by xmlShell, in which the second argument is 500 chars long. It is a dirty hack before a cleaner solution is found. Documentation should mention that the second argument must be at least 500 chars long, and could be stripped if too long.
+
+xmlShell: @doc: the initial document @filename: the output buffer @input: the line reading function @output: the output FILE, defaults to stdout if NULL Implements the XML shell This allow to load, validate, view, modify and save a document using a environment similar to a UNIX commandline.
+
+LIBXML_XPATH_ENABLED
+
+Get a new command line
+
+Parse the command itself
+
+Parse the argument
+
+start interpreting the command
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_OUTPUT_ENABLED
+
+LIBXML_VALID_ENABLED
+
+LIBXML_VALID_ENABLED
+
+LIBXML_OUTPUT_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_OUTPUT_ENABLED
+
+not xmlFree here !
+
+LIBXML_XPATH_ENABLED
+
+not xmlFree here !
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_DEBUG_ENABLED
+
+libxml.h
+
+
+
+%s
+
+%s
+
+%s
+
+Reference to default namespace not in scope\n
+
+Reference to namespace '%s' not in scope\n
+
+Reference to default namespace not on ancestor\n
+
+Reference to namespace '%s' not on ancestor\n
+
+String is not UTF-8 %s
+
+Name is NULL
+
+Name is not an NCName '%s'
+
+Name is not from the document dictionnary '%s'
+
+Node has no parent\n
+
+Node has no doc\n
+
+Document has no dictionnary\n
+
+pseudoroot
+
+Node doc differs from parent's one\n
+
+Attr has no prev and not first of attr list\n
+
+Node has no prev and not first of parent list\n
+
+Node prev->next : back link wrong\n
+
+Node has no next and not last of parent list\n
+
+Node next->prev : forward link wrong\n
+
+Node next->prev : forward link wrong\n
+
+nbktext
+
+Text node has wrong name '%s'
+
+Comment node has wrong name '%s'
+
+CData section has non NULL name '%s'
+
+(NULL)
+
+
+
+#%X
+
+...
+
+DTD node is NULL\n
+
+Node is not a DTD
+
+DTD(%s)
+
+DTD
+
+, PUBLIC %s
+
+, SYSTEM %s
+
+\n
+
+Attribute declaration is NULL\n
+
+Node is not an attribute declaration
+
+ATTRDECL(%s)
+
+Node attribute declaration has no name
+
+for %s
+
+Node attribute declaration has no element name
+
+CDATA
+
+ID
+
+IDREF
+
+IDREFS
+
+ENTITY
+
+ENTITIES
+
+NMTOKEN
+
+NMTOKENS
+
+ENUMERATION
+
+NOTATION
+
+|%s
+
+(%s
+
+)
+
+...)
+
+REQUIRED
+
+IMPLIED
+
+FIXED
+
+\"
+
+\"
+
+\n
+
+Element declaration is NULL\n
+
+Node is not an element declaration
+
+ELEMDECL(
+
+)
+
+Element declaration has no name
+
+, UNDEFINED
+
+, EMPTY
+
+, ANY
+
+, MIXED
+
+, MIXED
+
+%s
+
+\n
+
+Entity declaration is NULL\n
+
+Node is not an entity declaration
+
+ENTITYDECL(
+
+)
+
+Entity declaration has no name
+
+, internal\n
+
+, external parsed\n
+
+, unparsed\n
+
+, parameter\n
+
+, external parameter\n
+
+, predefined\n
+
+ExternalID=%s\n
+
+SystemID=%s\n
+
+URI=%s\n
+
+content=
+
+\n
+
+namespace node is NULL\n
+
+Node is not a namespace declaration
+
+Incomplete namespace %s href=NULL\n
+
+Incomplete default namespace href=NULL\n
+
+namespace %s href=
+
+default namespace href=
+
+\n
+
+Entity is NULL\n
+
+INTERNAL_GENERAL_ENTITY
+
+EXTERNAL_GENERAL_PARSED_ENTITY
+
+EXTERNAL_GENERAL_UNPARSED_ENTITY
+
+INTERNAL_PARAMETER_ENTITY
+
+EXTERNAL_PARAMETER_ENTITY
+
+ENTITY_%d !
+
+%s\n
+
+ExternalID=%s\n
+
+SystemID=%s\n
+
+URI=%s\n
+
+content=
+
+\n
+
+Attr is NULL
+
+ATTRIBUTE
+
+\n
+
+Attribute has no name
+
+node is NULL\n
+
+ELEMENT
+
+:
+
+\n
+
+Error, ATTRIBUTE found here\n
+
+TEXT no enc
+
+TEXT
+
+compact\n
+
+interned\n
+
+\n
+
+\n
+
+CDATA_SECTION\n
+
+ENTITY_REF(%s)\n
+
+ENTITY\n
+
+PI %s\n
+
+COMMENT\n
+
+Error, DOCUMENT found here\n
+
+DOCUMENT_TYPE\n
+
+DOCUMENT_FRAG\n
+
+NOTATION\n
+
+INCLUDE START\n
+
+INCLUDE END\n
+
+Unknown node type %d\n
+
+PBM: doc == NULL !!!\n
+
+content=
+
+\n
+
+node is NULL\n
+
+DOCUMENT == NULL !\n
+
+Misplaced ELEMENT node\n
+
+Misplaced ATTRIBUTE node\n
+
+Misplaced TEXT node\n
+
+Misplaced CDATA node\n
+
+Misplaced ENTITYREF node\n
+
+Misplaced ENTITY node\n
+
+Misplaced PI node\n
+
+Misplaced COMMENT node\n
+
+DOCUMENT\n
+
+HTML DOCUMENT\n
+
+Misplaced DOCTYPE node\n
+
+Misplaced FRAGMENT node\n
+
+Misplaced NOTATION node\n
+
+Unknown node type %d\n
+
+name=
+
+\n
+
+version=
+
+\n
+
+encoding=
+
+\n
+
+URL=
+
+\n
+
+standalone=true\n
+
+s recursive */ static void xmlCtxtDumpDocument(xmlDebugCtxtPtr ctxt, xmlDocPtr doc) { if (doc == NULL) { if (!ctxt->check) fprintf(ctxt->output, "DOCUMENT == NULL !\n"); return; } xmlCtxtDumpDocumentHead(ctxt, doc); if (((doc->type == XML_DOCUMENT_NODE) || (doc->type == XML_HTML_DOCUMENT_NODE)) && (doc->children != NULL)) { ctxt->depth++; xmlCtxtDumpNodeList(ctxt, doc->children); ctxt->depth--; } } static void xmlCtxtDumpEntityCallback(xmlEntityPtr cur, xmlDebugCtxtPtr ctxt) { if (cur == NULL) { if (!ctxt->check) fprintf(ctxt->output, "Entity is NULL"); return; } if (!ctxt->check) { fprintf(ctxt->output, "%s : ", (char *) cur->name); switch (cur->etype) { case XML_INTERNAL_GENERAL_ENTITY: fprintf(ctxt->output, "INTERNAL GENERAL, "); break; case XML_EXTERNAL_GENERAL_PARSED_ENTITY: fprintf(ctxt->output, "EXTERNAL PARSED, "); break; case XML_EXTERNAL_GENERAL_UNPARSED_ENTITY: fprintf(ctxt->output, "EXTERNAL UNPARSED, "); break; case XML_INTERNAL_PARAMETER_ENTITY: fprintf(ctxt->output, "INTERNAL PARAMETER, "); break; case XML_EXTERNAL_PARAMETER_ENTITY: fprintf(ctxt->output, "EXTERNAL PARAMETER, "); break; default: xmlDebugErr2(ctxt, XML_CHECK_ENTITY_TYPE, "Unknown entity type %d\n", cur->etype); } if (cur->ExternalID != NULL) fprintf(ctxt->output, "ID \"%s\"", (char *) cur->ExternalID); if (cur->SystemID != NULL) fprintf(ctxt->output, "SYSTEM \"%s\"", (char *) cur->SystemID); if (cur->orig != NULL) fprintf(ctxt->output, "\n orig \"%s\"", (char *) cur->orig); if ((cur->type != XML_ELEMENT_NODE) && (cur->content != NULL)) fprintf(ctxt->output, "\n content \"%s\"", (char *) cur->content); fprintf(ctxt->output, "\n"); } } /** * xmlCtxtDumpEntities: * @output: the FILE * for the output * @doc: the document * * Dumps debug information for all the entities in use by the document */ static void xmlCtxtDumpEntities(xmlDebugCtxtPtr ctxt, xmlDocPtr doc) { if (doc == NULL) return; xmlCtxtDumpDocHead(ctxt, doc); if ((doc->intSubset != NULL) && (doc->intSubset->entities != NULL)) { xmlEntitiesTablePtr table = (xmlEntitiesTablePtr) doc->intSubset->entities; if (!ctxt->check) fprintf(ctxt->output, "Entities in internal subset\n"); xmlHashScan(table, (xmlHashScanner) xmlCtxtDumpEntityCallback, ctxt); } else fprintf(ctxt->output, "No entities in internal subset\n"); if ((doc->extSubset != NULL) && (doc->extSubset->entities != NULL)) { xmlEntitiesTablePtr table = (xmlEntitiesTablePtr) doc->extSubset->entities; if (!ctxt->check) fprintf(ctxt->output, "Entities in external subset\n"); xmlHashScan(table, (xmlHashScanner) xmlCtxtDumpEntityCallback, ctxt); } else if (!ctxt->check) fprintf(ctxt->output, "No entities in external subset\n"); } /** * xmlCtxtDumpDTD: * @output: the FILE * for the output * @dtd: the DTD * * Dumps debug information for the DTD */ static void xmlCtxtDumpDTD(xmlDebugCtxtPtr ctxt, xmlDtdPtr dtd) { if (dtd == NULL) { if (!ctxt->check) fprintf(ctxt->output, "DTD is NULL\n"); return; } xmlCtxtDumpDtdNode(ctxt, dtd); if (dtd->children == NULL) fprintf(ctxt->output, " DTD is empty\n"); else { ctxt->depth++; xmlCtxtDumpNodeList(ctxt, dtd->children); ctxt->depth--; } } /************************************************************************ * * * Public entry points for dump * * * ************************************************************************/ /** * xmlDebugDumpString: * @output: the FILE * for the output * @str: the string * * Dumps informations about the string, shorten it if necessary */ void xmlDebugDumpString(FILE * output, const xmlChar * str) { int i; if (output == NULL) output = stdout; if (str == NULL) { fprintf(output, "(NULL)"); return; } for (i = 0; i < 40; i++) if (str[i] == 0) return; else if (IS_BLANK_CH(str[i])) fputc(
+
+, output); else if (str[i] >= 0x80) fprintf(output, "#%X", str[i]); else fputc(str[i], output); fprintf(output, "..."); } /** * xmlDebugDumpAttr: * @output: the FILE * for the output * @attr: the attribute * @depth: the indentation level. * * Dumps debug information for the attribute */ void xmlDebugDumpAttr(FILE *output, xmlAttrPtr attr, int depth) { xmlDebugCtxt ctxt; if (output == NULL) return; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; ctxt.depth = depth; xmlCtxtDumpAttr(&ctxt, attr); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpEntities: * @output: the FILE * for the output * @doc: the document * * Dumps debug information for all the entities in use by the document */ void xmlDebugDumpEntities(FILE * output, xmlDocPtr doc) { xmlDebugCtxt ctxt; if (output == NULL) return; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; xmlCtxtDumpEntities(&ctxt, doc); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpAttrList: * @output: the FILE * for the output * @attr: the attribute list * @depth: the indentation level. * * Dumps debug information for the attribute list */ void xmlDebugDumpAttrList(FILE * output, xmlAttrPtr attr, int depth) { xmlDebugCtxt ctxt; if (output == NULL) return; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; ctxt.depth = depth; xmlCtxtDumpAttrList(&ctxt, attr); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpOneNode: * @output: the FILE * for the output * @node: the node * @depth: the indentation level. * * Dumps debug information for the element node, it is not recursive */ void xmlDebugDumpOneNode(FILE * output, xmlNodePtr node, int depth) { xmlDebugCtxt ctxt; if (output == NULL) return; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; ctxt.depth = depth; xmlCtxtDumpOneNode(&ctxt, node); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpNode: * @output: the FILE * for the output * @node: the node * @depth: the indentation level. * * Dumps debug information for the element node, it is recursive */ void xmlDebugDumpNode(FILE * output, xmlNodePtr node, int depth) { xmlDebugCtxt ctxt; if (output == NULL) output = stdout; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; ctxt.depth = depth; xmlCtxtDumpNode(&ctxt, node); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpNodeList: * @output: the FILE * for the output * @node: the node list * @depth: the indentation level. * * Dumps debug information for the list of element node, it is recursive */ void xmlDebugDumpNodeList(FILE * output, xmlNodePtr node, int depth) { xmlDebugCtxt ctxt; if (output == NULL) output = stdout; xmlCtxtDumpInitCtxt(&ctxt); ctxt.output = output; ctxt.depth = depth; xmlCtxtDumpNodeList(&ctxt, node); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpDocumentHead: * @output: the FILE * for the output * @doc: the document * * Dumps debug information cncerning the document, not recursive */ void xmlDebugDumpDocumentHead(FILE * output, xmlDocPtr doc) { xmlDebugCtxt ctxt; if (output == NULL) output = stdout; xmlCtxtDumpInitCtxt(&ctxt); ctxt.options |= DUMP_TEXT_TYPE; ctxt.output = output; xmlCtxtDumpDocumentHead(&ctxt, doc); xmlCtxtDumpCleanCtxt(&ctxt); } /** * xmlDebugDumpDocument: * @output: the FILE * for the output * @doc: the document * * Dumps debug information for the document, it
+
+NULL\n
+
+-
+
+a
+
+t
+
+C
+
+e
+
+E
+
+p
+
+c
+
+d
+
+h
+
+T
+
+F
+
+N
+
+n
+
+?
+
+a
+
+-
+
+n
+
+-
+
+%8d
+
+%s
+
+%s
+
+%s
+
+%s
+
+%s
+
+default -> %s
+
+%s -> %s
+
+%s
+
+\n
+
+True
+
+False
+
+True
+
+False
+
+Result
+
+%s: no such node\n
+
+%s is a Boolean\n
+
+%s is a number\n
+
+%s is a string\n
+
+%s is a point\n
+
+%s is a range\n
+
+%s is a range\n
+
+%s is user-defined\n
+
+%s is an XSLT value tree\n
+
+Try casting the result string function (xpath builtin)\n
+
+\n
+
+Empty node set\n
+
+Node set\n
+
+Is a Boolean:%s\n
+
+Is a number:%0g\n
+
+Is a string:%s\n
+
+ls
+
+NULL\n
+
+base
+
+NULL\n
+
+No base found !!!\n
+
+%s\n
+
+setbase
+
+setns
+
+
+
+\0
+
+=
+
+setns: prefix=[nsuri] required\n
+
+\0
+
+
+
+\0
+
+Error: unable to register NS with prefix=\"%s\" and href=\"%s\"\n
+
+setrootns
+
+defaultns
+
+grep
+
+?
+
+*
+
+.
+
+[
+
+%s :
+
+%s :
+
+dir
+
+NULL\n
+
+dir
+
+NULL\n
+
+NULL\n
+
+failed to parse content\n
+
+relaxng
+
+Relax-NG schema %s failed to compile\n
+
+%s validates\n
+
+%s fails to validate\n
+
+%s validation generated an internal error\n
+
+cat
+
+NULL\n
+
+\n
+
+load
+
+HTML support not compiled in\n
+
+write
+
+Cannot write to %s\n
+
+Failed to write to %s\n
+
+Failed to write to %s\n
+
+Failed to write to %s\n
+
+w
+
+Failed to write to %s\n
+
+save
+
+s original name * * Returns 0 or -1 in case of error */ int xmlShellSave(xmlShellCtxtPtr ctxt, char *filename, xmlNodePtr node ATTRIBUTE_UNUSED, xmlNodePtr node2 ATTRIBUTE_UNUSED) { if ((ctxt == NULL) || (ctxt->doc == NULL)) return (-1); if ((filename == NULL) || (filename[0] == 0)) filename = ctxt->filename; if (filename == NULL) return (-1); #ifdef W_OK if (access((char *) filename, W_OK)) { xmlGenericError(xmlGenericErrorContext, "Cannot save to %s\n", filename); return (-1); } #endif switch (ctxt->doc->type) { case XML_DOCUMENT_NODE: if (xmlSaveFile((char *) filename, ctxt->doc) < 0) { xmlGenericError(xmlGenericErrorContext, "Failed to save to %s\n", filename); } break; case XML_HTML_DOCUMENT_NODE: #ifdef LIBXML_HTML_ENABLED if (htmlSaveFile((char *) filename, ctxt->doc) < 0) { xmlGenericError(xmlGenericErrorContext, "Failed to save to %s\n", filename); } #else if (xmlSaveFile((char *) filename, ctxt->doc) < 0) { xmlGenericError(xmlGenericErrorContext, "Failed to save to %s\n", filename); } #endif /* LIBXML_HTML_ENABLED */ break; default: xmlGenericError(xmlGenericErrorContext, "To save to subparts of a document use the
+
+command\n"); return (-1); } return (0); } #endif /* LIBXML_OUTPUT_ENABLED */ #ifdef LIBXML_VALID_ENABLED /** * xmlShellValidate: * @ctxt: the shell context * @dtd: the DTD URI (optional) * @node: unused * @node2: unused * * Implements the XML shell function "validate" * Validate the document, if a DTD path is provided, then the validation * is done against the given DTD. * * Returns 0 or -1 in case of error */ int xmlShellValidate(xmlShellCtxtPtr ctxt, char *dtd, xmlNodePtr node ATTRIBUTE_UNUSED, xmlNodePtr node2 ATTRIBUTE_UNUSED) { xmlValidCtxt vctxt; int res = -1; if ((ctxt == NULL) || (ctxt->doc == NULL)) return(-1); vctxt.userData = stderr; vctxt.error = (xmlValidityErrorFunc) fprintf; vctxt.warning = (xmlValidityWarningFunc) fprintf; if ((dtd == NULL) || (dtd[0] == 0)) { res = xmlValidateDocument(&vctxt, ctxt->doc); } else { xmlDtdPtr subset; subset = xmlParseDTD(NULL, (xmlChar *) dtd); if (subset != NULL) { res = xmlValidateDtd(&vctxt, ctxt->doc, subset); xmlFreeDtd(subset); } } return (res); } #endif /* LIBXML_VALID_ENABLED */ /** * xmlShellDu: * @ctxt: the shell context * @arg: unused * @tree: a node defining a subtree * @node2: unused * * Implements the XML shell function "du" * show the structure of the subtree under node @tree * If @tree is null, the command works on the current node. * * Returns 0 or -1 in case of error */ int xmlShellDu(xmlShellCtxtPtr ctxt, char *arg ATTRIBUTE_UNUSED, xmlNodePtr tree, xmlNodePtr node2 ATTRIBUTE_UNUSED) { xmlNodePtr node; int indent = 0, i; if (!ctxt) return (-1); if (tree == NULL) return (-1); node = tree; while (node != NULL) { if ((node->type == XML_DOCUMENT_NODE) || (node->type == XML_HTML_DOCUMENT_NODE)) { fprintf(ctxt->output, "/\n"); } else if (node->type == XML_ELEMENT_NODE) { for (i = 0; i < indent; i++) fprintf(ctxt->output, " "); fprintf(ctxt->output, "%s\n", node->name); } else { } /* * Browse the full subtree, deep first */ if ((node->type == XML_DOCUMENT_NODE) || (node->type == XML_HTML_DOCUMENT_NODE)) { node = ((xmlDocPtr) node)->children; } else if ((node->children != NULL) && (node->type != XML_ENTITY_REF_NODE)) { /* deep first */ node = node->children; indent++; } else if ((node != tree) && (node->next != NULL)) { /* then siblings */ node = node->next; } else if (node != tree) { /* go up to parents->next if needed */ while (node != tree) { if (node->parent != NULL) { node = node->parent; indent--; } if ((node != tree) && (node->next != NULL)) { node = node->next; break; } if (node->parent == NULL) { node = NULL; break; } if (node == tree) { node = NULL; break; } } /* exit condition */ if (node == tree) node = NULL; } else node = NULL; } return (0); } /** * xmlShellPwd: * @ctxt: the shell context * @buffer: the output buffer * @node: a node * @node2: unused * * Implements the XML shell function "pwd" * Show the full path from the root to the node, if needed building * thumblers when similar elements exists at a given ancestor level. * The output is compatible with XPath commands. * * Returns 0 or -1 in case of error */ int xmlShellPwd(xmlShellCtxtPtr ctxt ATTRIBUTE_UNUSED, char *buffer, xmlNodePtr node, xmlNodePtr node2 ATTRIBUTE_UNUSED) { xmlChar *path; if ((node == NULL) || (buffer == NULL)) return (-1); path = xmlGetNodePath(node); if (path == NULL) return (-1); /* * This test prevents buffer overflow, because this routine * is only called by xmlShell, in which the second argument is * 500 chars long. * It is a dirty hack before a cleaner solution is found. * Documentation should mention that the second argument must * be at least 500 chars long, and could be stripped if too long. */ snprintf(buffer, 499, "%s", path); buffer[499] =
+
+; xmlFree(path); return (0); } /** * xmlShell: * @doc: the initial document * @filename: the output buffer * @input: the line reading function * @output: the output FILE*, defaults to stdout if NULL * * Implements the XML shell * This allow to load, validate, view, modify and save a document * using a environment similar to a UNIX commandline. */ void xmlShell(xmlDocPtr doc, char *filename, xmlShellReadlineFunc input, FILE * output) { char prompt[500] = "/ > "; char *cmdline = NULL, *cur; char command[100]; char arg[400]; int i; xmlShellCtxtPtr ctxt; xmlXPathObjectPtr list; if (doc == NULL) return; if (filename == NULL) return; if (input == NULL) return; if (output == NULL) output = stdout; ctxt = (xmlShellCtxtPtr) xmlMalloc(sizeof(xmlShellCtxt)); if (ctxt == NULL) return; ctxt->loaded = 0; ctxt->doc = doc; ctxt->input = input; ctxt->output = output; ctxt->filename = (char *) xmlStrdup((xmlChar *) filename); ctxt->node = (xmlNodePtr) ctxt->doc; #ifdef LIBXML_XPATH_ENABLED ctxt->pctxt = xmlXPathNewContext(ctxt->doc); if (ctxt->pctxt == NULL) { xmlFree(ctxt); return; } #endif /* LIBXML_XPATH_ENABLED */ while (1) { if (ctxt->node == (xmlNodePtr) ctxt->doc) snprintf(prompt, sizeof(prompt), "%s > ", "/"); else if ((ctxt->node != NULL) && (ctxt->node->name)) snprintf(prompt, sizeof(prompt), "%s > ", ctxt->node->name); else snprintf(prompt, sizeof(prompt), "? > "); prompt[sizeof(prompt) - 1] = 0; /* * Get a new command line */ cmdline = ctxt->input(prompt); if (cmdline == NULL) break; /* * Parse the command itself */ cur = cmdline; while ((*cur ==
+
+) || (*cur ==
+
+)) cur++; i = 0; while ((*cur !=
+
+) && (*cur !=
+
+) && (*cur !=
+
+) && (*cur !=
+
+)) { if (*cur == 0) break; command[i++] = *cur++; } command[i] = 0; if (i == 0) continue; /* * Parse the argument */ while ((*cur ==
+
+) || (*cur ==
+
+)) cur++; i = 0; while ((*cur !=
+
+) && (*cur !=
+
+) && (*cur != 0)) { if (*cur == 0) break; arg[i++] = *cur++; } arg[i] = 0; /* * start interpreting the command */ if (!strcmp(command, "exit")) break; if (!strcmp(command, "quit")) break; if (!strcmp(command, "bye")) break; if (!strcmp(command, "help")) { fprintf(ctxt->output, "\tbase display XML base of the node\n"); fprintf(ctxt->output, "\tsetbase URI change the XML base of the node\n"); fprintf(ctxt->output, "\tbye leave shell\n"); fprintf(ctxt->output, "\tcat [node] display node or current node\n"); fprintf(ctxt->output, "\tcd [path] change directory to path or to root\n"); fprintf(ctxt->output, "\tdir [path] dumps informations about the node (namespace, attributes, content)\n"); fprintf(ctxt->output, "\tdu [path] show the structure of the subtree under path or the current node\n"); fprintf(ctxt->output, "\texit leave shell\n"); fprintf(ctxt->output, "\thelp display this help\n"); fprintf(ctxt->output, "\tfree display memory usage\n"); fprintf(ctxt->output, "\tload [name] load a new document with name\n"); fprintf(ctxt->output, "\tls [path] list contents of path or the current directory\n"); fprintf(ctxt->output, "\tset xml_fragment replace the current node content with the fragment parsed in context\n"); #ifdef LIBXML_XPATH_ENABLED fprintf(ctxt->output, "\txpath expr evaluate the XPath expression in that context and print the result\n"); fprintf(ctxt->output, "\tsetns nsreg register a namespace to a prefix in the XPath evaluation context\n"); fprintf(ctxt->output, "\t format for nsreg is: prefix=[nsuri] (i.e. prefix= unsets a prefix)\n"); fprintf(ctxt->output, "\tsetrootns register all namespace found on the root element\n"); fprintf(ctxt->output, "\t the default namespace if any uses
+
+); #endif /* LIBXML_XPATH_ENABLED */ fprintf(ctxt->output,
+
+); fprintf(ctxt->output,
+
+); #ifdef LIBXML_OUTPUT_ENABLED fprintf(ctxt->output,
+
+); fprintf(ctxt->output,
+
+); #endif /* LIBXML_OUTPUT_ENABLED */ #ifdef LIBXML_VALID_ENABLED fprintf(ctxt->output,
+
+); #endif /* LIBXML_VALID_ENABLED */ #ifdef LIBXML_SCHEMAS_ENABLED fprintf(ctxt->output,
+
+); #endif fprintf(ctxt->output,
+
+); #ifdef LIBXML_VALID_ENABLED } else if (!strcmp(command,
+
+)) { xmlShellValidate(ctxt, arg, NULL, NULL); #endif /* LIBXML_VALID_ENABLED */ } else if (!strcmp(command,
+
+)) { xmlShellLoad(ctxt, arg, NULL, NULL); #ifdef LIBXML_SCHEMAS_ENABLED } else if (!strcmp(command,
+
+)) { xmlShellRNGValidate(ctxt, arg, NULL, NULL); #endif #ifdef LIBXML_OUTPUT_ENABLED } else if (!strcmp(command,
+
+)) { xmlShellSave(ctxt, arg, NULL, NULL); } else if (!strcmp(command,
+
+)) { if ((arg == NULL) || (arg[0] == 0)) xmlGenericError(xmlGenericErrorContext,
+
+); else xmlShellWrite(ctxt, arg, NULL, NULL); #endif /* LIBXML_OUTPUT_ENABLED */ } else if (!strcmp(command,
+
+)) { xmlShellGrep(ctxt, arg, ctxt->node, NULL); } else if (!strcmp(command,
+
+)) { if (arg[0] == 0) { xmlMemShow(ctxt->output, 0); } else { int len = 0; sscanf(arg,
+
+, &len); xmlMemShow(ctxt->output, len); } } else if (!strcmp(command,
+
+)) { char dir[500]; if (!xmlShellPwd(ctxt, dir, ctxt->node, NULL)) fprintf(ctxt->output,
+
+, dir); } else if (!strcmp(command,
+
+)) { xmlShellDu(ctxt, NULL, ctxt->node, NULL); } else if (!strcmp(command,
+
+)) { xmlShellBase(ctxt, NULL, ctxt->node, NULL); } else if (!strcmp(command,
+
+)) { xmlShellSetContent(ctxt, arg, ctxt->node, NULL); #ifdef LIBXML_XPATH_ENABLED } else if (!strcmp(command,
+
+)) { if (arg[0] == 0) { xmlGenericError(xmlGenericErrorContext,
+
+); } else { xmlShellRegisterNamespace(ctxt, arg, NULL, NULL); } } else if (!strcmp(command,
+
+)) { xmlNodePtr root; root = xmlDocGetRootElement(ctxt->doc); xmlShellRegisterRootNamespaces(ctxt, NULL, root, NULL); } else if (!strcmp(command,
+
+)) { if (arg[0] == 0) { xmlGenericError(xmlGenericErrorContext,
+
+); } else { ctxt->pctxt->node = ctxt->node; list = xmlXPathEval((xmlChar *) arg, ctxt->pctxt); xmlXPathDebugDumpObject(ctxt->output, list, 0); xmlXPathFreeObject(list); } #endif /* LIBXML_XPATH_ENABLED */ #ifdef LIBXML_TREE_ENABLED } else if (!strcmp(command,
+
+)) { xmlShellSetBase(ctxt, arg, ctxt->node, NULL); #endif } else if ((!strcmp(command,
+
+)) || (!strcmp(command,
+
+))) { int dir = (!strcmp(command,
+
+)); if (arg[0] == 0) { if (dir) xmlShellDir(ctxt, NULL, ctxt->node, NULL); else xmlShellList(ctxt, NULL, ctxt->node, NULL); } else { ctxt->pctxt->node = ctxt->node; #ifdef LIBXML_XPATH_ENABLED ctxt->pctxt->node = ctxt->node; list = xmlXPathEval((xmlChar *) arg, ctxt->pctxt); #else list = NULL; #endif /* LIBXML_XPATH_ENABLED */ if (list != NULL) { switch (list->type) { case XPATH_UNDEFINED: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NODESET:{ int indx; if (list->nodesetval == NULL) break; for (indx = 0; indx < list->nodesetval->nodeNr; indx++) { if (dir) xmlShellDir(ctxt, NULL, list->nodesetval-> nodeTab[indx], NULL); else xmlShellList(ctxt, NULL, list->nodesetval-> nodeTab[indx], NULL); } break; } case XPATH_BOOLEAN: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NUMBER: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_STRING: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_POINT: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_RANGE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_LOCATIONSET: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_USERS: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_XSLT_TREE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; } #ifdef LIBXML_XPATH_ENABLED xmlXPathFreeObject(list); #endif } else { xmlGenericError(xmlGenericErrorContext,
+
+, arg); } ctxt->pctxt->node = NULL; } } else if (!strcmp(command,
+
+)) { if (arg[0] == 0) { ctxt->node = (xmlNodePtr) ctxt->doc; } else { #ifdef LIBXML_XPATH_ENABLED ctxt->pctxt->node = ctxt->node; list = xmlXPathEval((xmlChar *) arg, ctxt->pctxt); #else list = NULL; #endif /* LIBXML_XPATH_ENABLED */ if (list != NULL) { switch (list->type) { case XPATH_UNDEFINED: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NODESET: if (list->nodesetval != NULL) { if (list->nodesetval->nodeNr == 1) { ctxt->node = list->nodesetval->nodeTab[0]; if ((ctxt->node != NULL) && (ctxt->node->type == XML_NAMESPACE_DECL)) { xmlGenericError(xmlGenericErrorContext,
+
+); ctxt->node = NULL; } } else xmlGenericError(xmlGenericErrorContext,
+
+, arg, list->nodesetval->nodeNr); } else xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_BOOLEAN: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NUMBER: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_STRING: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_POINT: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_RANGE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_LOCATIONSET: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_USERS: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_XSLT_TREE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; } #ifdef LIBXML_XPATH_ENABLED xmlXPathFreeObject(list); #endif } else { xmlGenericError(xmlGenericErrorContext,
+
+, arg); } ctxt->pctxt->node = NULL; } #ifdef LIBXML_OUTPUT_ENABLED } else if (!strcmp(command,
+
+)) { if (arg[0] == 0) { xmlShellCat(ctxt, NULL, ctxt->node, NULL); } else { ctxt->pctxt->node = ctxt->node; #ifdef LIBXML_XPATH_ENABLED ctxt->pctxt->node = ctxt->node; list = xmlXPathEval((xmlChar *) arg, ctxt->pctxt); #else list = NULL; #endif /* LIBXML_XPATH_ENABLED */ if (list != NULL) { switch (list->type) { case XPATH_UNDEFINED: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NODESET:{ int indx; if (list->nodesetval == NULL) break; for (indx = 0; indx < list->nodesetval->nodeNr; indx++) { if (i > 0) fprintf(ctxt->output,
+
+); xmlShellCat(ctxt, NULL, list->nodesetval-> nodeTab[indx], NULL); } break; } case XPATH_BOOLEAN: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_NUMBER: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_STRING: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_POINT: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_RANGE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_LOCATIONSET: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_USERS: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; case XPATH_XSLT_TREE: xmlGenericError(xmlGenericErrorContext,
+
+, arg); break; } #ifdef LIBXML_XPATH_ENABLED xmlXPathFreeObject(list); #endif } else { xmlGenericError(xmlGenericErrorContext,
+
+, arg); } ctxt->pctxt->node = NULL; } #endif /* LIBXML_OUTPUT_ENABLED */ } else { xmlGenericError(xmlGenericErrorContext,
+
+, command); } free(cmdline); /* not xmlFree here ! */ cmdline = NULL; } #ifdef LIBXML_XPATH_ENABLED xmlXPathFreeContext(ctxt->pctxt); #endif /* LIBXML_XPATH_ENABLED */ if (ctxt->loaded) { xmlFreeDoc(ctxt->doc); } if (ctxt->filename != NULL) xmlFree(ctxt->filename); xmlFree(ctxt); if (cmdline != NULL) free(cmdline); /* not xmlFree here ! */ } #endif /* LIBXML_XPATH_ENABLED */ #define bottom_debugXML #include
+
+0x80)
+
+0x80)
+
+Summary: Tree debugging APIs Description: Interfaces to a set of routines used for debugging the tree produced by the XML parser. Copy: See Copyright for the status of this software. Author: Daniel Veillard
+
+The standard Dump routines.
+
+Checking routines
+
+XML shell helpers
+
+The XML shell related structures and functions
+
+xmlShellReadlineFunc: @prompt: a string prompt This is a generic signature for the XML shell input function. Returns a string which will be freed by the Shell.
+
+xmlShellCtxt: A debugging shell context. TODO: add the defined function tables.
+
+xmlShellCmd: @ctxt: a shell context @arg: a string argument @node: a first node @node2: a second node This is a generic signature for the XML shell functions. Returns an int, negative returns indicating errors.
+
+LIBXML_OUTPUT_ENABLED
+
+LIBXML_VALID_ENABLED
+
+The Shell interface.
+
+LIBXML_XPATH_ENABLED
+
+LIBXML_DEBUG_ENABLED
+
+__DEBUG_XML__
+
+C
+

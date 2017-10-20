@@ -1,0 +1,82 @@
+Copyright 2015-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Method associated with this operation
+
+Engine that implements this method or NULL if builtin
+
+Key: may be NULL
+
+Peer key for key agreement, may be NULL
+
+Actual operation
+
+Algorithm specific data
+
+Application specific data
+
+Keygen callback
+
+implementation specific keygen data
+
+EVP_PKEY_CTX
+
+EVP_PKEY_METHOD
+
+how big does the ctx->md_data need to be
+
+control function
+
+EVP_MD
+
+Default value for variable length ciphers
+
+Various flags
+
+init key
+
+encrypt/decrypt data
+
+cleanup ctx
+
+how big ctx->cipher_data needs to be
+
+Populate a ASN1_TYPE with parameters
+
+Get parameters from a ASN1_TYPE
+
+Miscellaneous operations
+
+Application data
+
+EVP_CIPHER
+
+Macros to code block cipher wrappers
+
+Wrapper functions for each cipher mode
+
+#define BLOCK_CIPHER_defs(cname, kstruct, \ nid, block_size, key_len, iv_len, flags,\ init_key, cleanup, set_asn1, get_asn1, ctrl)\ static const EVP_CIPHER cname##_cbc = {\ nid##_cbc, block_size, key_len, iv_len, \ flags | EVP_CIPH_CBC_MODE,\ init_key,\ cname##_cbc_cipher,\ cleanup,\ sizeof(EVP_CIPHER_CTX)-sizeof((((EVP_CIPHER_CTX )NULL)->c))+\ sizeof((((EVP_CIPHER_CTX )NULL)->c.kstruct)),\ set_asn1, get_asn1,\ ctrl, \ NULL \ };\ const EVP_CIPHER EVP_##cname##_cbc(void) { return &cname##_cbc; }\ static const EVP_CIPHER cname##_cfb = {\ nid##_cfb64, 1, key_len, iv_len, \ flags | EVP_CIPH_CFB_MODE,\ init_key,\ cname##_cfb_cipher,\ cleanup,\ sizeof(EVP_CIPHER_CTX)-sizeof((((EVP_CIPHER_CTX )NULL)->c))+\ sizeof((((EVP_CIPHER_CTX )NULL)->c.kstruct)),\ set_asn1, get_asn1,\ ctrl,\ NULL \ };\ const EVP_CIPHER EVP_##cname##_cfb(void) { return &cname##_cfb; }\ static const EVP_CIPHER cname##_ofb = {\ nid##_ofb64, 1, key_len, iv_len, \ flags | EVP_CIPH_OFB_MODE,\ init_key,\ cname##_ofb_cipher,\ cleanup,\ sizeof(EVP_CIPHER_CTX)-sizeof((((EVP_CIPHER_CTX )NULL)->c))+\ sizeof((((EVP_CIPHER_CTX )NULL)->c.kstruct)),\ set_asn1, get_asn1,\ ctrl,\ NULL \ };\ const EVP_CIPHER EVP_##cname##_ofb(void) { return &cname##_ofb; }\ static const EVP_CIPHER cname##_ecb = {\ nid##_ecb, block_size, key_len, iv_len, \ flags | EVP_CIPH_ECB_MODE,\ init_key,\ cname##_ecb_cipher,\ cleanup,\ sizeof(EVP_CIPHER_CTX)-sizeof((((EVP_CIPHER_CTX )NULL)->c))+\ sizeof((((EVP_CIPHER_CTX )NULL)->c.kstruct)),\ set_asn1, get_asn1,\ ctrl,\ NULL \ };\ const EVP_CIPHER EVP_##cname##_ecb(void) { return &cname##_ecb; }
+
+Type needs to be a bit field Sub-type needs to be for variations on the method, as in, can it do arbitrary encryption....
+
+RSA
+
+DSA
+
+DH
+
+ECC
+
+[ 0 ]
+
+EVP_PKEY
+
+Pulling defines out of C soure files
+
+www.openssl.org/source/license.html
+
+License
+
+internal/refcount.h
+
+0x0302
+

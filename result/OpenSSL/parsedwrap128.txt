@@ -1,0 +1,126 @@
+Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Beware! Following wrapping modes were designed for AES but this implementation allows you to use them for any 128 bit block cipher.
+
+RFC 3394 section 2.2.3.1 Default Initial Value
+
+RFC 5649 section 3 Alternative Initial Value 32-bit constant
+
+Input size limit: lower than maximum of standards but far larger than anything that will be used in practice.
+
+Wrapping according to RFC 3394 section 2.2.1. @param[in] key Key value. @param[in] iv IV value. Length = 8 bytes. NULL = use default_iv. @param[in] in Plaintext as n 64-bit blocks, n >= 2. @param[in] inlen Length of in. @param[out] out Ciphertext. Minimal buffer length = (inlen + 8) bytes. Input and output buffers can overlap if block function supports that. @param[in] block Block processing function. @return 0 if inlen does not consist of n 64-bit blocks, n >= 2. or if inlen > CRYPTO128_WRAP_MAX. Output length if wrapping succeeded.
+
+Unwrapping according to RFC 3394 section 2.2.2 steps 1-2. The IV check (step 3) is responsibility of the caller. @param[in] key Key value. @param[out] iv Unchecked IV value. Minimal buffer length = 8 bytes. @param[out] out Plaintext without IV. Minimal buffer length = (inlen - 8) bytes. Input and output buffers can overlap if block function supports that. @param[in] in Ciphertext as n 64-bit blocks. @param[in] inlen Length of in. @param[in] block Block processing function. @return 0 if inlen is out of range [24, CRYPTO128_WRAP_MAX] or if inlen is not a multiple of 8. Output length otherwise.
+
+Unwrapping according to RFC 3394 section 2.2.2, including the IV check. The first block of plaintext has to match the supplied IV, otherwise an error is returned. @param[in] key Key value. @param[out] iv IV value to match against. Length = 8 bytes. NULL = use default_iv. @param[out] out Plaintext without IV. Minimal buffer length = (inlen - 8) bytes. Input and output buffers can overlap if block function supports that. @param[in] in Ciphertext as n 64-bit blocks. @param[in] inlen Length of in. @param[in] block Block processing function. @return 0 if inlen is out of range [24, CRYPTO128_WRAP_MAX] or if inlen is not a multiple of 8 or if IV doesn't match expected value. Output length otherwise.
+
+Wrapping according to RFC 5649 section 4.1. @param[in] key Key value. @param[in] icv (Non-standard) IV, 4 bytes. NULL = use default_aiv. @param[out] out Ciphertext. Minimal buffer length = (inlen + 15) bytes. Input and output buffers can overlap if block function supports that. @param[in] in Plaintext as n 64-bit blocks, n >= 2. @param[in] inlen Length of in. @param[in] block Block processing function. @return 0 if inlen is out of range [1, CRYPTO128_WRAP_MAX]. Output length if wrapping succeeded.
+
+n: number of 64-bit blocks in the padded key data If length of plain text is not a multiple of 8, pad the plain text octet string on the right with octets of zeros, where final length is the smallest multiple of 8 that is greater than length of plain text. If length of plain text is a multiple of 8, then there is no padding.
+
+CEILING(m/8)
+
+RFC 5649 section 3: Alternative Initial Value
+
+Section 1: use 32-bit fixed field for plaintext octet length
+
+Section 3: Alternative Initial Value
+
+Standard doesn't mention this.
+
+Section 4.1 - special case in step 2: If the padded plaintext contains exactly eight octets, then prepend the AIV and encrypt the resulting 128-bit block using AES in ECB mode.
+
+AIV + padded input
+
+Section 4.1 step 1
+
+Unwrapping according to RFC 5649 section 4.2. @param[in] key Key value. @param[in] icv (Non-standard) IV, 4 bytes. NULL = use default_aiv. @param[out] out Plaintext. Minimal buffer length = inlen bytes. Input and output buffers can overlap if block function supports that. @param[in] in Ciphertext as n 64-bit blocks. @param[in] inlen Length of in. @param[in] block Block processing function. @return 0 if inlen is out of range [16, CRYPTO128_WRAP_MAX], or if inlen is not a multiple of 8 or if IV and message length indicator doesn't match. Output length if unwrapping succeeded and IV matches.
+
+n: number of 64-bit blocks in the padded key data
+
+RFC 5649 section 3: Alternative Initial Value
+
+Section 4.2: Ciphertext length has to be (n+1) 64-bit blocks.
+
+Section 4.2 - special case in step 1: When n=1, the ciphertext contains exactly two 64-bit blocks and they are decrypted as a single AES block using AES in ECB mode: AIV | P[1] = DEC(K, C[0] | C[1])
+
+Remove AIV
+
+Section 3: AIV checks: Check that MSB(32,A) = A65959A6. Optionally a user-supplied value can be used (even if standard doesn't mention this).
+
+Check that 8(n-1) < LSB(32,AIV) <= 8n. If so, let ptext_len = LSB(32,AIV).
+
+Check that the rightmost padding_len octets of the output data are zero.
+
+Section 4.2 step 3: Remove padding
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+t match expected value. * Output length otherwise. */ size_t CRYPTO_128_unwrap(void *key, const unsigned char *iv, unsigned char *out, const unsigned char *in, size_t inlen, block128_f block) { size_t ret; unsigned char got_iv[8]; ret = crypto_128_unwrap_raw(key, got_iv, out, in, inlen, block); if (ret == 0) return 0; if (!iv) iv = default_iv; if (CRYPTO_memcmp(got_iv, iv, 8)) { OPENSSL_cleanse(out, ret); return 0; } return ret; } /** Wrapping according to RFC 5649 section 4.1. * * @param[in] key Key value. * @param[in] icv (Non-standard) IV, 4 bytes. NULL = use default_aiv. * @param[out] out Ciphertext. Minimal buffer length = (inlen + 15) bytes. * Input and output buffers can overlap if block function * supports that. * @param[in] in Plaintext as n 64-bit blocks, n >= 2. * @param[in] inlen Length of in. * @param[in] block Block processing function. * @return 0 if inlen is out of range [1, CRYPTO128_WRAP_MAX]. * Output length if wrapping succeeded. */ size_t CRYPTO_128_wrap_pad(void *key, const unsigned char *icv, unsigned char *out, const unsigned char *in, size_t inlen, block128_f block) { /* n: number of 64-bit blocks in the padded key data * * If length of plain text is not a multiple of 8, pad the plain text octet * string on the right with octets of zeros, where final length is the * smallest multiple of 8 that is greater than length of plain text. * If length of plain text is a multiple of 8, then there is no padding. */ const size_t blocks_padded = (inlen + 7) / 8; /* CEILING(m/8) */ const size_t padded_len = blocks_padded * 8; const size_t padding_len = padded_len - inlen; /* RFC 5649 section 3: Alternative Initial Value */ unsigned char aiv[8]; int ret; /* Section 1: use 32-bit fixed field for plaintext octet length */ if (inlen == 0 || inlen >= CRYPTO128_WRAP_MAX) return 0; /* Section 3: Alternative Initial Value */ if (!icv) memcpy(aiv, default_aiv, 4); else memcpy(aiv, icv, 4); /* Standard doesn
+
+t match. * Output length if unwrapping succeeded and IV matches. */ size_t CRYPTO_128_unwrap_pad(void *key, const unsigned char *icv, unsigned char *out, const unsigned char *in, size_t inlen, block128_f block) { /* n: number of 64-bit blocks in the padded key data */ size_t n = inlen / 8 - 1; size_t padded_len; size_t padding_len; size_t ptext_len; /* RFC 5649 section 3: Alternative Initial Value */ unsigned char aiv[8]; static unsigned char zeros[8] = { 0x0 }; size_t ret; /* Section 4.2: Ciphertext length has to be (n+1) 64-bit blocks. */ if ((inlen & 0x7) != 0 || inlen < 16 || inlen >= CRYPTO128_WRAP_MAX) return 0; memmove(out, in, inlen); if (inlen == 16) { /* * Section 4.2 - special case in step 1: When n=1, the ciphertext * contains exactly two 64-bit blocks and they are decrypted as a * single AES block using AES in ECB mode: AIV | P[1] = DEC(K, C[0] | * C[1]) */ block(out, out, key); memcpy(aiv, out, 8); /* Remove AIV */ memmove(out, out + 8, 8); padded_len = 8; } else { padded_len = inlen - 8; ret = crypto_128_unwrap_raw(key, aiv, out, out, inlen, block); if (padded_len != ret) { OPENSSL_cleanse(out, inlen); return 0; } } /* * Section 3: AIV checks: Check that MSB(32,A) = A65959A6. Optionally a * user-supplied value can be used (even if standard doesn
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0xA6,
+
+0x59,
+
+0x59,
+
+0xA6
+
+0x7)
+
+0xff);
+
+0xff)
+
+0xff);
+
+0xff);
+
+0xff);
+
+0x7)
+
+0xff);
+
+0xff)
+
+0xff);
+
+0xff);
+
+0xff);
+
+0xFF;
+
+0xFF;
+
+0xFF;
+
+0xFF;
+
+0x0
+
+0x7)
+

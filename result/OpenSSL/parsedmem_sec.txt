@@ -1,0 +1,78 @@
+Copyright 2015-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright 2004-2014, Akamai Technologies. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This file is in two halves. The first half implements the public API to be used by external consumers, and to be used by OpenSSL to store data in a "secure arena." The second half implements the secure arena. For details on that implementation, see below (look for uppercase "SECURE HEAP IMPLEMENTATION").
+
+These are the functions that must be implemented by a secure heap (sh).
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+IMPLEMENTED
+
+END OF PAGE ... ... START OF PAGE
+
+SECURE HEAP IMPLEMENTATION
+
+The implementation provided here uses a fixed-sized mmap() heap, which is locked into memory, not written to core files, and protected on either side by an unmapped page, which will catch pointer overruns (or underruns) and an attempt to read data out of the secure heap. Free'd memory is zero'd or otherwise cleansed. This is a pretty standard buddy allocator. We keep areas in a multiple of "sh.minsize" units. The freelist and bitmaps are kept separately, so all (and only) data is kept in the mmap'd heap. This code assumes eight-bit bytes. The numbers 3 and 7 are all over the place.
+
+size in bits
+
+make sure size and minsize are powers of 2
+
+Prevent allocations of size 0 later on
+
+Allocate space for heap, and two extra pages as guards
+
+Now try to add guard pages and lock into memory.
+
+Starting guard is already aligned from mmap.
+
+Ending guard page - need to round up to page boundary
+
+try to find a larger entry to split
+
+split larger entry
+
+remove from bigger list
+
+done with bigger list
+
+add to smaller list
+
+split in 2
+
+peel off memory to hand back
+
+Try to coalesce two adjacent free areas.
+
+IMPLEMENTED
+
+www.openssl.org/source/license.html
+
+License
+
+secure arena.
+
+SECURE HEAP IMPLEMENTATION
+
+e_os.h
+
+d memory is zero
+
+sh.minsize
+
+/dev/zero
+
+0xFF
+

@@ -1,0 +1,26 @@
+Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+set client Hello login callback
+
+set SRP N/g param callback for verification
+
+set SRP client passwd callback
+
+server side
+
+Calculate: B = (kv + g^b) % N
+
+If the server just has the raw password, make up a verifier entry on the fly
+
+client side
+
+Checks if b % n == 0
+
+Sanity check parameters: we can quickly check B % N == 0 by checking B != 0 since B < N
+
+www.openssl.org/source/license.html
+
+License
+
+ssl_locl.h
+

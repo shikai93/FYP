@@ -1,0 +1,70 @@
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Based on https://131002.net/siphash C reference implementation
+
+SipHash reference C implementation Copyright (c) 2012-2016 Jean-Philippe Aumasson <jeanphilippe.aumasson@gmail.com> Copyright (c) 2012-2014 Daniel J. Bernstein <djb@cr.yp.to> To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide. This software is distributed without any warranty. You should have received a copy of the CC0 Public Domain Dedication along with this software. If not, see <http://creativecommons.org/publicdomain/zero/1.0/>.
+
+default: SipHash-2-4
+
+hash_size = crounds = drounds = 0 means SipHash24 with 16-byte output
+
+deal with leavings
+
+not enough to fill leavings
+
+copy data into leavings and reduce input
+
+process leavings
+
+gets put into leavings
+
+save leavings and other ctx
+
+finalize hash
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+fall thru
+
+www.openssl.org/source/license.html
+
+131002.net/siphash C reference implementation */
+
+creativecommons.org/publicdomain/zero/1.0/>.
+
+License
+
+internal/siphash.h
+
+siphash_local.h
+
+0x736f6d6570736575ULL
+
+0x646f72616e646f6dULL
+
+0x6c7967656e657261ULL
+
+0x7465646279746573ULL
+
+0xee;
+
+0xee;
+
+0xff;
+
+0xdd;
+

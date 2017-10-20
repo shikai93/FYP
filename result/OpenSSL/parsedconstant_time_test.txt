@@ -1,0 +1,70 @@
+Copyright 2014-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+internal/nelem.h
+
+internal/constant_time_locl.h
+
+testutil.h
+
+internal/numbers.h
+
+TRUE %s op failed
+
+a=%jx b=%jx\n
+
+FALSE %s op failed
+
+a=%jx b=%jx\n
+
+test_select_64 TRUE failed
+
+a=%jx b=%jx got %jx wanted a\n
+
+a=%jx b=%jx got %jx wanted b\n
+
+ct_lt
+
+constant_time_lt_8
+
+constant_time_lt_s
+
+constant_time_lt
+
+constant_time_lt_8
+
+constant_time_lt_s
+
+constant_time_ge
+
+constant_time_ge_8
+
+constant_time_ge_s
+
+constant_time_ge
+
+constant_time_ge_8
+
+constant_time_ge_s
+
+constant_time_eq
+
+constant_time_eq_8
+
+constant_time_eq_s
+
+constant_time_eq
+
+constant_time_eq_8
+
+constant_time_eq_s
+
+constant_time_lt_64
+
+test_64values failed i=%d j=%d
+
+0xff;
+

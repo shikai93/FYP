@@ -1,0 +1,132 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+generate a key
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+inform
+
+F
+
+Input format - DER or PEM
+
+in
+
+<
+
+Input file
+
+outform
+
+F
+
+Output format - DER or PEM
+
+out
+
+>
+
+Output file
+
+text
+
+-
+
+Print as text
+
+C
+
+-
+
+Output C code
+
+noout
+
+-
+
+No output
+
+genkey
+
+-
+
+Generate a DSA key
+
+engine
+
+s
+
+Use engine e, possibly a hardware device
+
+%s: Use -help for summary.\n
+
+r
+
+Error allocating BN_GENCB object\n
+
+Error allocating DSA object\n
+
+Generating DSA parameters, %d bit long prime\n
+
+This could take some time\n
+
+Error, DSA key generation failed\n
+
+unable to load DSA parameters\n
+
+BN space
+
+DSA *get_dsa%d()\n{\n
+
+dsap
+
+dsaq
+
+dsag
+
+DSA *dsa = DSA_new();\n
+
+\n
+
+if (dsa == NULL)\n
+
+return NULL;\n
+
+dsa->p = BN_bin2bn(dsap_%d, sizeof (dsap_%d), NULL);\n
+
+dsa->q = BN_bin2bn(dsaq_%d, sizeof (dsaq_%d), NULL);\n
+
+dsa->g = BN_bin2bn(dsag_%d, sizeof (dsag_%d), NULL);\n
+
+if (!dsa->p || !dsa->q || !dsa->g) {\n
+
+DSA_free(dsa);\n
+
+return NULL;\n
+
+}\n
+
+return(dsa);\n}\n
+
+unable to write DSA parameters\n
+
+*
+
+.
+
++
+
+*
+
+\n
+

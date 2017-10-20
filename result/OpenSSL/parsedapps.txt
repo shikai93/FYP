@@ -1,0 +1,1146 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+On VMS, you need to define this to get the declaration of fileno(). The value 2 is to make sure no function defined in POSIX-2 is left undefined.
+
+Skip whitespace.
+
+The start of something good :-)
+
+now look for the end of this
+
+We know that there is no previous user data to return to us
+
+Under _WIN32, which covers even Win64 and CE, file descriptors referenced by BIO_s_fd are not inherited by child process and therefore below is not an option. It could have been an option if bss_fd.c was operating on real Windows descriptors, such as those obtained with CreateFile.
+
+Can't do BIO_gets on an fd BIO so add a buffering BIO
+
+See if an empty password will do
+
+Initialize or extend, if certs != NULL, a certificate stack.
+
+Initialize or extend, if crls != NULL, a certificate stack.
+
+Return error for unknown extensions
+
+Print error for unknown extensions
+
+ASN1 parse unknown extensions
+
+BIO_dump unknown extensions
+
+Does extension exist?
+
+If normal copy don't override existing extension
+
+Delete all extensions of same type
+
+Try to load an engine in a shareable library
+
+Free our "structural" reference.
+
+false
+
+FALSE
+
+no
+
+NO
+
+0
+
+true
+
+TRUE
+
+yes
+
+YES
+
+1
+
+name is expected to be in the format /type0=value0/type1=value1/type2=... where characters may be escaped by \
+
+Collect the type
+
+Collect the value.
+
+If not at EOS (must be + or /), move forward.
+
+Parse
+
+Read whole contents of a BIO into an allocated memory buffer and return it.
+
+next_protos_parse parses a comma separated list of strings into a string in a format suitable for passing to SSL_CTX_set_next_protos_advertised. outlen: (output) set to the length of the resulting buffer on success. err: (maybe NULL) on failure, an error message line is written to this BIO. in: a NUL terminated string like "abc,def,ghi" returns: a malloc'd buffer or NULL on failure.
+
+Get first http URL from a DIST_POINT structure
+
+Look through a CRLDP structure and attempt to find an http URL to downloads a CRL from.
+
+Example of downloading CRLs from CRLDP: not usable for real world as it always downloads, doesn't support non-blocking I/O and doesn't cache anything.
+
+Try to download delta CRL
+
+Platform-specific sections
+
+UNICODE path
+
+we could map more codes...
+
+app_tminterval section
+
+sum of user and kernel times
+
+by means of unistd.h
+
+app_isdir section
+
+raw_read|write section
+
+Centralized handling if input and output files with format specification The format is meant to show what the input and output is supposed to be, and is therefore a show of intent more than anything else. However, it does impact behavior on some platform, such as differentiating between text and binary input/output on non-Unix platforms
+
+On VMS, setbuf() will only take 32-bit pointers, and a compilation with /POINTER_SIZE=64 will give off a MAYLOSEDATA2 warning here. However, we trust that the C RTL will never give us a FILE pointer above the first 4 GB of memory, so we simply turn off the warning temporarily.
+
+The assert above should make sure we never reach this point
+
+Open a file for writing, owner-read-only.
+
+VMS doesn't have O_BINARY, it just doesn't make sense. But, it still needs to know that we're going binary, or fdopen() will fail with "invalid argument"... so we tell VMS what the context is.
+
+If we have fp, then fdopen took over fd, so don't close both.
+
+On Windows select only works for sockets, so we simply don't wait
+
+if OPENSSL_SYS_WINDOWS is defined then so is OPENSSL_SYS_MSDOS
+
+Probably redirected input? _kbhit() does not work in this case
+
+Corrupt a signature by modifying final byte
+
+www.openssl.org/source/license.html
+
+", 7) == 0)
+
+License
+
+s_apps.h
+
+apps.h
+
+\0
+
+argv space
+
+\'
+
+"
+
+\0
+
+\0
+
+subject=
+
+\n
+
+issuer=
+
+\n
+
+\0
+
+\0
+
+OpenSSL application user interface
+
+pass phrase
+
+Out of memory\n
+
+password buffer
+
+User interface error\n
+
+aborted!\n
+
+pass:
+
+env:
+
+Can't read environment variable %s\n
+
+file:
+
+r
+
+Can't open file %s\n
+
+fd:
+
+Can't access file descriptor %s\n
+
+t do BIO_gets on an fd BIO so add a buffering BIO */ btmp = BIO_new(BIO_f_buffer()); pwdbio = BIO_push(btmp, pwdbio); #endif } else if (strcmp(arg, "stdin") == 0) { pwdbio = dup_bio_in(FORMAT_TEXT); if (!pwdbio) { BIO_printf(bio_err, "Can
+
+); return NULL; } } else { BIO_printf(bio_err,
+
+%s\"\n
+
+Error reading password from BIO\n
+
+\n
+
+%s: Can't load config file \"%s\"\n
+
+%s: Error on line %ld of config file \"%s\"\n
+
+r
+
+r
+
+Error configuring OpenSSL modules\n
+
+oid_section
+
+problem loading oid section %s\n
+
+problem creating object %s=%s\n
+
+Error loading PKCS12 file for %s\n
+
+
+
+
+
+Passphrase callback error for %s\n
+
+Mac verify error (wrong password?) in PKCS12 file for %s\n
+
+https not supported\n
+
+GET
+
+Host
+
+Error loading %s from %s\n
+
+certificate
+
+CRL
+
+r
+
+bad input format specified for %s\n
+
+unable to load certificate\n
+
+r
+
+bad input format specified for input crl\n
+
+unable to load CRL\n
+
+no keyfile specified\n
+
+no engine specified\n
+
+cannot load %s from engine\n
+
+engines not supported\n
+
+r
+
+bad input format specified for key file\n
+
+unable to load %s\n
+
+no keyfile specified\n
+
+no engine specified\n
+
+cannot load %s from engine\n
+
+engines not supported\n
+
+r
+
+RSA keys not supported\n
+
+RSA keys not supported\n
+
+unable to load %s\n
+
+bad input format specified for %s\n
+
+r
+
+unable to load %s\n
+
+certificates
+
+CRLs
+
+%s: Could not allocate %d bytes for %s\n
+
+compatible
+
+ca_default
+
+no_header
+
+no_version
+
+no_serial
+
+no_signame
+
+no_validity
+
+no_subject
+
+no_issuer
+
+no_pubkey
+
+no_extensions
+
+no_sigdump
+
+no_aux
+
+no_attributes
+
+ext_default
+
+ext_error
+
+ext_parse
+
+ext_dump
+
+esc_2253
+
+esc_2254
+
+esc_ctrl
+
+esc_msb
+
+use_quote
+
+utf8
+
+ignore_type
+
+show_type
+
+dump_all
+
+dump_nostr
+
+dump_der
+
+compat
+
+sep_comma_plus
+
+sep_comma_plus_space
+
+sep_semi_plus_space
+
+sep_multiline
+
+dn_rev
+
+nofname
+
+sname
+
+lname
+
+align
+
+oid
+
+space_eq
+
+dump_unknown
+
+RFC2253
+
+oneline
+
+multiline
+
+ca_default
+
+none
+
+copy
+
+copyall
+
+t override existing extension */ if (copy_type == EXT_COPY_ADD) continue; /* Delete all extensions of same type */ do { tmpext = X509_get_ext(x, idx); X509_delete_ext(x, idx); X509_EXTENSION_free(tmpext); idx = X509_get_ext_by_OBJ(x, obj, -1); } while (idx != -1); } if (!X509_add_ext(x, ext, -1)) goto end; } ret = 1; end: sk_X509_EXTENSION_pop_free(exts, X509_EXTENSION_free); return ret; } static int set_multi_opts(unsigned long *flags, const char *arg, const NAME_EX_TBL * in_tbl) { STACK_OF(CONF_VALUE) *vals; CONF_VALUE *val; int i, ret = 1; if (!arg) return 0; vals = X509V3_parse_list(arg); for (i = 0; i < sk_CONF_VALUE_num(vals); i++) { val = sk_CONF_VALUE_value(vals, i); if (!set_table_opts(flags, val->name, in_tbl)) ret = 0; } sk_CONF_VALUE_pop_free(vals, X509V3_conf_free); return ret; } static int set_table_opts(unsigned long *flags, const char *arg, const NAME_EX_TBL * in_tbl) { char c; const NAME_EX_TBL *ptbl; c = arg[0]; if (c ==
+
+) { c = 0; arg++; } else if (c ==
+
+) { c = 1; arg++; } else { c = 1; } for (ptbl = in_tbl; ptbl->name; ptbl++) { if (strcasecmp(arg, ptbl->name) == 0) { *flags &= ~ptbl->mask; if (c) *flags |= ptbl->flag; else *flags &= ~ptbl->flag; return 1; } } return 0; } void print_name(BIO *out, const char *title, X509_NAME *nm, unsigned long lflags) { char *buf; char mline = 0; int indent = 0; if (title) BIO_puts(out, title); if ((lflags & XN_FLAG_SEP_MASK) == XN_FLAG_SEP_MULTILINE) { mline = 1; indent = 4; } if (lflags == XN_FLAG_COMPAT) { buf = X509_NAME_oneline(nm, 0, 0); BIO_puts(out, buf); BIO_puts(out, "\n"); OPENSSL_free(buf); } else { if (mline) BIO_puts(out, "\n"); X509_NAME_print_ex(out, nm, indent, lflags); BIO_puts(out, "\n"); } } void print_bignum_var(BIO *out, const BIGNUM *in, const char *var, int len, unsigned char *buffer) { BIO_printf(out, " static unsigned char %s_%d[] = {", var, len); if (BN_is_zero(in)) { BIO_printf(out, "\n\t0x00"); } else { int i, l; l = BN_bn2bin(in, buffer); for (i = 0; i < l; i++) { if ((i % 10) == 0) BIO_printf(out, "\n\t"); if (i < l - 1) BIO_printf(out, "0x%02X, ", buffer[i]); else BIO_printf(out, "0x%02X", buffer[i]); } } BIO_printf(out, "\n };\n"); } void print_array(BIO *out, const char* title, int len, const unsigned char* d) { int i; BIO_printf(out, "unsigned char %s[%d] = {", title, len); for (i = 0; i < len; i++) { if ((i % 10) == 0) BIO_printf(out, "\n "); if (i < len - 1) BIO_printf(out, "0x%02X, ", d[i]); else BIO_printf(out, "0x%02X", d[i]); } BIO_printf(out, "\n};\n"); } X509_STORE *setup_verify(const char *CAfile, const char *CApath, int noCAfile, int noCApath) { X509_STORE *store = X509_STORE_new(); X509_LOOKUP *lookup; if (store == NULL) goto end; if (CAfile != NULL || !noCAfile) { lookup = X509_STORE_add_lookup(store, X509_LOOKUP_file()); if (lookup == NULL) goto end; if (CAfile) { if (!X509_LOOKUP_load_file(lookup, CAfile, X509_FILETYPE_PEM)) { BIO_printf(bio_err, "Error loading file %s\n", CAfile); goto end; } } else { X509_LOOKUP_load_file(lookup, NULL, X509_FILETYPE_DEFAULT); } } if (CApath != NULL || !noCApath) { lookup = X509_STORE_add_lookup(store, X509_LOOKUP_hash_dir()); if (lookup == NULL) goto end; if (CApath) { if (!X509_LOOKUP_add_dir(lookup, CApath, X509_FILETYPE_PEM)) { BIO_printf(bio_err, "Error loading directory %s\n", CApath); goto end; } } else { X509_LOOKUP_add_dir(lookup, NULL, X509_FILETYPE_DEFAULT); } } ERR_clear_error(); return store; end: X509_STORE_free(store); return NULL; } #ifndef OPENSSL_NO_ENGINE /* Try to load an engine in a shareable library */ static ENGINE *try_load_engine(const char *engine) { ENGINE *e = ENGINE_by_id("dynamic"); if (e) { if (!ENGINE_ctrl_cmd_string(e, "SO_PATH", engine, 0) || !ENGINE_ctrl_cmd_string(e, "LOAD", NULL, 0)) { ENGINE_free(e); e = NULL; } } return e; } #endif ENGINE *setup_engine(const char *engine, int debug) { ENGINE *e = NULL; #ifndef OPENSSL_NO_ENGINE if (engine != NULL) { if (strcmp(engine, "auto") == 0) { BIO_printf(bio_err, "enabling auto ENGINE support\n"); ENGINE_register_all_complete(); return NULL; } if ((e = ENGINE_by_id(engine)) == NULL && (e = try_load_engine(engine)) == NULL) { BIO_printf(bio_err, "invalid engine \"%s\"\n", engine); ERR_print_errors(bio_err); return NULL; } if (debug) { ENGINE_ctrl(e, ENGINE_CTRL_SET_LOGSTREAM, 0, bio_err, 0); } ENGINE_ctrl_cmd(e, "SET_USER_INTERFACE", 0, ui_method, 0, 1); if (!ENGINE_set_default(e, ENGINE_METHOD_ALL)) { BIO_printf(bio_err, "can
+
+); ERR_print_errors(bio_err); ENGINE_free(e); return NULL; } BIO_printf(bio_err,
+
+%s\" set.\n
+
+structural
+
+0
+
+0
+
+0
+
+V
+
+r
+
+Out of memory\n
+
+unable to load number from %s\n
+
+error converting number from bin to BIGNUM\n
+
+file name too long\n
+
+%s.%s
+
+%s-%s
+
+w
+
+error converting serial to ASN.1 format\n
+
+\n
+
+file name too long\n
+
+%s.%s
+
+%s.%s
+
+%s-%s
+
+%s-%s
+
+unable to rename %s to %s\n
+
+reason
+
+unable to rename %s to %s\n
+
+reason
+
+r
+
+%s.attr
+
+%s-attr
+
+new DB
+
+unique_subject
+
+error creating serial number index:(%ld,%ld,%ld)\n
+
+error creating name index:(%ld,%ld,%ld)\n
+
+file name too long\n
+
+%s.attr
+
+%s.attr.%s
+
+%s.%s
+
+%s-attr
+
+%s-attr-%s
+
+%s-%s
+
+w
+
+unable to open '%s'\n
+
+w
+
+unable to open '%s'\n
+
+unique_subject = %s\n
+
+yes
+
+no
+
+file name too long\n
+
+%s.attr
+
+%s.attr.%s
+
+%s.attr.%s
+
+%s.%s
+
+%s.%s
+
+%s-attr
+
+%s-attr-%s
+
+%s-attr-%s
+
+%s-%s
+
+%s-%s
+
+unable to rename %s to %s\n
+
+reason
+
+unable to rename %s to %s\n
+
+reason
+
+unable to rename %s to %s\n
+
+reason
+
+unable to rename %s to %s\n
+
+reason
+
+f
+
+F
+
+n
+
+N
+
+0
+
+t
+
+T
+
+y
+
+Y
+
+1
+
+/
+
+=
+
+\0
+
+%s: Hit end of string before finding the equals.\n
+
+\0
+
+/
+
++
+
+\\
+
+\0
+
+%s: escape character at end of string\n
+
+\0
+
+%s: Skipping unknown attribute \"%s\"\n
+
+:
+
+%s Policies:
+
+\n
+
+<empty>\n
+
+Require explicit Policy: %s\n
+
+True
+
+False
+
+Authority
+
+User
+
+abc,def,ghi
+
+d buffer or NULL on failure. */ unsigned char *next_protos_parse(size_t *outlen, const char *in) { size_t len; unsigned char *out; size_t i, start = 0; len = strlen(in); if (len >= 65535) return NULL; out = app_malloc(strlen(in) + 1, "NPN buffer"); for (i = 0; i <= len; ++i) { if (i == len || in[i] ==
+
+) { if (i - start > 255) { OPENSSL_free(out); return NULL; } out[start] = i - start; start = i + 1; } else { out[i + 1] = in[i]; } } *outlen = len + 1; return out; } void print_cert_checks(BIO *bio, X509 *x, const char *checkhost, const char *checkemail, const char *checkip) { if (x == NULL) return; if (checkhost) { BIO_printf(bio, "Hostname %s does%s match certificate\n", checkhost, X509_check_host(x, checkhost, 0, 0, NULL) == 1 ? "" : " NOT"); } if (checkemail) { BIO_printf(bio, "Email %s does%s match certificate\n", checkemail, X509_check_email(x, checkemail, 0, 0) ? "" : " NOT"); } if (checkip) { BIO_printf(bio, "IP %s does%s match certificate\n", checkip, X509_check_ip_asc(x, checkip, 0) ? "" : " NOT"); } } /* Get first http URL from a DIST_POINT structure */ static const char *get_dp_url(DIST_POINT *dp) { GENERAL_NAMES *gens; GENERAL_NAME *gen; int i, gtype; ASN1_STRING *uri; if (!dp->distpoint || dp->distpoint->type != 0) return NULL; gens = dp->distpoint->name.fullname; for (i = 0; i < sk_GENERAL_NAME_num(gens); i++) { gen = sk_GENERAL_NAME_value(gens, i); uri = GENERAL_NAME_get0_value(gen, &gtype); if (gtype == GEN_URI && ASN1_STRING_length(uri) > 6) { const char *uptr = (const char *)ASN1_STRING_get0_data(uri); if (strncmp(uptr, "http://", 7) == 0) return uptr; } } return NULL; } /* * Look through a CRLDP structure and attempt to find an http URL to * downloads a CRL from. */ static X509_CRL *load_crl_crldp(STACK_OF(DIST_POINT) *crldp) { int i; const char *urlptr = NULL; for (i = 0; i < sk_DIST_POINT_num(crldp); i++) { DIST_POINT *dp = sk_DIST_POINT_value(crldp, i); urlptr = get_dp_url(dp); if (urlptr) return load_crl(urlptr, FORMAT_HTTP); } return NULL; } /* * Example of downloading CRLs from CRLDP: not usable for real world as it * always downloads, doesn
+
+t cache * anything. */ static STACK_OF(X509_CRL) *crls_http_cb(X509_STORE_CTX *ctx, X509_NAME *nm) { X509 *x; STACK_OF(X509_CRL) *crls = NULL; X509_CRL *crl; STACK_OF(DIST_POINT) *crldp; crls = sk_X509_CRL_new_null(); if (!crls) return NULL; x = X509_STORE_CTX_get_current_cert(ctx); crldp = X509_get_ext_d2i(x, NID_crl_distribution_points, NULL, NULL); crl = load_crl_crldp(crldp); sk_DIST_POINT_pop_free(crldp, DIST_POINT_free); if (!crl) { sk_X509_CRL_free(crls); return NULL; } sk_X509_CRL_push(crls, crl); /* Try to download delta CRL */ crldp = X509_get_ext_d2i(x, NID_freshest_crl, NULL, NULL); crl = load_crl_crldp(crldp); sk_DIST_POINT_pop_free(crldp, DIST_POINT_free); if (crl) sk_X509_CRL_push(crls, crl); return crls; } void store_setup_crl_download(X509_STORE *st) { X509_STORE_set_lookup_crls_cb(st, crls_http_cb); } /* * Platform-specific sections */ #if defined(_WIN32) # ifdef fileno # undef fileno # define fileno(a) (int)_fileno(a) # endif # include <windows.h> # include <tchar.h> static int WIN32_rename(const char *from, const char *to) { TCHAR *tfrom = NULL, *tto; DWORD err; int ret = 0; if (sizeof(TCHAR) == 1) { tfrom = (TCHAR *)from; tto = (TCHAR *)to; } else { /* UNICODE path */ size_t i, flen = strlen(from) + 1, tlen = strlen(to) + 1; tfrom = malloc(sizeof(*tfrom) * (flen + tlen)); if (tfrom == NULL) goto err; tto = tfrom + flen; # if !defined(_WIN32_WCE) || _WIN32_WCE>=101 if (!MultiByteToWideChar(CP_ACP, 0, from, flen, (WCHAR *)tfrom, flen)) # endif for (i = 0; i < flen; i++) tfrom[i] = (TCHAR)from[i]; # if !defined(_WIN32_WCE) || _WIN32_WCE>=101 if (!MultiByteToWideChar(CP_ACP, 0, to, tlen, (WCHAR *)tto, tlen)) # endif for (i = 0; i < tlen; i++) tto[i] = (TCHAR)to[i]; } if (MoveFile(tfrom, tto)) goto ok; err = GetLastError(); if (err == ERROR_ALREADY_EXISTS || err == ERROR_FILE_EXISTS) { if (DeleteFile(tto) && MoveFile(tfrom, tto)) goto ok; err = GetLastError(); } if (err == ERROR_FILE_NOT_FOUND || err == ERROR_PATH_NOT_FOUND) errno = ENOENT; else if (err == ERROR_ACCESS_DENIED) errno = EACCES; else errno = EINVAL; /* we could map more codes... */ err: ret = -1; ok: if (tfrom != NULL && tfrom != (TCHAR *)from) free(tfrom); return ret; } #endif /* app_tminterval section */ #if defined(_WIN32) double app_tminterval(int stop, int usertime) { FILETIME now; double ret = 0; static ULARGE_INTEGER tmstart; static int warning = 1; # ifdef _WIN32_WINNT static HANDLE proc = NULL; if (proc == NULL) { if (check_winnt()) proc = OpenProcess(PROCESS_QUERY_INFORMATION, FALSE, GetCurrentProcessId()); if (proc == NULL) proc = (HANDLE) - 1; } if (usertime && proc != (HANDLE) - 1) { FILETIME junk; GetProcessTimes(proc, &junk, &junk, &junk, &now); } else # endif { SYSTEMTIME systime; if (usertime && warning) { BIO_printf(bio_err, "To get meaningful results, run " "this program on idle system.\n"); warning = 0; } GetSystemTime(&systime); SystemTimeToFileTime(&systime, &now); } if (stop == TM_START) { tmstart.u.LowPart = now.dwLowDateTime; tmstart.u.HighPart = now.dwHighDateTime; } else { ULARGE_INTEGER tmstop; tmstop.u.LowPart = now.dwLowDateTime; tmstop.u.HighPart = now.dwHighDateTime; ret = (__int64)(tmstop.QuadPart - tmstart.QuadPart) * 1e-7; } return (ret); } #elif defined(OPENSSL_SYSTEM_VXWORKS) # include <time.h> double app_tminterval(int stop, int usertime) { double ret = 0; # ifdef CLOCK_REALTIME static struct timespec tmstart; struct timespec now; # else static unsigned long tmstart; unsigned long now; # endif static int warning = 1; if (usertime && warning) { BIO_printf(bio_err, "To get meaningful results, run " "this program on idle system.\n"); warning = 0; } # ifdef CLOCK_REALTIME clock_gettime(CLOCK_REALTIME, &now); if (stop == TM_START) tmstart = now; else ret = ((now.tv_sec + now.tv_nsec * 1e-9) - (tmstart.tv_sec + tmstart.tv_nsec * 1e-9)); # else now = tickGet(); if (stop == TM_START) tmstart = now; else ret = (now - tmstart) / (double)sysClkRateGet(); # endif return (ret); } #elif defined(OPENSSL_SYSTEM_VMS) # include <time.h> # include <times.h> double app_tminterval(int stop, int usertime) { static clock_t tmstart; double ret = 0; clock_t now; # ifdef __TMS struct tms rus; now = times(&rus); if (usertime) now = rus.tms_utime; # else if (usertime) now = clock(); /* sum of user and kernel times */ else { struct timeval tv; gettimeofday(&tv, NULL); now = (clock_t)((unsigned long long)tv.tv_sec * CLK_TCK + (unsigned long long)tv.tv_usec * (1000000 / CLK_TCK) ); } # endif if (stop == TM_START) tmstart = now; else ret = (now - tmstart) / (double)(CLK_TCK); return (ret); } #elif defined(_SC_CLK_TCK) /* by means of unistd.h */ # include <sys/times.h> double app_tminterval(int stop, int usertime) { double ret = 0; struct tms rus; clock_t now = times(&rus); static clock_t tmstart; if (usertime) now = rus.tms_utime; if (stop == TM_START) { tmstart = now; } else { long int tck = sysconf(_SC_CLK_TCK); ret = (now - tmstart) / (double)tck; } return (ret); } #else # include <sys/time.h> # include <sys/resource.h> double app_tminterval(int stop, int usertime) { double ret = 0; struct rusage rus; struct timeval now; static struct timeval tmstart; if (usertime) getrusage(RUSAGE_SELF, &rus), now = rus.ru_utime; else gettimeofday(&now, NULL); if (stop == TM_START) tmstart = now; else ret = ((now.tv_sec + now.tv_usec * 1e-6) - (tmstart.tv_sec + tmstart.tv_usec * 1e-6)); return ret; } #endif int app_access(const char* name, int flag) { #ifdef _WIN32 return _access(name, flag); #else return access(name, flag); #endif } /* app_isdir section */ #ifdef _WIN32 int app_isdir(const char *name) { DWORD attr; # if defined(UNICODE) || defined(_UNICODE) size_t i, len_0 = strlen(name) + 1; WCHAR tempname[MAX_PATH]; if (len_0 > MAX_PATH) return -1; # if !defined(_WIN32_WCE) || _WIN32_WCE>=101 if (!MultiByteToWideChar(CP_ACP, 0, name, len_0, tempname, MAX_PATH)) # endif for (i = 0; i < len_0; i++) tempname[i] = (WCHAR)name[i]; attr = GetFileAttributes(tempname); # else attr = GetFileAttributes(name); # endif if (attr == INVALID_FILE_ATTRIBUTES) return -1; return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0); } #else # include <sys/stat.h> # ifndef S_ISDIR # if defined(_S_IFMT) && defined(_S_IFDIR) # define S_ISDIR(a) (((a) & _S_IFMT) == _S_IFDIR) # else # define S_ISDIR(a) (((a) & S_IFMT) == S_IFDIR) # endif # endif int app_isdir(const char *name) { # if defined(S_ISDIR) struct stat st; if (stat(name, &st) == 0) return S_ISDIR(st.st_mode); else return -1; # else return -1; # endif } #endif /* raw_read|write section */ #if defined(__VMS) # include "vms_term_sock.h" static int stdin_sock = -1; static void close_stdin_sock(void) { TerminalSocket (TERM_SOCK_DELETE, &stdin_sock); } int fileno_stdin(void) { if (stdin_sock == -1) { TerminalSocket(TERM_SOCK_CREATE, &stdin_sock); atexit(close_stdin_sock); } return stdin_sock; } #else int fileno_stdin(void) { return fileno(stdin); } #endif int fileno_stdout(void) { return fileno(stdout); } #if defined(_WIN32) && defined(STD_INPUT_HANDLE) int raw_read_stdin(void *buf, int siz) { DWORD n; if (ReadFile(GetStdHandle(STD_INPUT_HANDLE), buf, siz, &n, NULL)) return (n); else return (-1); } #elif defined(__VMS) # include <sys/socket.h> int raw_read_stdin(void *buf, int siz) { return recv(fileno_stdin(), buf, siz, 0); } #else int raw_read_stdin(void *buf, int siz) { return read(fileno_stdin(), buf, siz); } #endif #if defined(_WIN32) && defined(STD_OUTPUT_HANDLE) int raw_write_stdout(const void *buf, int siz) { DWORD n; if (WriteFile(GetStdHandle(STD_OUTPUT_HANDLE), buf, siz, &n, NULL)) return (n); else return (-1); } #else int raw_write_stdout(const void *buf, int siz) { return write(fileno_stdout(), buf, siz); } #endif /* * Centralized handling if input and output files with format specification * The format is meant to show what the input and output is supposed to be, * and is therefore a show of intent more than anything else. However, it * does impact behavior on some platform, such as differentiating between * text and binary input/output on non-Unix platforms */ static int istext(int format) { return (format & B_FORMAT_TEXT) == B_FORMAT_TEXT; } BIO *dup_bio_in(int format) { return BIO_new_fp(stdin, BIO_NOCLOSE | (istext(format) ? BIO_FP_TEXT : 0)); } BIO *dup_bio_out(int format) { BIO *b = BIO_new_fp(stdout, BIO_NOCLOSE | (istext(format) ? BIO_FP_TEXT : 0)); #ifdef OPENSSL_SYS_VMS if (istext(format)) b = BIO_push(BIO_new(BIO_f_linebuffer()), b); #endif return b; } BIO *dup_bio_err(int format) { BIO *b = BIO_new_fp(stderr, BIO_NOCLOSE | (istext(format) ? BIO_FP_TEXT : 0)); #ifdef OPENSSL_SYS_VMS if (istext(format)) b = BIO_push(BIO_new(BIO_f_linebuffer()), b); #endif return b; } void unbuffer(FILE *fp) { /* * On VMS, setbuf() will only take 32-bit pointers, and a compilation * with /POINTER_SIZE=64 will give off a MAYLOSEDATA2 warning here. * However, we trust that the C RTL will never give us a FILE pointer * above the first 4 GB of memory, so we simply turn off the warning * temporarily. */ #if defined(OPENSSL_SYS_VMS) && defined(__DECC) # pragma environment save # pragma message disable maylosedata2 #endif setbuf(fp, NULL); #if defined(OPENSSL_SYS_VMS) && defined(__DECC) # pragma environment restore #endif } static const char *modestr(char mode, int format) { OPENSSL_assert(mode ==
+
+|| mode ==
+
+|| mode ==
+
+); switch (mode) { case
+
+: return istext(format) ? "a" : "ab"; case
+
+: return istext(format) ? "r" : "rb"; case
+
+: return istext(format) ? "w" : "wb"; } /* The assert above should make sure we never reach this point */ return NULL; } static const char *modeverb(char mode) { switch (mode) { case
+
+: return "appending"; case
+
+: return "reading"; case
+
+: return "writing"; } return "(doing something)"; } /* * Open a file for writing, owner-read-only. */ BIO *bio_open_owner(const char *filename, int format, int private) { FILE *fp = NULL; BIO *b = NULL; int fd = -1, bflags, mode, textmode; if (!private || filename == NULL || strcmp(filename, "-") == 0) return bio_open_default(filename,
+
+, format); mode = O_WRONLY; #ifdef O_CREAT mode |= O_CREAT; #endif #ifdef O_TRUNC mode |= O_TRUNC; #endif textmode = istext(format); if (!textmode) { #ifdef O_BINARY mode |= O_BINARY; #elif defined(_O_BINARY) mode |= _O_BINARY; #endif } #ifdef OPENSSL_SYS_VMS /* VMS doesn
+
+t make sense. But, * it still needs to know that we
+
+invalid argument
+
+ctx=bin
+
+w
+
+%s: Can't open \"%s\" for writing, %s\n
+
+t close both. */ if (fp) fclose(fp); else if (fd >= 0) close(fd); return NULL; } static BIO *bio_open_default_(const char *filename, char mode, int format, int quiet) { BIO *ret; if (filename == NULL || strcmp(filename, "-") == 0) { ret = mode ==
+
+? dup_bio_in(format) : dup_bio_out(format); if (quiet) { ERR_clear_error(); return ret; } if (ret != NULL) return ret; BIO_printf(bio_err, "Can
+
+, mode == 'r' ?
+
+:
+
+, strerror(errno)); } else { ret = BIO_new_file(filename, modestr(mode, format)); if (quiet) { ERR_clear_error(); return ret; } if (ret != NULL) return ret; BIO_printf(bio_err,
+
+t open %s for %s, %s\n", filename, modeverb(mode), strerror(errno)); } ERR_print_errors(bio_err); return NULL; } BIO *bio_open_default(const char *filename, char mode, int format) { return bio_open_default_(filename, mode, format, 0); } BIO *bio_open_default_quiet(const char *filename, char mode, int format) { return bio_open_default_(filename, mode, format, 1); } void wait_for_async(SSL *s) { /* On Windows select only works for sockets, so we simply don
+
+allocate async fds
+
+today
+
+\0
+
+0xfL
+
+0xffffffffl},
+
+0xffffffffl},
+
+0xffffffffL},
+
+0xffffffffL},
+
+0xffffffffL},
+
+0xffffffffL},
+
+0xffffffffL},
+
+0x00");
+
+0x%02X,
+
+0x%02X",
+
+0x%02X,
+
+0x%02X",
+
+0x1;
+
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+struct timeval for DTLS
+
+quick macro when you need to pass an unsigned char instead of a char. this is true for some implementations of the is() functions, for example.
+
+Common verification options.
+
+Common "extended validation" options.
+
+Common SSL options. Any changes here must be coordinated with ../ssl/ssl_conf.c
+
+Random state options.
+
+Option parsing.
+
+value type: - no value (also the value zero), n number, p positive number, u unsigned, l long, s string, < input file, > output file, f any format, F der/pem format, E der/pem/engine format identifier. l, n and u include zero; p does not.
+
+A string/int pairing; widely use for option value lookup, hence the name OPT_PAIR. But that name is misleading in s_cb.c, so we also use the "generic" name STRINT_PAIR.
+
+Flags to pass into opt_format; see FORMAT_xxx, below.
+
+VMS C only for now, implemented in vms_decc_init.c If other C compilers forget to terminate argv with NULL, this function can be re-used.
+
+Win32-specific argv initialization that splits OS-supplied UNICODE command line string to array of UTF8-encoded strings.
+
+Sets the file to load the Certificate Transparency log list from. If path is NULL, loads from the default file path. Returns 1 on success, 0 otherwise.
+
+Functions defined in ca.c and also used in ocsp.c
+
+index - unique
+
+index - unique when active and not disabled
+
+Revoked
+
+Expired
+
+Valid ; inserted with: ca ... -valid
+
+Suspended
+
+See OPT_FMT_xxx, above.
+
+On some platforms, it's important to distinguish between text and binary files. On some, there might even be specific file formats for different contents. The FORMAT_xxx macros are meant to express an intent with the file being read or created.
+
+Generic text
+
+Generic binary
+
+Base64
+
+ASN.1/DER
+
+Not really a file format
+
+PEM RSAPubicKey format
+
+DER RSAPubicKey format
+
+MS Key blob format
+
+MS PVK file format
+
+Download using HTTP
+
+NSS keylog format
+
+IETF RFC 5280 says serial number must be <= 20 bytes. Use 159 bits so that the first bit will never be one, so that the DER encoding rules won't force a leading octet.
+
+www.openssl.org/source/license.html
+
+License
+
+e_os.h
+
+internal/nelem.h
+
+policy
+
+s
+
+adds policy to the acceptable policy set
+
+purpose
+
+s
+
+certificate chain purpose
+
+verify_name
+
+s
+
+verification policy name
+
+verify_depth
+
+n
+
+chain depth limit
+
+auth_level
+
+n
+
+chain authentication security level
+
+attime
+
+M
+
+verification epoch time
+
+verify_hostname
+
+s
+
+expected peer hostname
+
+verify_email
+
+s
+
+expected peer email
+
+verify_ip
+
+s
+
+expected peer IP address
+
+ignore_critical
+
+-
+
+permit unhandled critical extensions
+
+issuer_checks
+
+-
+
+(deprecated)
+
+crl_check
+
+-
+
+check leaf certificate revocation
+
+crl_check_all
+
+-
+
+check full chain revocation
+
+policy_check
+
+-
+
+perform rfc5280 policy checks
+
+explicit_policy
+
+-
+
+set policy variable require-explicit-policy
+
+inhibit_any
+
+-
+
+set policy variable inhibit-any-policy
+
+inhibit_map
+
+-
+
+set policy variable inhibit-policy-mapping
+
+x509_strict
+
+-
+
+disable certificate compatibility work-arounds
+
+extended_crl
+
+-
+
+enable extended CRL features
+
+use_deltas
+
+-
+
+use delta CRLs
+
+policy_print
+
+-
+
+print policy processing diagnostics
+
+check_ss_sig
+
+-
+
+check root CA self-signatures
+
+trusted_first
+
+-
+
+search trust store first (default)
+
+suiteB_128_only
+
+-
+
+Suite B 128-bit-only mode
+
+suiteB_128
+
+-
+
+Suite B 128-bit mode allowing 192-bit algorithms
+
+suiteB_192
+
+-
+
+Suite B 192-bit-only mode
+
+partial_chain
+
+-
+
+accept chains anchored by intermediate trust-store CAs
+
+no_alt_chains
+
+-
+
+(deprecated)
+
+no_check_time
+
+-
+
+ignore certificate validity time
+
+allow_proxy_certs
+
+-
+
+allow the use of proxy certificates
+
+extended validation
+
+xkey
+
+<
+
+key for Extended certificates
+
+xcert
+
+<
+
+cert for Extended certificates
+
+xchain
+
+<
+
+chain for Extended certificates
+
+xchain_build
+
+-
+
+build certificate chain for the extended certificates
+
+xcertform
+
+F
+
+format of Extended certificate (PEM or DER) PEM default
+
+xkeyform
+
+F
+
+format of Extended certificate's key (PEM or DER) PEM default
+
+no_ssl3
+
+-
+
+Just disable SSLv3
+
+no_tls1
+
+-
+
+Just disable TLSv1
+
+no_tls1_1
+
+-
+
+Just disable TLSv1.1
+
+no_tls1_2
+
+-
+
+Just disable TLSv1.2
+
+no_tls1_3
+
+-
+
+Just disable TLSv1.3
+
+bugs
+
+-
+
+Turn on SSL bug compatibility
+
+no_comp
+
+-
+
+Disable SSL/TLS compression (default)
+
+comp
+
+-
+
+Use SSL/TLS-level compression
+
+no_ticket
+
+-
+
+Disable use of TLS session tickets
+
+serverpref
+
+-
+
+Use server's cipher preferences
+
+legacy_renegotiation
+
+-
+
+Enable use of legacy renegotiation (dangerous)
+
+no_renegotiation
+
+-
+
+Disable all renegotiation.
+
+legacy_server_connect
+
+-
+
+Allow initial connection to servers that don't support RI
+
+no_resumption_on_reneg
+
+-
+
+Disallow session resumption on renegotiation
+
+no_legacy_server_connect
+
+-
+
+Disallow initial connection to servers that don't support RI
+
+allow_no_dhe_kex
+
+-
+
+In TLSv1.3 allow non-(ec)dhe based key exchange on resumption
+
+strict
+
+-
+
+Enforce strict certificate checks as per TLS standard
+
+sigalgs
+
+s
+
+Signature algorithms to support (colon-separated list)
+
+client_sigalgs
+
+s
+
+Signature algorithms to support for client certificate
+
+authentication (colon-separated list)
+
+groups
+
+s
+
+Groups to advertise (colon-separated list)
+
+curves
+
+s
+
+Groups to advertise (colon-separated list)
+
+named_curve
+
+s
+
+Elliptic curve used for ECDHE (server-side only)
+
+cipher
+
+s
+
+Specify cipher list to be used
+
+dhparam
+
+<
+
+DH parameter file to use, in cert file if not specified
+
+record_padding
+
+s
+
+Block size to pad TLS 1.3 records to.
+
+debug_broken_protocol
+
+-
+
+Perform all sorts of protocol violations for testing purposes
+
+rand
+
+s
+
+Load the file(s) into the random number generator
+
+writerand
+
+>
+
+Write random data to the specified file
+
+generic
+
+R
+
+E
+
+V
+
+S
+
+s important to distinguish between text and binary * files. On some, there might even be specific file formats for different * contents. The FORMAT_xxx macros are meant to express an intent with the * file being read or created. */ # define B_FORMAT_TEXT 0x8000 # define FORMAT_UNDEF 0 # define FORMAT_TEXT (1 | B_FORMAT_TEXT) /* Generic text */ # define FORMAT_BINARY 2 /* Generic binary */ # define FORMAT_BASE64 (3 | B_FORMAT_TEXT) /* Base64 */ # define FORMAT_ASN1 4 /* ASN.1/DER */ # define FORMAT_PEM (5 | B_FORMAT_TEXT) # define FORMAT_PKCS12 6 # define FORMAT_SMIME (7 | B_FORMAT_TEXT) # define FORMAT_ENGINE 8 /* Not really a file format */ # define FORMAT_PEMRSA (9 | B_FORMAT_TEXT) /* PEM RSAPubicKey format */ # define FORMAT_ASN1RSA 10 /* DER RSAPubicKey format */ # define FORMAT_MSBLOB 11 /* MS Key blob format */ # define FORMAT_PVK 12 /* MS PVK file format */ # define FORMAT_HTTP 13 /* Download using HTTP */ # define FORMAT_NSS 14 /* NSS keylog format */ # define EXT_COPY_NONE 0 # define EXT_COPY_ADD 1 # define EXT_COPY_ALL 2 # define NETSCAPE_CERT_HDR "certificate" # define APP_PASS_LEN 1024 /* * IETF RFC 5280 says serial number must be <= 20 bytes. Use 159 bits * so that the first bit will never be one, so that the DER encoding * rules won
+
+progs.h
+
+0x8000
+

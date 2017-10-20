@@ -1,0 +1,42 @@
+Copyright 2016-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Regression tests for ASN.1 parsing bugs.
+
+Unless we are testing it we don't use ASN1_item_d2i_bio because it performs sanity checks on the input and can reject it before the decoder is called.
+
+Don't indicate success for memory allocation errors
+
+Usage: d2i_test <name> <type> <file>, e.g. d2i_test generalname bad_generalname.der
+
+www.openssl.org/source/license.html
+
+License
+
+testutil.h
+
+internal/nelem.h
+
+r
+
+t use ASN1_item_d2i_bio because it * performs sanity checks on the input and can reject it before the * decoder is called. */ len = BIO_read(bio, buf, sizeof buf); if (!TEST_int_ge(len, 0)) goto err; value = ASN1_item_d2i(NULL, &buf_ptr, len, item_type); if (value == NULL) { if (TEST_int_eq(expected_error, ASN1_DECODE)) ret = 1; goto err; } derlen = ASN1_item_i2d(value, &der, item_type); if (der == NULL || derlen < 0) { if (TEST_int_eq(expected_error, ASN1_ENCODE)) ret = 1; goto err; } if (derlen != len || memcmp(der, buf, derlen) != 0) { if (TEST_int_eq(expected_error, ASN1_COMPARE)) ret = 1; goto err; } if (TEST_int_eq(expected_error, ASN1_OK)) ret = 1; err: /* Don
+
+OK
+
+BIO
+
+decode
+
+encode
+
+compare
+
+Usage: d2i_test item_name expected_error file.der
+
+Unknown type %s
+
+Supported types:
+
+\t%s
+
+Unknown expected error %s\n
+

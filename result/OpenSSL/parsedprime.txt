@@ -1,0 +1,76 @@
+Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+-
+
+Usage: %s [options] [number...]\n
+
+-
+
+number Number to check for primality\n
+
+help
+
+-
+
+Display this summary
+
+hex
+
+-
+
+Hex output
+
+generate
+
+-
+
+Generate a prime
+
+bits
+
+p
+
+Size of number in bits
+
+safe
+
+-
+
+When used with -generate, generate a safe prime
+
+checks
+
+p
+
+Number of checks
+
+%s: Use -help for summary.\n
+
+Extra arguments given.\n
+
+%s: No prime specified\n
+
+Specify the number of bits.\n
+
+Out of memory.\n
+
+Failed to generate prime.\n
+
+Out of memory.\n
+
+%s\n
+
+Failed to process value (%s)\n
+
+(%s) %s prime\n
+
+is
+
+is not
+

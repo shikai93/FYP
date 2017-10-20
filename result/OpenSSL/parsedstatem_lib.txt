@@ -1,0 +1,278 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+send s->init_buf in records of type 'type' (SSL3_RT_HANDSHAKE or SSL3_RT_CHANGE_CIPHER_SPEC)
+
+should not be done for 'Hello Request's, but in that case we'll ignore the result anyway
+
+Reset any extension flags
+
+Sanity check that the maximum version we accept has ciphers enabled. For clients we do this check during construction of the ClientHello.
+
+Renegotiation is disabled
+
+Server attempting to renegotiate with client that doesn't support secure renegotiation.
+
+mark client_random uninitialized
+
+Size of the to-be-signed TLS13 data, without the hash size itself: 64 bytes of value 32, 33 context bytes, 1 byte separator
+
+Set the first 64 bytes of to-be-signed data to octet 32
+
+This copies the 33 bytes of context plus the 0 separator byte
+
+If we're currently reading then we need to use the saved handshake hash value. We can't use the current handshake hash state because that includes the CertVerify itself.
+
+Get the data to be signed
+
+Digest cached records and discard handshake buffer
+
+Check for broken implementations of GOST ciphersuites
+
+If key is GOST and len is exactly 64 or 128, it is signature without length field (CryptoPro implementations at least till TLS 1.2)
+
+This is a real handshake so make sure we clean it up at the end
+
+We only change the keys if we didn't already do this when we sent the client certificate
+
+This is a fatal error, which leaves enc_write_ctx in an inconsistent state and thus ssl3_send_alert may crash.
+
+Log the master secret, if logging is enabled. We don't log it for TLSv1.3: there's a different key schedule for that.
+
+Copy the finished so we can use it for renegotiation checks
+
+A KeyUpdate message signals a key change so the end of the message must be on a record boundary.
+
+There are only two defined key update types. Fail if we get a value we didn't recognise.
+
+If we get a request for us to update our sending keys too then, we need to additionally send a KeyUpdate message. However that message should not also request an update (otherwise we get into an infinite loop).
+
+ssl3_take_mac calculates the Finished MAC for the handshakes messages seen to far.
+
+If no new cipher setup return immediately: other functions will set the appropriate error.
+
+'Change Cipher Spec' is just a single byte, which should already have been consumed by ssl_get_message() so there should be no bytes left, unless we're using DTLS1_BAD_VER, which has an extra 2 bytes
+
+Check we have a cipher to change to
+
+Remember that a CCS has been received, so that an old key of SCTP-Auth can be deleted when a CCS is sent. Will be ignored if no SCTP is used
+
+This is a real handshake so make sure we clean it up at the end
+
+In TLSv1.3 a Finished message signals a key change so the end of the message must be on a record boundary.
+
+If this occurs, we have missed a message
+
+Copy the finished so we can use it for renegotiation checks
+
+In TLS1.3 we also have to change cipher state and do any final processing of the initial server flight (if we are a client)
+
+Add a certificate to the WPACKET
+
+Add certificate chain to provided WPACKET
+
+If we have a certificate specific chain use it, else use parent ctx.
+
+It is valid for the chain not to be complete (because normally we don't include the root cert in the chain). Therefore we deliberately ignore the error return from this call. We're not actually verifying the cert - we're just building as much of the chain as we can
+
+Don't leave errors in the queue
+
+Dummy error calls so mkerr generates them
+
+Tidy up after the end of a handshake. In the case of SCTP this may result in NBIO events. If |clearbufs| is set then init_buf and the wbio buffer is freed up as well.
+
+We don't do this in DTLS because we may still need the init_buf in case there are any unexpected retransmits
+
+skipped if we just sent a HelloRequest
+
+In TLSv1.3 we update the cache as part of processing the NewSessionTicket
+
+done with handshaking
+
+If we've not cleared the buffers its because we've got more work to do, so continue.
+
+s->init_num < SSL3_HM_HEADER_LENGTH
+
+A ChangeCipherSpec must be a single byte and may not occur in the middle of a handshake message.
+
+The server may always send 'Hello Request' messages -- we are doing a handshake anyway now, so ignore them if their format is correct. Does not count for 'Finished' MAC.
+
+s->init_num == SSL3_HM_HEADER_LENGTH
+
+Only happens with SSLv3+ in an SSLv2 backward compatible ClientHello Total message size is the remaining record bytes to read plus the SSL3_HM_HEADER_LENGTH bytes that we already read
+
+BUF_MEM_grow takes an 'int' parameter
+
+We've already read everything in
+
+If receiving Finished, record MAC of prior handshake messages for Finished verification.
+
+Feed this message into MAC computation.
+
+We defer feeding in the HRR until later. We'll do it as part of processing the message
+
+Must be in order high to low
+
+Must be in order high to low
+
+ssl_method_error - Check whether an SSL_METHOD is enabled. @s: The SSL handle for the candidate method @method: the intended method. Returns 0 on success, or an SSL error reason on failure.
+
+ssl_version_supported - Check that the specified `version` is supported by `SSL ` instance @s: The SSL handle for the candidate method @version: Protocol version to test against Returns 1 when supported, otherwise 0
+
+Version should match method version for non-ANY method
+
+ssl_check_version_downgrade - In response to RFC7507 SCSV version fallback indication from a client check whether we're using the highest supported protocol version. @s server SSL handle. Returns 1 when using the highest enabled version, 0 otherwise.
+
+Check that the current protocol is the highest enabled version (according to s->ctx->method, as version negotiation may have changed s->method).
+
+Apparently we're using a version-flexible SSL_METHOD (not at its highest protocol version).
+
+Unexpected state; fail closed.
+
+ssl_set_version_bound - set an upper or lower bound on the supported (D)TLS protocols, provided the initial (D)TLS method is version-flexible. This function sanity-checks the proposed value and makes sure the method is version-flexible, then sets the limit if all is well. @method_version: The version of the current SSL_METHOD. @version: the intended limit. @bound: pointer to limit to be updated. Returns 1 on success, 0 on failure.
+
+Restrict TLS methods to TLS protocol versions. Restrict DTLS methods to DTLS protocol versions. Note, DTLS version numbers are decreasing, use comparison macros. Note that for both lower-bounds we use explicit versions, not (D)TLS_MIN_VERSION. This is because we don't want to break user configurations. If the MIN (supported) version ever rises, the user's "floor" remains valid even if no longer available. We don't expect the MAX ceiling to ever get lower, so making that variable makes sense.
+
+XXX For fixed version methods, should we always fail and not set any bounds, always succeed and not set any bounds, or set the bounds and arrange to fail later if they are not met? At present fixed-version methods are not subject to controls that disable individual protocol versions.
+
+ssl_choose_server_version - Choose server (D)TLS version. Called when the client HELLO is received to select the final server protocol version and the version specific method. @s: server SSL handle. Returns 0 on success or an SSL error reason number on failure.
+
+With version-flexible methods we have an initial state with: s->method->version == (D)TLS_ANY_VERSION, s->version == (D)TLS_MAX_VERSION. So we detect version-flexible methods via the method version, not the handle version.
+
+If this SSL handle is not from a version flexible method we don't (and never did) check min/max FIPS or Suite B constraints. Hope that's OK. It is up to the caller to not choose fixed protocol versions they don't want. If not, then easy to fix, just return ssl_method_error(s, s->method)
+
+Fall through if we are TLSv1.3 already (this means we must be after a HelloRetryRequest
+
+fall thru
+
+Trailing or invalid data?
+
+TODO(TLS1.3): Remove this before release
+
+TODO(TLS1.3): There is some discussion on the TLS list about whether to ignore versions <TLS1.2 in supported_versions. At the moment we honour them if present. To be reviewed later
+
+Trailing data?
+
+We get here if this is after a HelloRetryRequest. In this case we just check that we still negotiated TLSv1.3
+
+If the supported versions extension isn't present, then the highest version we can negotiate is TLSv1.2
+
+No supported versions extension, so we just use the version supplied in the ClientHello.
+
+ssl_choose_client_version - Choose client (D)TLS version. Called when the server HELLO is received to select the final client protocol version and the version specific method. @s: client SSL handle. @version: The proposed version from the server's HELLO. @checkdgrd: Whether to check the downgrade sentinels in the server_random @al: Where to store any alert value that may be generated Returns 0 on success or an SSL error reason number on failure.
+
+TODO(TLS1.3): Remove this before release
+
+If this SSL handle is not from a version flexible method we don't (and never did) check min/max, FIPS or Suite B constraints. Hope that's OK. It is up to the caller to not choose fixed protocol versions they don't want. If not, then easy to fix, just return ssl_method_error(s, s->method)
+
+Check for downgrades
+
+ssl_get_min_max_version - get minimum and maximum protocol version @s: The SSL connection @min_version: The minimum supported version @max_version: The maximum supported version Work out what version we should be using for the initial ClientHello if the version is initially (D)TLS_ANY_VERSION. We apply any explicit SSL_OP_NO_xxx options, the MinProtocol and MaxProtocol configuration commands, any Suite B constraints and any floor imposed by the security level here, so we don't advertise the wrong protocol version to only reject the outcome later. Computing the right floor matters. If, e.g., TLS 1.0 and 1.2 are enabled, TLS 1.1 is disabled, but the security level, Suite-B and/or MinProtocol only allow TLS 1.2, we want to advertise TLS1.2, not TLS1. Returns 0 on success or an SSL error reason number on failure. On failure min_version and max_version will also be set to 0.
+
+If this SSL handle is not from a version flexible method we don't (and never did) check min/max FIPS or Suite B constraints. Hope that's OK. It is up to the caller to not choose fixed protocol versions they don't want. If not, then easy to fix, just return ssl_method_error(s, s->method)
+
+SSL_OP_NO_X disables all protocols above X if there are some protocols below X enabled. This is required in order to maintain the "version capability" vector contiguous. Any versions with a NULL client method (protocol version client is disabled at compile-time) is also a "hole". Our initial state is hole == 1, version == 0. That is, versions above the first version in the method table are disabled (a "hole" above the valid protocol entries) and we don't have a selected version yet. Whenever "hole == 1", and we hit an enabled method, its version becomes the selected version, and the method becomes a candidate "single" method. We're no longer in a hole, so "hole" becomes 0. If "hole == 0" and we hit an enabled method, then "single" is cleared, as we support a contiguous range of at least two methods. If we hit a disabled method, then hole becomes true again, but nothing else changes yet, because all the remaining methods may be disabled too. If we again hit an enabled method after the new hole, it becomes selected, as we start from scratch.
+
+A table entry with a NULL client method is still a hole in the "version capability" vector.
+
+Fail if everything is disabled
+
+ssl_set_client_hello_version - Work out what version we should be using for the initial ClientHello.legacy_version field. @s: client SSL handle. Returns 0 on success or an SSL error reason number on failure.
+
+TLS1.3 always uses TLS1.2 in the legacy_version field
+
+Checks a list of |groups| to determine if the |group_id| is in it. If it is and |checkallow| is 1 then additionally check if the group is allowed to be used. Returns 1 if the group is in the list (and allowed if |checkallow| is 1) or 0 otherwise.
+
+Replace ClientHello1 in the transcript hash with a synthetic message
+
+Get the hash of the initial ClientHello
+
+Reinitialise the transcript hash
+
+Inject the synthetic message_hash message
+
+get the CA RDNs
+
+Start sub-packet for client CA list
+
+Create a buffer containing data to be signed for server key exchange
+
+www.openssl.org/source/license.html
+
+License
+
+../ssl_locl.h
+
+statem_locl.h
+
+internal/cryptlib.h
+
+type
+
+Hello Request
+
+ll * ignore the result anyway */ if (!ssl3_finish_mac(s, (unsigned char *)&s->init_buf->data[s->init_off], written)) return -1; if (written == s->init_num) { if (s->msg_callback) s->msg_callback(1, s->version, type, s->init_buf->data, (size_t)(s->init_off + s->init_num), s, s->msg_callback_arg); return (1); } s->init_off += written; s->init_num -= written; return (0); } int tls_close_construct_packet(SSL *s, WPACKET *pkt, int htype) { size_t msglen; if ((htype != SSL3_MT_CHANGE_CIPHER_SPEC && !WPACKET_close(pkt)) || !WPACKET_get_length(pkt, &msglen) || msglen > INT_MAX) return 0; s->init_num = (int)msglen; s->init_off = 0; return 1; } int tls_setup_handshake(SSL *s) { if (!ssl3_init_finished_mac(s)) return 0; /* Reset any extension flags */ memset(s->ext.extflags, 0, sizeof(s->ext.extflags)); if (s->server) { STACK_OF(SSL_CIPHER) *ciphers = SSL_get_ciphers(s); int i, ver_min, ver_max, ok = 0; /* * Sanity check that the maximum version we accept has ciphers * enabled. For clients we do this check during construction of the * ClientHello. */ if (ssl_get_min_max_version(s, &ver_min, &ver_max) != 0) { SSLerr(SSL_F_TLS_SETUP_HANDSHAKE, ERR_R_INTERNAL_ERROR); ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR); return 0; } for (i = 0; i < sk_SSL_CIPHER_num(ciphers); i++) { const SSL_CIPHER *c = sk_SSL_CIPHER_value(ciphers, i); if (SSL_IS_DTLS(s)) { if (DTLS_VERSION_GE(ver_max, c->min_dtls) && DTLS_VERSION_LE(ver_max, c->max_dtls)) ok = 1; } else if (ver_max >= c->min_tls && ver_max <= c->max_tls) { ok = 1; } if (ok) break; } if (!ok) { SSLerr(SSL_F_TLS_SETUP_HANDSHAKE, SSL_R_NO_CIPHERS_AVAILABLE); ERR_add_error_data(1, "No ciphers enabled for max supported " "SSL/TLS version"); ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_HANDSHAKE_FAILURE); return 0; } if (SSL_IS_FIRST_HANDSHAKE(s)) { s->ctx->stats.sess_accept++; } else if ((s->options & SSL_OP_NO_RENEGOTIATION)) { /* Renegotiation is disabled */ ssl3_send_alert(s, SSL3_AL_WARNING, SSL_AD_NO_RENEGOTIATION); return 0; } else if (!s->s3->send_connection_binding && !(s->options & SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION)) { /* * Server attempting to renegotiate with client that doesn
+
+TLS 1.3, server CertificateVerify
+
+TLS 1.3, client CertificateVerify
+
+re currently reading then we need to use the saved handshake * hash value. We can
+
+USING TLSv1.2 HASH %s\n
+
+Using client verify alg %s\n
+
+t already do this when we sent the * client certificate */ if (SSL_IS_TLS13(s) && !s->server && s->s3->tmp.cert_req == 0 && (!s->method->ssl3_enc->change_cipher_state(s, SSL3_CC_HANDSHAKE | SSL3_CHANGE_CIPHER_CLIENT_WRITE))) { SSLerr(SSL_F_TLS_CONSTRUCT_FINISHED, SSL_R_CANNOT_CHANGE_CIPHER); /* * This is a fatal error, which leaves * enc_write_ctx in an inconsistent state * and thus ssl3_send_alert may crash. */ return 0; } if (s->server) { sender = s->method->ssl3_enc->server_finished_label; slen = s->method->ssl3_enc->server_finished_label_len; } else { sender = s->method->ssl3_enc->client_finished_label; slen = s->method->ssl3_enc->client_finished_label_len; } finish_md_len = s->method->ssl3_enc->final_finish_mac(s, sender, slen, s->s3->tmp.finish_md); if (finish_md_len == 0) { SSLerr(SSL_F_TLS_CONSTRUCT_FINISHED, ERR_R_INTERNAL_ERROR); goto err; } s->s3->tmp.finish_md_len = finish_md_len; if (!WPACKET_memcpy(pkt, s->s3->tmp.finish_md, finish_md_len)) { SSLerr(SSL_F_TLS_CONSTRUCT_FINISHED, ERR_R_INTERNAL_ERROR); goto err; } /* * Log the master secret, if logging is enabled. We don
+
+s a different key schedule for that. */ if (!SSL_IS_TLS13(s) && !ssl_log_secret(s, MASTER_SECRET_LABEL, s->session->master_key, s->session->master_key_length)) { SSLerr(SSL_F_TLS_CONSTRUCT_FINISHED, ERR_R_INTERNAL_ERROR); goto err; } /* * Copy the finished so we can use it for renegotiation checks */ if (!ossl_assert(finish_md_len <= EVP_MAX_MD_SIZE)) { SSLerr(SSL_F_TLS_CONSTRUCT_FINISHED, ERR_R_INTERNAL_ERROR); goto err; } if (!s->server) { memcpy(s->s3->previous_client_finished, s->s3->tmp.finish_md, finish_md_len); s->s3->previous_client_finished_len = finish_md_len; } else { memcpy(s->s3->previous_server_finished, s->s3->tmp.finish_md, finish_md_len); s->s3->previous_server_finished_len = finish_md_len; } return 1; err: ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR); return 0; } int tls_construct_key_update(SSL *s, WPACKET *pkt) { if (!WPACKET_put_bytes_u8(pkt, s->key_update)) { SSLerr(SSL_F_TLS_CONSTRUCT_KEY_UPDATE, ERR_R_INTERNAL_ERROR); goto err; } s->key_update = SSL_KEY_UPDATE_NONE; return 1; err: ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR); return 0; } MSG_PROCESS_RETURN tls_process_key_update(SSL *s, PACKET *pkt) { int al; unsigned int updatetype; s->key_update_count++; if (s->key_update_count > MAX_KEY_UPDATE_MESSAGES) { al = SSL_AD_ILLEGAL_PARAMETER; SSLerr(SSL_F_TLS_PROCESS_KEY_UPDATE, SSL_R_TOO_MANY_KEY_UPDATES); goto err; } /* * A KeyUpdate message signals a key change so the end of the message must * be on a record boundary. */ if (RECORD_LAYER_processed_read_pending(&s->rlayer)) { al = SSL_AD_UNEXPECTED_MESSAGE; SSLerr(SSL_F_TLS_PROCESS_KEY_UPDATE, SSL_R_NOT_ON_RECORD_BOUNDARY); goto err; } if (!PACKET_get_1(pkt, &updatetype) || PACKET_remaining(pkt) != 0) { al = SSL_AD_DECODE_ERROR; SSLerr(SSL_F_TLS_PROCESS_KEY_UPDATE, SSL_R_BAD_KEY_UPDATE); goto err; } /* * There are only two defined key update types. Fail if we get a value we * didn
+
+Change Cipher Spec
+
+re using DTLS1_BAD_VER, which has an extra 2 bytes */ if (SSL_IS_DTLS(s)) { if ((s->version == DTLS1_BAD_VER && remain != DTLS1_CCS_HEADER_LENGTH + 1) || (s->version != DTLS1_BAD_VER && remain != DTLS1_CCS_HEADER_LENGTH - 1)) { al = SSL_AD_DECODE_ERROR; SSLerr(SSL_F_TLS_PROCESS_CHANGE_CIPHER_SPEC, SSL_R_BAD_CHANGE_CIPHER_SPEC); goto f_err; } } else { if (remain != 0) { al = SSL_AD_DECODE_ERROR; SSLerr(SSL_F_TLS_PROCESS_CHANGE_CIPHER_SPEC, SSL_R_BAD_CHANGE_CIPHER_SPEC); goto f_err; } } /* Check we have a cipher to change to */ if (s->s3->tmp.new_cipher == NULL) { al = SSL_AD_UNEXPECTED_MESSAGE; SSLerr(SSL_F_TLS_PROCESS_CHANGE_CIPHER_SPEC, SSL_R_CCS_RECEIVED_EARLY); goto f_err; } s->s3->change_cipher_spec = 1; if (!ssl3_do_change_cipher_spec(s)) { al = SSL_AD_INTERNAL_ERROR; SSLerr(SSL_F_TLS_PROCESS_CHANGE_CIPHER_SPEC, ERR_R_INTERNAL_ERROR); goto f_err; } if (SSL_IS_DTLS(s)) { dtls1_reset_seq_numbers(s, SSL3_CC_READ); if (s->version == DTLS1_BAD_VER) s->d1->handshake_read_seq++; #ifndef OPENSSL_NO_SCTP /* * Remember that a CCS has been received, so that an old key of * SCTP-Auth can be deleted when a CCS is sent. Will be ignored if no * SCTP is used */ BIO_ctrl(SSL_get_wbio(s), BIO_CTRL_DGRAM_SCTP_AUTH_CCS_RCVD, 1, NULL); #endif } return MSG_PROCESS_CONTINUE_READING; f_err: ssl3_send_alert(s, SSL3_AL_FATAL, al); ossl_statem_set_error(s); return MSG_PROCESS_ERROR; } MSG_PROCESS_RETURN tls_process_finished(SSL *s, PACKET *pkt) { int al = SSL_AD_INTERNAL_ERROR; size_t md_len; /* This is a real handshake so make sure we clean it up at the end */ if (s->server) s->statem.cleanuphand = 1; /* * In TLSv1.3 a Finished message signals a key change so the end of the * message must be on a record boundary. */ if (SSL_IS_TLS13(s) && RECORD_LAYER_processed_read_pending(&s->rlayer)) { al = SSL_AD_UNEXPECTED_MESSAGE; SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_NOT_ON_RECORD_BOUNDARY); goto f_err; } /* If this occurs, we have missed a message */ if (!SSL_IS_TLS13(s) && !s->s3->change_cipher_spec) { al = SSL_AD_UNEXPECTED_MESSAGE; SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_GOT_A_FIN_BEFORE_A_CCS); goto f_err; } s->s3->change_cipher_spec = 0; md_len = s->s3->tmp.peer_finish_md_len; if (md_len != PACKET_remaining(pkt)) { al = SSL_AD_DECODE_ERROR; SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_BAD_DIGEST_LENGTH); goto f_err; } if (CRYPTO_memcmp(PACKET_data(pkt), s->s3->tmp.peer_finish_md, md_len) != 0) { al = SSL_AD_DECRYPT_ERROR; SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_DIGEST_CHECK_FAILED); goto f_err; } /* * Copy the finished so we can use it for renegotiation checks */ if (!ossl_assert(md_len <= EVP_MAX_MD_SIZE)) { al = SSL_AD_INTERNAL_ERROR; SSLerr(SSL_F_TLS_PROCESS_FINISHED, ERR_R_INTERNAL_ERROR); goto f_err; } if (s->server) { memcpy(s->s3->previous_client_finished, s->s3->tmp.peer_finish_md, md_len); s->s3->previous_client_finished_len = md_len; } else { memcpy(s->s3->previous_server_finished, s->s3->tmp.peer_finish_md, md_len); s->s3->previous_server_finished_len = md_len; } /* * In TLS1.3 we also have to change cipher state and do any final processing * of the initial server flight (if we are a client) */ if (SSL_IS_TLS13(s)) { if (s->server) { if (!s->method->ssl3_enc->change_cipher_state(s, SSL3_CC_APPLICATION | SSL3_CHANGE_CIPHER_SERVER_READ)) { SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_CANNOT_CHANGE_CIPHER); goto f_err; } } else { if (!s->method->ssl3_enc->generate_master_secret(s, s->master_secret, s->handshake_secret, 0, &s->session->master_key_length)) { SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_CANNOT_CHANGE_CIPHER); goto f_err; } if (!s->method->ssl3_enc->change_cipher_state(s, SSL3_CC_APPLICATION | SSL3_CHANGE_CIPHER_CLIENT_READ)) { SSLerr(SSL_F_TLS_PROCESS_FINISHED, SSL_R_CANNOT_CHANGE_CIPHER); goto f_err; } if (!tls_process_initial_server_flight(s, &al)) goto f_err; } } return MSG_PROCESS_FINISHED_READING; f_err: ssl3_send_alert(s, SSL3_AL_FATAL, al); ossl_statem_set_error(s); return MSG_PROCESS_ERROR; } int tls_construct_change_cipher_spec(SSL *s, WPACKET *pkt) { if (!WPACKET_put_bytes_u8(pkt, SSL3_MT_CCS)) { SSLerr(SSL_F_TLS_CONSTRUCT_CHANGE_CIPHER_SPEC, ERR_R_INTERNAL_ERROR); ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR); return 0; } return 1; } /* Add a certificate to the WPACKET */ static int ssl_add_cert_to_wpacket(SSL *s, WPACKET *pkt, X509 *x, int chain, int *al) { int len; unsigned char *outbytes; len = i2d_X509(x, NULL); if (len < 0) { SSLerr(SSL_F_SSL_ADD_CERT_TO_WPACKET, ERR_R_BUF_LIB); *al = SSL_AD_INTERNAL_ERROR; return 0; } if (!WPACKET_sub_allocate_bytes_u24(pkt, len, &outbytes) || i2d_X509(x, &outbytes) != len) { SSLerr(SSL_F_SSL_ADD_CERT_TO_WPACKET, ERR_R_INTERNAL_ERROR); *al = SSL_AD_INTERNAL_ERROR; return 0; } if (SSL_IS_TLS13(s) && !tls_construct_extensions(s, pkt, SSL_EXT_TLS1_3_CERTIFICATE, x, chain, al)) return 0; return 1; } /* Add certificate chain to provided WPACKET */ static int ssl_add_cert_chain(SSL *s, WPACKET *pkt, CERT_PKEY *cpk, int *al) { int i, chain_count; X509 *x; STACK_OF(X509) *extra_certs; STACK_OF(X509) *chain = NULL; X509_STORE *chain_store; int tmpal = SSL_AD_INTERNAL_ERROR; if (cpk == NULL || cpk->x509 == NULL) return 1; x = cpk->x509; /* * If we have a certificate specific chain use it, else use parent ctx. */ if (cpk->chain != NULL) extra_certs = cpk->chain; else extra_certs = s->ctx->extra_certs; if ((s->mode & SSL_MODE_NO_AUTO_CHAIN) || extra_certs) chain_store = NULL; else if (s->cert->chain_store) chain_store = s->cert->chain_store; else chain_store = s->ctx->cert_store; if (chain_store != NULL) { X509_STORE_CTX *xs_ctx = X509_STORE_CTX_new(); if (xs_ctx == NULL) { SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, ERR_R_MALLOC_FAILURE); goto err; } if (!X509_STORE_CTX_init(xs_ctx, chain_store, x, NULL)) { X509_STORE_CTX_free(xs_ctx); SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, ERR_R_X509_LIB); goto err; } /* * It is valid for the chain not to be complete (because normally we * don
+
+re not actually verifying * the cert - we
+
+t leave errors in the queue */ ERR_clear_error(); chain = X509_STORE_CTX_get0_chain(xs_ctx); i = ssl_security_cert_chain(s, chain, NULL, 0); if (i != 1) { #if 0 /* Dummy error calls so mkerr generates them */ SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, SSL_R_EE_KEY_TOO_SMALL); SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, SSL_R_CA_KEY_TOO_SMALL); SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, SSL_R_CA_MD_TOO_WEAK); #endif X509_STORE_CTX_free(xs_ctx); SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, i); goto err; } chain_count = sk_X509_num(chain); for (i = 0; i < chain_count; i++) { x = sk_X509_value(chain, i); if (!ssl_add_cert_to_wpacket(s, pkt, x, i, &tmpal)) { X509_STORE_CTX_free(xs_ctx); goto err; } } X509_STORE_CTX_free(xs_ctx); } else { i = ssl_security_cert_chain(s, extra_certs, x, 0); if (i != 1) { SSLerr(SSL_F_SSL_ADD_CERT_CHAIN, i); goto err; } if (!ssl_add_cert_to_wpacket(s, pkt, x, 0, &tmpal)) goto err; for (i = 0; i < sk_X509_num(extra_certs); i++) { x = sk_X509_value(extra_certs, i); if (!ssl_add_cert_to_wpacket(s, pkt, x, i + 1, &tmpal)) goto err; } } return 1; err: *al = tmpal; return 0; } unsigned long ssl3_output_cert_chain(SSL *s, WPACKET *pkt, CERT_PKEY *cpk, int *al) { int tmpal = SSL_AD_INTERNAL_ERROR; if (!WPACKET_start_sub_packet_u24(pkt) || !ssl_add_cert_chain(s, pkt, cpk, &tmpal) || !WPACKET_close(pkt)) { SSLerr(SSL_F_SSL3_OUTPUT_CERT_CHAIN, ERR_R_INTERNAL_ERROR); *al = tmpal; return 0; } return 1; } /* * Tidy up after the end of a handshake. In the case of SCTP this may result * in NBIO events. If |clearbufs| is set then init_buf and the wbio buffer is * freed up as well. */ WORK_STATE tls_finish_handshake(SSL *s, WORK_STATE wst, int clearbufs) { void (*cb) (const SSL *ssl, int type, int val) = NULL; #ifndef OPENSSL_NO_SCTP if (SSL_IS_DTLS(s) && BIO_dgram_is_sctp(SSL_get_wbio(s))) { WORK_STATE ret; ret = dtls_wait_for_dry(s); if (ret != WORK_FINISHED_CONTINUE) return ret; } #endif if (clearbufs) { if (!SSL_IS_DTLS(s)) { /* * We don
+
+ve not cleared the buffers its because we
+
+Hello Request
+
+Finished
+
+int
+
+ve already read everything in */ *len = (unsigned long)s->init_num; return 1; } p = s->init_msg; n = s->s3->tmp.message_size - s->init_num; while (n > 0) { i = s->method->ssl_read_bytes(s, SSL3_RT_HANDSHAKE, NULL, &p[s->init_num], n, 0, &readbytes); if (i <= 0) { s->rwstate = SSL_READING; *len = 0; return 0; } s->init_num += readbytes; n -= readbytes; } #ifndef OPENSSL_NO_NEXTPROTONEG /* * If receiving Finished, record MAC of prior handshake messages for * Finished verification. */ if (*s->init_buf->data == SSL3_MT_FINISHED) ssl3_take_mac(s); #endif /* Feed this message into MAC computation. */ if (RECORD_LAYER_is_sslv2_record(&s->rlayer)) { if (!ssl3_finish_mac(s, (unsigned char *)s->init_buf->data, s->init_num)) { SSLerr(SSL_F_TLS_GET_MESSAGE_BODY, ERR_R_EVP_LIB); ssl3_send_alert(s, SSL3_AL_FATAL, SSL_AD_INTERNAL_ERROR); *len = 0; return 0; } if (s->msg_callback) s->msg_callback(0, SSL2_VERSION, 0, s->init_buf->data, (size_t)s->init_num, s, s->msg_callback_arg); } else { /* * We defer feeding in the HRR until later. We
+
+re using the highest * supported protocol version. * * @s server SSL handle. * * Returns 1 when using the highest enabled version, 0 otherwise. */ int ssl_check_version_downgrade(SSL *s) { const version_info *vent; const version_info *table; /* * Check that the current protocol is the highest enabled version * (according to s->ctx->method, as version negotiation may have changed * s->method). */ if (s->version == s->ctx->method->version) return 1; /* * Apparently we
+
+t want to break user * configurations. If the MIN (supported) version ever rises, the user
+
+floor
+
+t expect the * MAX ceiling to ever get lower, so making that variable makes sense. */ switch (method_version) { default: /* * XXX For fixed version methods, should we always fail and not set any * bounds, always succeed and not set any bounds, or set the bounds and * arrange to fail later if they are not met? At present fixed-version * methods are not subject to controls that disable individual protocol * versions. */ return 0; case TLS_ANY_VERSION: if (version < SSL3_VERSION || version > TLS_MAX_VERSION) return 0; break; case DTLS_ANY_VERSION: if (DTLS_VERSION_GT(version, DTLS_MAX_VERSION) || DTLS_VERSION_LT(version, DTLS1_BAD_VER)) return 0; break; } *bound = version; return 1; } static void check_for_downgrade(SSL *s, int vers, DOWNGRADE *dgrd) { if (vers == TLS1_2_VERSION && ssl_version_supported(s, TLS1_3_VERSION)) { *dgrd = DOWNGRADE_TO_1_2; } else if (!SSL_IS_DTLS(s) && vers < TLS1_2_VERSION && (ssl_version_supported(s, TLS1_2_VERSION) || ssl_version_supported(s, TLS1_3_VERSION))) { *dgrd = DOWNGRADE_TO_1_1; } else { *dgrd = DOWNGRADE_NONE; } } /* * ssl_choose_server_version - Choose server (D)TLS version. Called when the * client HELLO is received to select the final server protocol version and * the version specific method. * * @s: server SSL handle. * * Returns 0 on success or an SSL error reason number on failure. */ int ssl_choose_server_version(SSL *s, CLIENTHELLO_MSG *hello, DOWNGRADE *dgrd) { /*- * With version-flexible methods we have an initial state with: * * s->method->version == (D)TLS_ANY_VERSION, * s->version == (D)TLS_MAX_VERSION. * * So we detect version-flexible methods via the method version, not the * handle version. */ int server_version = s->method->version; int client_version = hello->legacy_version; const version_info *vent; const version_info *table; int disabled = 0; RAW_EXTENSION *suppversions; s->client_version = client_version; switch (server_version) { default: if (!SSL_IS_TLS13(s)) { if (version_cmp(s, client_version, s->version) < 0) return SSL_R_WRONG_SSL_VERSION; *dgrd = DOWNGRADE_NONE; /* * If this SSL handle is not from a version flexible method we don
+
+s OK. It is up to the caller to not choose fixed protocol * versions they don
+
+t present, then the highest * version we can negotiate is TLSv1.2 */ if (version_cmp(s, client_version, TLS1_3_VERSION) >= 0) client_version = TLS1_2_VERSION; /* * No supported versions extension, so we just use the version supplied in * the ClientHello. */ for (vent = table; vent->version != 0; ++vent) { const SSL_METHOD *method; if (vent->smeth == NULL || version_cmp(s, client_version, vent->version) < 0) continue; method = vent->smeth(); if (ssl_method_error(s, method) == 0) { check_for_downgrade(s, vent->version, dgrd); s->version = vent->version; s->method = method; return 0; } disabled = 1; } return disabled ? SSL_R_UNSUPPORTED_PROTOCOL : SSL_R_VERSION_TOO_LOW; } /* * ssl_choose_client_version - Choose client (D)TLS version. Called when the * server HELLO is received to select the final client protocol version and * the version specific method. * * @s: client SSL handle. * @version: The proposed version from the server
+
+t * (and never did) check min/max, FIPS or Suite B constraints. Hope * that
+
+t want. If not, then easy to fix, just return * ssl_method_error(s, s->method) */ return 0; case TLS_ANY_VERSION: table = tls_version_table; break; case DTLS_ANY_VERSION: table = dtls_version_table; break; } for (vent = table; vent->version != 0; ++vent) { const SSL_METHOD *method; int err; if (vent->cmeth == NULL) continue; if (highver != 0 && version != vent->version) continue; method = vent->cmeth(); err = ssl_method_error(s, method); if (err != 0) { if (version == vent->version) { *al = SSL_AD_PROTOCOL_VERSION; return err; } continue; } if (highver == 0) highver = vent->version; if (version != vent->version) continue; #ifndef OPENSSL_NO_TLS13DOWNGRADE /* Check for downgrades */ if (checkdgrd) { if (version == TLS1_2_VERSION && highver > version) { if (memcmp(tls12downgrade, s->s3->server_random + SSL3_RANDOM_SIZE - sizeof(tls12downgrade), sizeof(tls12downgrade)) == 0) { *al = SSL_AD_ILLEGAL_PARAMETER; return SSL_R_INAPPROPRIATE_FALLBACK; } } else if (!SSL_IS_DTLS(s) && version < TLS1_2_VERSION && highver > version) { if (memcmp(tls11downgrade, s->s3->server_random + SSL3_RANDOM_SIZE - sizeof(tls11downgrade), sizeof(tls11downgrade)) == 0) { *al = SSL_AD_ILLEGAL_PARAMETER; return SSL_R_INAPPROPRIATE_FALLBACK; } } } #endif s->method = method; s->version = version; return 0; } *al = SSL_AD_PROTOCOL_VERSION; return SSL_R_UNSUPPORTED_PROTOCOL; } /* * ssl_get_min_max_version - get minimum and maximum protocol version * @s: The SSL connection * @min_version: The minimum supported version * @max_version: The maximum supported version * * Work out what version we should be using for the initial ClientHello if the * version is initially (D)TLS_ANY_VERSION. We apply any explicit SSL_OP_NO_xxx * options, the MinProtocol and MaxProtocol configuration commands, any Suite B * constraints and any floor imposed by the security level here, * so we don
+
+t * (and never did) check min/max FIPS or Suite B constraints. Hope * that
+
+t want. If not, then easy to fix, just return * ssl_method_error(s, s->method) */ *min_version = *max_version = s->version; return 0; case TLS_ANY_VERSION: table = tls_version_table; break; case DTLS_ANY_VERSION: table = dtls_version_table; break; } /* * SSL_OP_NO_X disables all protocols above X *if* there are some protocols * below X enabled. This is required in order to maintain the "version * capability" vector contiguous. Any versions with a NULL client method * (protocol version client is disabled at compile-time) is also a "hole". * * Our initial state is hole == 1, version == 0. That is, versions above * the first version in the method table are disabled (a "hole" above * the valid protocol entries) and we don
+
+hole == 1
+
+single
+
+hole
+
+hole == 0
+
+single
+
+version capability
+

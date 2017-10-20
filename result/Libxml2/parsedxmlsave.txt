@@ -1,0 +1,806 @@
+xmlsave.c: Implemetation of the document serializer See Copyright for the status of this software. daniel@veillard.com
+
+XHTML detection
+
+xmlIsXHTML: @systemID: the system identifier @publicID: the public identifier Try to find if the document correspond to an XHTML DTD Returns 1 if true, 0 if not and -1 in case of error
+
+array for indenting output
+
+used for element content
+
+used for attribute content
+
+Output error handlers
+
+xmlSaveErrMemory: @extra: extra informations Handle an out of memory condition
+
+xmlSaveErr: @code: the error number @node: the location of the error. @extra: extra informations Handle an out of memory condition
+
+Special escaping routines
+
+xmlEscapeEntities: @out: a pointer to an array of bytes to store the result @outlen: the length of @out @in: a pointer to an array of unescaped UTF-8 bytes @inlen: the length of @in Take a block of UTF-8 chars in and escape them. Used when there is no encoding specified. Returns 0 if success, or -1 otherwise The value of @inlen after return is the number of octets consumed if the return value is positive, else unpredictable. The value of @outlen after return is the number of octets consumed.
+
+default case, just copy !
+
+We assume we have UTF-8 input.
+
+We could do multiple things here. Just save as a char ref
+
+Allocation and deallocation
+
+xmlSaveCtxtInit: @ctxt: the saving context Initialize a saving context
+
+xmlFreeSaveCtxt: Free a saving context, destroying the ouptut in any remaining buffer
+
+xmlNewSaveCtxt: Create a new saving context Returns the new structure or NULL in case of error
+
+Use the options
+
+Re-check this option as it may already have been set
+
+Dumping XML tree content to a simple buffer
+
+xmlAttrSerializeContent: @buf: the XML buffer output @doc: the document @attr: the attribute pointer Serialize the attribute in the buffer
+
+should not happen unless we have a badly built tree
+
+Dumping XML tree content to an I/O output buffer
+
+initialize the state, e.g. if outputting a BOM
+
+xmlNsDumpOutput: @buf: the XML buffer output @cur: a namespace Dump a local Namespace definition. Should be called in the context of attributes dumps.
+
+Within the context of an element attributes
+
+xmlNsListDumpOutput: @buf: the XML buffer output @cur: the first namespace Dump a list of local Namespace definitions. Should be called in the context of attributes dumps.
+
+xmlDtdDumpOutput: @buf: the XML buffer output @dtd: the pointer to the DTD Dump the XML document DTD, if any.
+
+Dump the notations first they are not in the DTD children list Do this only on a standalone DTD or on the internal subset though.
+
+xmlAttrDumpOutput: @buf: the XML buffer output @cur: the attribute pointer Dump an XML attribute
+
+xmlAttrListDumpOutput: @buf: the XML buffer output @doc: the document @cur: the first attribute pointer @encoding: an optional encoding string Dump a list of XML attributes
+
+xmlNodeListDumpOutput: @cur: the first node Dump an XML node list, recursive behaviour, children are printed too.
+
+xmlNodeDumpOutputInternal: @cur: the current node Dump an HTML node, recursive behaviour, children are printed too.
+
+Restore the state of the saving context at the end of the document
+
+xmlNodeDumpOutputInternal: @cur: the current node Dump an XML node, recursive behaviour, children are printed too.
+
+Disable escaping, needed for XSLT
+
+xmlDocContentDumpOutput: @cur: the document Dump an XML document.
+
+we need to switch to this encoding but just for this document since we output the XMLDecl the conversion must be done to not generate not well formed documents.
+
+Save the XML declaration
+
+Restore the state of the saving context at the end of the document
+
+Functions specific to XHTML serialization
+
+xhtmlIsEmpty: @node: the node Check if a node is an empty xhtml node Returns 1 if the node is an empty node, 0 if not and -1 in case of error
+
+xhtmlAttrListDumpOutput: @cur: the first attribute pointer Dump a list of XML attributes
+
+C.8
+
+C.7.
+
+xhtmlNodeListDumpOutput: @buf: the XML buffer output @doc: the XHTML document @cur: the first node @level: the imbrication level for indenting @format: is formatting allowed @encoding: an optional encoding string Dump an XML node list, recursive behaviour, children are printed too. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+xhtmlNodeDumpOutput: @buf: the XML buffer output @doc: the XHTML document @cur: the current node @level: the imbrication level for indenting @format: is formatting allowed @encoding: an optional encoding string Dump an XHTML node, recursive behaviour, children are printed too.
+
+Disable escaping, needed for XSLT
+
+3.1.1. Strictly Conforming Documents A.3.1.1 3/
+
+C.2. Empty Elements
+
+C.3. Element Minimization and Empty Element Content
+
+This was removed due to problems with HTML processors. See bug #345147.
+
+4.8. Script and Style elements
+
+Nothing to escape, so just output as is...
+
+FIXME: Should we do something about "--" also?
+
+(We cannot use xhtmlNodeDumpOutput() here because we wish to leave '>' unescaped!)
+
+We must use a CDATA section. Unfortunately, this will break CSS and JavaScript when read by a browser in HTML4-compliant mode. :-(
+
+Public entry points
+
+xmlSaveToFd: @fd: a file descriptor number @encoding: the encoding name to use or NULL @options: a set of xmlSaveOptions Create a document saving context serializing to a file descriptor with the encoding and the options given. Returns a new serialization context or NULL in case of error.
+
+xmlSaveToFilename: @filename: a file name or an URL @encoding: the encoding name to use or NULL @options: a set of xmlSaveOptions Create a document saving context serializing to a filename or possibly to an URL (but this is less reliable) with the encoding and the options given. Returns a new serialization context or NULL in case of error.
+
+TODO handle compression option
+
+xmlSaveToBuffer: @buffer: a buffer @encoding: the encoding name to use or NULL @options: a set of xmlSaveOptions Create a document saving context serializing to a buffer with the encoding and the options given Returns a new serialization context or NULL in case of error.
+
+xmlSaveToIO: @iowrite: an I/O write function @ioclose: an I/O close function @ioctx: an I/O handler @encoding: the encoding name to use or NULL @options: a set of xmlSaveOptions Create a document saving context serializing to a file descriptor with the encoding and the options given Returns a new serialization context or NULL in case of error.
+
+xmlSaveDoc: @ctxt: a document saving context @doc: a document Save a full document to a saving context TODO: The function is not fully implemented yet as it does not return the byte count but 0 instead Returns the number of byte written or -1 in case of error
+
+xmlSaveTree: @ctxt: a document saving context @node: the top node of the subtree to save Save a subtree starting at the node parameter to a saving context TODO: The function is not fully implemented yet as it does not return the byte count but 0 instead Returns the number of byte written or -1 in case of error
+
+xmlSaveFlush: @ctxt: a document saving context Flush a document saving context, i.e. make sure that all bytes have been output. Returns the number of byte written or -1 in case of error.
+
+xmlSaveClose: @ctxt: a document saving context Close a document saving context, i.e. make sure that all bytes have been output and free the associated data. Returns the number of byte written or -1 in case of error.
+
+xmlSaveSetEscape: @ctxt: a document saving context @escape: the escaping function Set a custom escaping function to be used for text in element content Returns 0 if successful or -1 in case of error.
+
+xmlSaveSetAttrEscape: @ctxt: a document saving context @escape: the escaping function Set a custom escaping function to be used for text in attribute content Returns 0 if successful or -1 in case of error.
+
+Public entry points based on buffers
+
+xmlAttrSerializeTxtContent: @buf: the XML buffer output @doc: the document @attr: the attribute node @string: the text content Serialize text attribute values to an xml simple buffer
+
+We assume we have UTF-8 content.
+
+We could do multiple things here. Just save as a char ref
+
+xmlNodeDump: @buf: the XML buffer output @doc: the document @cur: the current node @level: the imbrication level for indenting @format: is formatting allowed Dump an XML node, recursive behaviour,children are printed too. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called Returns the number of bytes written to the buffer or -1 in case of error
+
+xmlElemDump: @f: the FILE for the output @doc: the document @cur: the current node Dump an XML/HTML node, recursive behaviour, children are printed too.
+
+LIBXML_HTML_ENABLED
+
+Saving functions front-ends
+
+xmlNodeDumpOutput: @buf: the XML buffer output @doc: the document @cur: the current node @level: the imbrication level for indenting @format: is formatting allowed @encoding: an optional encoding string Dump an XML node, recursive behaviour, children are printed too. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+xmlDocDumpFormatMemoryEnc: @out_doc: Document to generate XML text from @doc_txt_ptr: Memory pointer for allocated XML text @doc_txt_len: Length of the generated XML text @txt_encoding: Character encoding to use when generating XML text @format: should formatting spaces been added Dump the current DOM tree into memory using the character encoding specified by the caller. Note it is up to the caller of this function to free the allocated memory with xmlFree(). Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+Continue, caller just won't get length
+
+No document, no output
+
+Validate the encoding value, if provided. This logic is copied from xmlSaveFileEnc.
+
+xmlDocDumpMemory: @cur: the document @mem: OUT: the memory pointer @size: OUT: the memory length Dump an XML document in memory and return the #xmlChar and it's size in bytes. It's up to the caller to free the memory with xmlFree(). The resulting byte array is zero terminated, though the last 0 is not included in the returned size.
+
+xmlDocDumpFormatMemory: @cur: the document @mem: OUT: the memory pointer @size: OUT: the memory length @format: should formatting spaces been added Dump an XML document in memory and return the #xmlChar and it's size. It's up to the caller to free the memory with xmlFree(). Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+xmlDocDumpMemoryEnc: @out_doc: Document to generate XML text from @doc_txt_ptr: Memory pointer for allocated XML text @doc_txt_len: Length of the generated XML text @txt_encoding: Character encoding to use when generating XML text Dump the current DOM tree into memory using the character encoding specified by the caller. Note it is up to the caller of this function to free the allocated memory with xmlFree().
+
+xmlDocFormatDump: @f: the FILE @cur: the document @format: should formatting spaces been added Dump an XML document to an open FILE. returns: the number of bytes written or -1 in case of failure. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+xmlDocDump: @f: the FILE @cur: the document Dump an XML document to an open FILE. returns: the number of bytes written or -1 in case of failure.
+
+xmlSaveFileTo: @buf: an output I/O buffer @cur: the document @encoding: the encoding if any assuming the I/O layer handles the trancoding Dump an XML document to an I/O buffer. Warning ! This call xmlOutputBufferClose() on buf which is not available after this call. returns: the number of bytes written or -1 in case of failure.
+
+xmlSaveFormatFileTo: @buf: an output I/O buffer @cur: the document @encoding: the encoding if any assuming the I/O layer handles the trancoding @format: should formatting spaces been added Dump an XML document to an I/O buffer. Warning ! This call xmlOutputBufferClose() on buf which is not available after this call. returns: the number of bytes written or -1 in case of failure.
+
+xmlSaveFormatFileEnc: @filename: the filename or URL to output @cur: the document being saved @encoding: the name of the encoding to use or NULL. @format: should formatting spaces be added. Dump an XML document to a file or an URL. Returns the number of bytes written or -1 in case of error. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called
+
+save the content to a temp buffer.
+
+xmlSaveFileEnc: @filename: the filename (or URL) @cur: the document @encoding: the name of an encoding (or NULL) Dump an XML document, converting it to the given encoding returns: the number of bytes written or -1 in case of failure.
+
+xmlSaveFormatFile: @filename: the filename (or URL) @cur: the document @format: should formatting spaces been added Dump an XML document to a file. Will use compression if compiled in and enabled. If @filename is "-" the stdout file is used. If @format is set then the document will be indented on output. Note that @format = 1 provide node indenting only if xmlIndentTreeOutput = 1 or xmlKeepBlanksDefault(0) was called returns: the number of bytes written or -1 in case of failure.
+
+xmlSaveFile: @filename: the filename (or URL) @cur: the document Dump an XML document to a file. Will use compression if compiled in and enabled. If @filename is "-" the stdout file is used. returns: the number of bytes written or -1 in case of failure.
+
+LIBXML_OUTPUT_ENABLED
+
+W3C//DTD XHTML 1.0 Strict//EN"
+
+www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+
+W3C//DTD XHTML 1.0 Frameset//EN"
+
+www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"
+
+W3C//DTD XHTML 1.0 Transitional//EN"
+
+www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+
+www.w3.org/1999/xhtml"
+
+www.w3.org/1999/xhtml\"");
+
+libxml.h
+
+-//W3C//DTD XHTML 1.0 Strict//EN
+
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd
+
+-//W3C//DTD XHTML 1.0 Frameset//EN
+
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd
+
+-//W3C//DTD XHTML 1.0 Transitional//EN
+
+http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd
+
+http://www.w3.org/1999/xhtml
+
+Unimplemented block at %s:%d\n
+
+string is not in UTF-8\n
+
+invalid character value\n
+
+unknown encoding %s\n
+
+document has no DOCTYPE\n
+
+unexpected error number\n
+
+&
+
+#
+
+x
+
+0
+
+1
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+A
+
+B
+
+C
+
+D
+
+E
+
+F
+
+0
+
+;
+
+<
+
+&
+
+l
+
+t
+
+;
+
+>
+
+&
+
+g
+
+t
+
+;
+
+&
+
+&
+
+a
+
+m
+
+p
+
+;
+
+\n
+
+\t
+
+xmlEscapeEntities : char out of range\n
+
+creating saving context
+
+&
+
+;
+
+creating encoding buffer
+
+xml
+
+xmlns:
+
+xmlns
+
+=
+
+<!DOCTYPE
+
+PUBLIC
+
+
+
+SYSTEM
+
+>
+
+[\n
+
+]>
+
+
+
+:
+
+=\"
+
+\"
+
+\n
+
+HTML
+
+<?
+
+
+
+?>
+
+<?
+
+?>
+
+<!--
+
+-->
+
+&
+
+;
+
+\0
+
+<![CDATA[]]>
+
+\0
+
+]
+
+]
+
+>
+
+<![CDATA[
+
+]]>
+
+<![CDATA[
+
+]]>
+
+<
+
+:
+
+/>
+
+>
+
+\n
+
+</
+
+:
+
+>
+
+HTML
+
+<?xml version=
+
+\"1.0\"
+
+encoding=
+
+standalone=\"no\"
+
+standalone=\"yes\"
+
+?>\n
+
+\n
+
+a
+
+area
+
+b
+
+br
+
+base
+
+basefont
+
+c
+
+col
+
+f
+
+frame
+
+h
+
+hr
+
+i
+
+img
+
+input
+
+isindex
+
+l
+
+link
+
+m
+
+meta
+
+p
+
+param
+
+id
+
+name
+
+lang
+
+lang
+
+xml
+
+a
+
+p
+
+div
+
+img
+
+map
+
+applet
+
+form
+
+frame
+
+iframe
+
+id=\"
+
+\"
+
+xml:lang=\"
+
+\"
+
+lang=\"
+
+\"
+
+\n
+
+<?
+
+
+
+?>
+
+<?
+
+?>
+
+<!--
+
+-->
+
+&
+
+;
+
+\0
+
+<![CDATA[]]>
+
+\0
+
+]
+
+]
+
+>
+
+<![CDATA[
+
+]]>
+
+<![CDATA[
+
+]]>
+
+<
+
+:
+
+html
+
+xmlns=\"http://www.w3.org/1999/xhtml\"
+
+head
+
+html
+
+meta
+
+http-equiv
+
+Content-Type
+
+/>
+
+>
+
+\n
+
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=
+
+UTF-8
+
+\" />
+
+\n
+
+>
+
+</
+
+:
+
+>
+
+>
+
+\n
+
+<meta http-equiv=\"Content-Type\" content=\"text/html; charset=
+
+UTF-8
+
+\" />
+
+script
+
+style
+
+<
+
+&
+
+]]>
+
+--
+
+>
+
+\0
+
+]
+
+]
+
+>
+
+<![CDATA[
+
+]]>
+
+<![CDATA[
+
+]]>
+
+\n
+
+</
+
+:
+
+>
+
+\n
+
+&#10;
+
+\r
+
+&#13;
+
+\t
+
+&#9;
+
+"
+
+&quot;
+
+<
+
+&lt;
+
+>
+
+&gt;
+
+&
+
+&amp;
+
+ISO-8859-1
+
+ISO-8859-1
+
+xmlNodeDump : node == NULL\n
+
+xmlNodeDump : buf == NULL\n
+
+creating buffer
+
+xmlElemDump : cur == NULL\n
+
+xmlElemDump : doc == NULL\n
+
+HTML support not compiled in\n
+
+UTF-8
+
+t get length */ } if (doc_txt_ptr == NULL) { *doc_txt_len = 0; return; } *doc_txt_ptr = NULL; *doc_txt_len = 0; if (out_doc == NULL) { /* No document, no output */ return; } /* * Validate the encoding value, if provided. * This logic is copied from xmlSaveFileEnc. */ if (txt_encoding == NULL) txt_encoding = (const char *) out_doc->encoding; if (txt_encoding != NULL) { conv_hdlr = xmlFindCharEncodingHandler(txt_encoding); if ( conv_hdlr == NULL ) { xmlSaveErr(XML_SAVE_UNKNOWN_ENCODING, (xmlNodePtr) out_doc, txt_encoding); return; } } if ((out_buff = xmlAllocOutputBuffer(conv_hdlr)) == NULL ) { xmlSaveErrMemory("creating buffer"); return; } memset(&ctxt, 0, sizeof(ctxt)); ctxt.doc = out_doc; ctxt.buf = out_buff; ctxt.level = 0; ctxt.format = format; ctxt.encoding = (const xmlChar *) txt_encoding; xmlSaveCtxtInit(&ctxt); ctxt.options |= XML_SAVE_AS_XML; xmlDocContentDumpOutput(&ctxt, out_doc); xmlOutputBufferFlush(out_buff); if (out_buff->conv != NULL) { *doc_txt_len = out_buff->conv->use; *doc_txt_ptr = xmlStrndup(out_buff->conv->content, *doc_txt_len); } else { *doc_txt_len = out_buff->buffer->use; *doc_txt_ptr = xmlStrndup(out_buff->buffer->content, *doc_txt_len); } (void)xmlOutputBufferClose(out_buff); if ((*doc_txt_ptr == NULL) && (*doc_txt_len > 0)) { *doc_txt_len = 0; xmlSaveErrMemory("creating output"); } return; } /** * xmlDocDumpMemory: * @cur: the document * @mem: OUT: the memory pointer * @size: OUT: the memory length * * Dump an XML document in memory and return the #xmlChar * and it
+
+s up to the caller to free the memory with xmlFree(). * The resulting byte array is zero terminated, though the last 0 is not * included in the returned size. */ void xmlDocDumpMemory(xmlDocPtr cur, xmlChar**mem, int *size) { xmlDocDumpFormatMemoryEnc(cur, mem, size, NULL, 0); } /** * xmlDocDumpFormatMemory: * @cur: the document * @mem: OUT: the memory pointer * @size: OUT: the memory length * @format: should formatting spaces been added * * * Dump an XML document in memory and return the #xmlChar * and it
+
+xmlDocDump : document == NULL\n
+
+-
+
+-
+
+elfgcchack.h
+
+0x10)
+
+0x100)
+
+0x1000)
+
+0x10000)
+
+0x100000)
+
+0xF)
+
+0xA:
+
+0xB:
+
+0xC:
+
+0xD:
+
+0xE:
+
+0xF:
+
+0x20)
+
+0x80))
+
+0x80)
+
+0xC0)
+
+0xE0)
+
+0x1F;
+
+0x3F;
+
+0xF0)
+
+0x0F;
+
+0x3F;
+
+0x3F;
+
+0xF8)
+
+0x07;
+
+0x3F;
+
+0x3F;
+
+0x3F;
+
+0x80)
+
+0xC0)
+
+0xE0)
+
+0x1F;
+
+0x3F;
+
+0xF0)
+
+0x0F;
+
+0x3F;
+
+0x3F;
+
+0xF8)
+
+0x07;
+
+0x3F;
+
+0x3F;
+
+0x3F;
+
+Summary: the XML document serializer Description: API to save document or subtree of document Copy: See Copyright for the status of this software. Author: Daniel Veillard
+
+xmlSaveOption: This is the set of XML save options that can be passed down to the xmlSaveToFd() and similar calls.
+
+format save output
+
+drop the xml declaration
+
+no empty tags
+
+disable XHTML1 specific rules
+
+force XHTML1 specific rules
+
+force XML serialization on HTML doc
+
+force HTML serialization on XML doc
+
+LIBXML_OUTPUT_ENABLED
+
+__XML_XMLSAVE_H__
+
+C
+

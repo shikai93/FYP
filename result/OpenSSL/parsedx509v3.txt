@@ -1,0 +1,262 @@
+Copyright 1999-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Forward reference
+
+Useful typedefs
+
+V3 extension structure
+
+If this is set the following four fields are ignored
+
+Old style ASN1 calls
+
+The following pair is used for string extensions
+
+The following pair is used for multi-valued extensions
+
+The following are used for raw extensions
+
+Any extension specific data
+
+Context specific info
+
+Maybe more here
+
+ext_flags values
+
+otherName
+
+Old names
+
+iPAddress
+
+dirn
+
+rfc822Name, dNSName, uniformResourceIdentifier
+
+registeredID
+
+x400Address
+
+If relativename then this contains the full distribution point name
+
+All existing reasons
+
+Strong extranet structures
+
+Proxy certificate structures, see RFC 3820
+
+Values in idp_flags field
+
+IDP present
+
+IDP values inconsistent
+
+onlyuser true
+
+onlyCA true
+
+onlyattr true
+
+indirectCRL true
+
+onlysomereasons present
+
+X509_PURPOSE stuff
+
+Really self issued not necessarily self signed
+
+EXFLAG_SET is set to indicate that some values have been precomputed
+
+Self signed
+
+Default trust ID
+
+Flags for X509V3_EXT_print()
+
+Return error for unknown extensions
+
+Print error for unknown extensions
+
+ASN1 parse unknown extensions
+
+BIO_dump unknown extensions
+
+Flags for X509V3_add1_i2d
+
+The new declarations are in crypto.h, but the old ones were here.
+
+Flags for X509_check_ functions
+
+Always check subject name for host match even if subject alt names present
+
+Disable wildcard matching for dnsName fields and common name.
+
+Wildcards must not match a partial label.
+
+Allow (non-partial) wildcards to match multiple labels.
+
+Constraint verifier subdomain patterns to match a single labels.
+
+Never check the subject CN
+
+Match reference identifiers starting with "." to any sub-domain. This is a non-public flag, turned on implicitly when the subject reference identity is a DNS name.
+
+API tag for elements of the ASIdentifer SEQUENCE.
+
+AFI values, assigned by IANA. It'd be nice to make the AFI handling code totally generic, but there are too many little things that would need to be defined for other address families for it to be worth the trouble.
+
+Utilities to construct and extract values from RFC3779 extensions, since some of the encodings (particularly for IP address prefixes and ranges) are a bit tedious to work with directly.
+
+Canonical forms.
+
+Tests for inheritance and containment.
+
+Check whether RFC 3779 extensions nest properly in chains.
+
+OPENSSL_NO_RFC3779
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+section:
+
+,name:
+
+,value:
+
+.
+
+0x1
+
+0x2
+
+0x1
+
+0x2
+
+0x4
+
+0x807f
+
+0x1
+
+0x2
+
+0x4
+
+0x8
+
+0x10
+
+0x20
+
+0x40
+
+0x1
+
+0x2
+
+0x4
+
+0x8
+
+0x10
+
+0x20
+
+0x40
+
+0x80
+
+0x100
+
+0x200
+
+0x400
+
+0x800
+
+0x1000
+
+0x2000
+
+0x0080
+
+0x0040
+
+0x0020
+
+0x0010
+
+0x0008
+
+0x0004
+
+0x0002
+
+0x0001
+
+0x8000
+
+0x80
+
+0x40
+
+0x20
+
+0x10
+
+0x04
+
+0x02
+
+0x01
+
+0x1
+
+0x2
+
+0x4
+
+0x8
+
+0x10
+
+0x20
+
+0x40
+
+0x80
+
+0x100
+
+0x1
+
+0x2
+
+0xfL
+
+0xfL
+
+0x10
+
+0x10100000L
+
+0x1
+
+0x2
+
+0x4
+
+0x8
+
+0x10
+
+0x20
+
+0x8000
+

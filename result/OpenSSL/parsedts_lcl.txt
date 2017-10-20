@@ -1,0 +1,72 @@
+Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+MessageImprint ::= SEQUENCE { hashAlgorithm AlgorithmIdentifier, hashedMessage OCTET STRING }
+
+TimeStampResp ::= SEQUENCE { status PKIStatusInfo, timeStampToken TimeStampToken OPTIONAL }
+
+TimeStampReq ::= SEQUENCE { version INTEGER { v1(1) }, messageImprint MessageImprint, --a hash algorithm OID and the hash value of the data to be --time-stamped reqPolicy TSAPolicyId OPTIONAL, nonce INTEGER OPTIONAL, certReq BOOLEAN DEFAULT FALSE, extensions [0] IMPLICIT Extensions OPTIONAL }
+
+Accuracy ::= SEQUENCE { seconds INTEGER OPTIONAL, millis [0] INTEGER (1..999) OPTIONAL, micros [1] INTEGER (1..999) OPTIONAL }
+
+TSTInfo ::= SEQUENCE { version INTEGER { v1(1) }, policy TSAPolicyId, messageImprint MessageImprint, -- MUST have the same value as the similar field in -- TimeStampReq serialNumber INTEGER, -- Time-Stamping users MUST be ready to accommodate integers -- up to 160 bits. genTime GeneralizedTime, accuracy Accuracy OPTIONAL, ordering BOOLEAN DEFAULT FALSE, nonce INTEGER OPTIONAL, -- MUST be present if the similar field was present -- in TimeStampReq. In that case it MUST have the same value. tsa [0] GeneralName OPTIONAL, extensions [1] IMPLICIT Extensions OPTIONAL }
+
+IssuerSerial ::= SEQUENCE { issuer GeneralNames, serialNumber CertificateSerialNumber }
+
+ESSCertID ::= SEQUENCE { certHash Hash, issuerSerial IssuerSerial OPTIONAL }
+
+Always SHA-1 digest.
+
+SigningCertificate ::= SEQUENCE { certs SEQUENCE OF ESSCertID, policies SEQUENCE OF PolicyInformation OPTIONAL }
+
+ESSCertIDv2 ::= SEQUENCE { hashAlgorithm AlgorithmIdentifier DEFAULT {algorithm id-sha256}, certHash Hash, issuerSerial IssuerSerial OPTIONAL }
+
+Default: SHA-256
+
+SigningCertificateV2 ::= SEQUENCE { certs SEQUENCE OF ESSCertIDv2, policies SEQUENCE OF PolicyInformation OPTIONAL }
+
+Certs to include in signed data.
+
+Acceptable policies.
+
+It may appear in policies, too.
+
+Acceptable message digests.
+
+accuracy, 0 means not specified.
+
+accuracy, 0 means not specified.
+
+accuracy, 0 means not specified.
+
+fraction of seconds in time stamp token.
+
+Optional info, see values above.
+
+Callback functions.
+
+User data for serial_cb.
+
+User data for time_cb.
+
+User data for extension_cb.
+
+These members are used only while creating the response.
+
+Set this to the union of TS_VFY_... flags you want to carry out.
+
+Must be set only with TS_VFY_SIGNATURE. certs is optional.
+
+Must be set only with TS_VFY_POLICY.
+
+Must be set only with TS_VFY_IMPRINT. If md_alg is NULL, the algorithm from the response is used.
+
+Must be set only with TS_VFY_DATA.
+
+Must be set only with TS_VFY_TSA_NAME.
+
+Must be set only with TS_VFY_TSA_NAME.
+
+www.openssl.org/source/license.html
+
+License
+

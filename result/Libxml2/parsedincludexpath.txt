@@ -1,0 +1,16 @@
+keyword";
+
+Document not parsed successfully. \n
+
+Error in xmlXPathNewContext\n
+
+Error in xmlXPathEvalExpression\n
+
+No result\n
+
+//keyword
+
+Usage: %s docname\n
+
+keyword: %s\n
+

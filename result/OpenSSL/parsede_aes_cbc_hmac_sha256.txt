@@ -1,0 +1,142 @@
+Copyright 2013-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+AAD length in decrypt case
+
+13 used
+
+handy when benchmarking
+
+n4x is 1 or 2
+
+ask for IVs in bulk
+
+align
+
+populate descriptors with pointers and IVs
+
+5+16 is place for header and explicit IV
+
+fix seqnum
+
+fix length
+
+hash 13-byte headers and first 64-13 bytes of inputs
+
+hash bulk inputs
+
+goal is to minimize pressure on L1 cache by moving in shorter steps, so that hashed data is still in the cache by the time we encrypt it
+
+remainder actually
+
+64 is HMAC header
+
+convert to bits
+
+hash input tails and finalize
+
+finalize MACs
+
+write MAC
+
+pad
+
+account for explicit iv
+
+arrange header
+
+explicit IV in TLS 1.1 and later
+
+Assembly stitch handles AVX-capable processors, but its performance is not optimal on AMD Jaguar, ~40% worse, for unknown reasons. Incidentally processor in question supports AVX, but not AMD-specific XOP extension, which can be used to identify it and avoid stitch invocation. So that after we establish that current CPU supports AVX, we even see if it's either even XOP-capable Bulldozer-based or GenuineIntel one. But SHAEXT-capable go ahead...
+
+SHAEXT?
+
+AVX?
+
+XOP?
+
+"Intel CPU"?
+
+"TLS" mode of operation
+
+calculate HMAC and append it to payload
+
+pad the payload|hmac
+
+encrypt HMAC|padding at once
+
+arrange cache line alignment
+
+decrypt HMAC|padding at once
+
+"TLS" mode of operation
+
+omit explicit iv
+
+figure out payload length
+
+If pad is invalid then we will fail the above test but we must continue anyway because we are in constant time code. However, we'll use the maxpad value instead of the supplied pad to make sure we perform well defined pointer arithmetic.
+
+calculate HMAC
+
+see original reference version in #else
+
+amend mac
+
+but pretend as if we hashed padded payload
+
+at most 18 bits
+
+j is not incremented yet
+
+but pretend as if we hashed padded payload
+
+pre-lucky-13 reference version of above
+
+verify HMAC
+
+see original reference version in #else
+
+... and padding
+
+pre-lucky-13 reference version of above
+
+verify padding
+
+ipad
+
+opad
+
+too short
+
+AVX2
+
+not yet
+
+www.openssl.org/source/license.html
+
+License
+
+modes_lcl.h
+
+internal/constant_time_locl.h
+
+internal/evp_int.h
+
+MAXCHUNKSIZE is not divisible by 64
+
+s * either even XOP-capable Bulldozer-based or GenuineIntel one. * But SHAEXT-capable go ahead... */ if (((OPENSSL_ia32cap_P[2] & (1 << 29)) || /* SHAEXT? */ ((OPENSSL_ia32cap_P[1] & (1 << (60 - 32))) && /* AVX? */ ((OPENSSL_ia32cap_P[1] & (1 << (43 - 32))) /* XOP? */ | (OPENSSL_ia32cap_P[0] & (1 << 30))))) && /* "Intel CPU"? */ plen > (sha_off + iv) && (blocks = (plen - (sha_off + iv)) / SHA256_CBLOCK)) { SHA256_Update(&key->md, in + iv, sha_off); (void)aesni_cbc_sha256_enc(in, out, blocks, &key->ks, EVP_CIPHER_CTX_iv_noconst(ctx), &key->md, in + iv + sha_off); blocks *= SHA256_CBLOCK; aes_off += blocks; sha_off += blocks; key->md.Nh += blocks >> 29; key->md.Nl += blocks <<= 3; if (key->md.Nl < (unsigned int)blocks) key->md.Nh++; } else { sha_off = 0; } # endif sha_off += iv; SHA256_Update(&key->md, in + sha_off, plen - sha_off); if (plen != len) { /* "TLS" mode of operation */ if (in != out) memcpy(out + aes_off, in + aes_off, plen - aes_off); /* calculate HMAC and append it to payload */ SHA256_Final(out + plen, &key->md); key->md = key->tail; SHA256_Update(&key->md, out + plen, SHA256_DIGEST_LENGTH); SHA256_Final(out + plen, &key->md); /* pad the payload|hmac */ plen += SHA256_DIGEST_LENGTH; for (l = len - plen - 1; plen < len; plen++) out[plen] = l; /* encrypt HMAC|padding at once */ aesni_cbc_encrypt(out + aes_off, out + aes_off, len - aes_off, &key->ks, EVP_CIPHER_CTX_iv_noconst(ctx), 1); } else { aesni_cbc_encrypt(in + aes_off, out + aes_off, len - aes_off, &key->ks, EVP_CIPHER_CTX_iv_noconst(ctx), 1); } } else { union { unsigned int u[SHA256_DIGEST_LENGTH / sizeof(unsigned int)]; unsigned char c[64 + SHA256_DIGEST_LENGTH]; } mac, *pmac; /* arrange cache line alignment */ pmac = (void *)(((size_t)mac.c + 63) & ((size_t)0 - 64)); /* decrypt HMAC|padding at once */ aesni_cbc_encrypt(in, out, len, &key->ks, EVP_CIPHER_CTX_iv_noconst(ctx), 0); if (plen != NO_PAYLOAD_LENGTH) { /* "TLS" mode of operation */ size_t inp_len, mask, j, i; unsigned int res, maxpad, pad, bitlen; int ret = 1; union { unsigned int u[SHA_LBLOCK]; unsigned char c[SHA256_CBLOCK]; } *data = (void *)key->md.data; if ((key->aux.tls_aad[plen - 4] << 8 | key->aux.tls_aad[plen - 3]) >= TLS1_1_VERSION) iv = AES_BLOCK_SIZE; if (len < (iv + SHA256_DIGEST_LENGTH + 1)) return 0; /* omit explicit iv */ out += iv; len -= iv; /* figure out payload length */ pad = out[len - 1]; maxpad = len - (SHA256_DIGEST_LENGTH + 1); maxpad |= (255 - maxpad) >> (sizeof(maxpad) * 8 - 8); maxpad &= 255; mask = constant_time_ge(maxpad, pad); ret &= mask; /* * If pad is invalid then we will fail the above test but we must * continue anyway because we are in constant time code. However, * we
+
+0x80;
+
+0x80;
+
+0x80;
+
+0x80
+
+0x36;
+
+0x36
+
+0x5c;
+

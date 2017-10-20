@@ -1,0 +1,364 @@
+runsuite.c: C program to run libxml2 againts published testsuites See Copyright for the status of this software. daniel@veillard.com
+
+File name and path utilities
+
+Libxml2 specific routines
+
+that's needed to implement <resource>
+
+We need to trap calls to the resolver to not account memory for the catalog which is shared to the current running test. We also don't want to have network downloads modifying tests.
+
+Trapping the error messages at the generic level to grab the equivalent of stderr messages on CLI tools.
+
+buffer is full
+
+Deactivate the cache if created; otherwise we have to create/free it for every test, since it will confuse the memory leak detection. Note that normally this need not be done, since the cache is not created until set explicitely with xmlXPathContextSetCache(); but for test purposes it is sometimes usefull to activate the cache by default for the whole library.
+
+used as default nanemspace in xstc tests
+
+Test test/xsdtest/xsdtestsuite.xml
+
+); if (test == NULL) { test_log("Failed to find test in correct line %ld\n", xmlGetLineNo(cur)); return(1); } memt = xmlMemUsed(); extraMemoryFromResolver = 0; / dump the schemas to a buffer, then reparse it and compile the schemas
+
+); if (test != NULL) { xmlBufferEmpty(buf); xmlNodeDump(buf, test->doc, test, 0, 0); name = getString(tst, "string(@name)"); content = xmlStrdup(buf->content); if ((name != NULL) && (content != NULL)) { res = composeDir(base, name); xmlFree(name); addEntity((char ) res, (char ) content); } else { if (name != NULL) xmlFree(name); if (content != NULL) xmlFree(content); } } tst = getNext(tst, "following-sibling::resource[1]"); } if (buf != NULL) xmlBufferFree(buf); } static void installDirs(xmlNodePtr tst, const xmlChar base) { xmlNodePtr test; xmlChar name, res; name = getString(tst, "string(@name)"); if (name == NULL) return; res = composeDir(base, name); xmlFree(name); if (res == NULL) { return; } / Now process resources and subdir recursively
+
+); if (test == NULL) { fprintf(stderr, "Failed to find test in correct line %ld\n", xmlGetLineNo(cur)); return(1); } memt = xmlMemUsed(); extraMemoryFromResolver = 0; / dump the schemas to a buffer, then reparse it and compile the schemas
+
+now scan all the siblings of correct to process the <valid> tests
+
+); if (test == NULL) { fprintf(stderr, "Failed to find test in <valid> line %ld\n", xmlGetLineNo(tmp)); } else { xmlBufferEmpty(buf); if (dtd != NULL) xmlBufferAdd(buf, dtd, -1); xmlNodeDump(buf, test->doc, test, 0, 0); / We are ready to run the test
+
+now scan all the siblings of correct to process the <invalid> tests
+
+); if (test == NULL) { fprintf(stderr, "Failed to find test in <invalid> line %ld\n", xmlGetLineNo(tmp)); } else { xmlBufferEmpty(buf); xmlNodeDump(buf, test->doc, test, 0, 0); / We are ready to run the test
+
+Schemas test suites from W3C/NIST/MS/Sun
+
+We'll automatically mark the instances as failed if the schema was broken.
+
+The driver for the tests
+
+!SCHEMAS
+
+www.w3.org/1999/xlink");
+
+libxml.h
+
+runsuite.log
+
+%s/%s
+
+Exitting tests on fatal error\n
+
+s needed to implement <resource> */ #define MAX_ENTITIES 20 static char *testEntitiesName[MAX_ENTITIES]; static char *testEntitiesValue[MAX_ENTITIES]; static int nb_entities = 0; static void resetEntities(void) { int i; for (i = 0;i < nb_entities;i++) { if (testEntitiesName[i] != NULL) xmlFree(testEntitiesName[i]); if (testEntitiesValue[i] != NULL) xmlFree(testEntitiesValue[i]); } nb_entities = 0; } static int addEntity(char *name, char *content) { if (nb_entities >= MAX_ENTITIES) { fprintf(stderr, "Too many entities defined\n"); return(-1); } testEntitiesName[nb_entities] = name; testEntitiesValue[nb_entities] = content; nb_entities++; return(0); } /* * We need to trap calls to the resolver to not account memory for the catalog * which is shared to the current running test. We also don
+
+Failed to find resource %s\n
+
+\n------------\n
+
+%s
+
+ts
+
+TestSuite
+
+xlink
+
+http://www.w3.org/1999/xlink
+
+Failed to compile %s\n
+
+Failed to compile %s\n
+
+./incorrect[1]
+
+./*
+
+Failed to find test in correct line %ld\n
+
+out of memory !\n
+
+Failed to detect incorect RNG line %ld\n
+
+Validation of tests starting line %ld leaked %d\n
+
+out of memory !\n
+
+./*
+
+string(@name)
+
+following-sibling::resource[1]
+
+string(@name)
+
+./resource[1]
+
+./dir[1]
+
+following-sibling::dir[1]
+
+./dir[1]
+
+./resource[1]
+
+./correct[1]
+
+./*
+
+Failed to find test in correct line %ld\n
+
+out of memory !\n
+
+Failed to parse RNGtest line %ld\n
+
+following-sibling::valid[1]
+
+dtd
+
+./*
+
+Failed to find test in <valid> line %ld\n
+
+test
+
+Failed to parse valid instance line %ld\n
+
+Failed to validate valid instance line %ld\n
+
+Internal error validating instance line %ld\n
+
+Validation of instance line %ld leaked %d\n
+
+following-sibling::valid[1]
+
+following-sibling::invalid[1]
+
+./*
+
+Failed to find test in <invalid> line %ld\n
+
+test
+
+Failed to parse valid instance line %ld\n
+
+Failed to detect invalid instance line %ld\n
+
+Internal error validating instance line %ld\n
+
+Validation of instance line %ld leaked %d\n
+
+following-sibling::invalid[1]
+
+Validation of tests starting line %ld leaked %d\n
+
+string(documentation)
+
+Suite %s\n
+
+./testCase[1]
+
+following-sibling::testCase[1]
+
+test/xsdtest/xsdtestsuite.xml
+
+Failed to parse %s\n
+
+## XML Schemas datatypes test suite from James Clark\n
+
+testSuite
+
+Unexpected format %s\n
+
+./testSuite[1]
+
+testSuite
+
+Unexpected format %s\n
+
+following-sibling::testSuite[1]
+
+string(documentation)
+
+Suite %s\n
+
+string(section)
+
+Section %s\n
+
+./testSuite[1]
+
+following-sibling::testSuite[1]
+
+test/relaxng/OASIS/spectest.xml
+
+Failed to parse %s\n
+
+## Relax NG test suite from James Clark\n
+
+testSuite
+
+Unexpected format %s\n
+
+./testSuite[1]
+
+testSuite
+
+Unexpected format %s\n
+
+following-sibling::testSuite[1]
+
+test/relaxng/testsuite.xml
+
+Failed to parse %s\n
+
+## Relax NG test suite for libxml2\n
+
+testSuite
+
+Unexpected format %s\n
+
+./testSuite[1]
+
+testSuite
+
+Unexpected format %s\n
+
+following-sibling::testSuite[1]
+
+string(ts:instanceDocument/@xlink:href)
+
+testGroup line %ld misses href for schemaDocument\n
+
+Failed to build path to schemas testGroup line %ld : %s\n
+
+schemas for testGroup line %ld is missing: %s\n
+
+string(ts:expected/@validity)
+
+instanceDocument line %ld misses expected validity\n
+
+instance %s fails to parse\n
+
+valid
+
+valid instance %s failed to validate against %s\n
+
+valid instance %s got internal error validating %s\n
+
+invalid
+
+Failed to detect invalid instance %s against %s\n
+
+instanceDocument line %ld has unexpected validity value%s\n
+
+Validation of tests starting line %ld leaked %d\n
+
+string(ts:schemaTest/ts:schemaDocument/@xlink:href)
+
+testGroup line %ld misses href for schemaDocument\n
+
+Failed to build path to schemas testGroup line %ld : %s\n
+
+schemas for testGroup line %ld is missing: %s\n
+
+string(ts:schemaTest/ts:expected/@validity)
+
+testGroup line %ld misses expected validity\n
+
+valid
+
+valid schemas %s failed to parse\n
+
+nimplemented
+
+valid schemas %s hit an unimplemented block\n
+
+./ts:instanceTest[1]
+
+following-sibling::ts:instanceTest[1]
+
+invalid
+
+Failed to detect error in schemas %s\n
+
+nimplemented
+
+invalid schemas %s hit an unimplemented block\n
+
+testGroup line %ld misses unexpected validity value%s\n
+
+Processing test line %ld %s leaked %d\n
+
+Failed to parse %s\n
+
+testSet
+
+Unexpected format %s\n
+
+contributor
+
+Unknown
+
+name
+
+Unknown
+
+## %s test suite for Schemas version %s\n
+
+./ts:testGroup[1]
+
+testGroup
+
+Unexpected format %s\n
+
+following-sibling::ts:testGroup[1]
+
+w
+
+Could not open the log file, running in verbose mode\n
+
+-v
+
+Ran %d tests, no errors\n
+
+Ran %d tests, %d errors, %d leaks\n
+
+Ran %d tests, no errors\n
+
+Ran %d tests, %d errors, %d leaks\n
+
+Ran %d tests, no errors\n
+
+Ran %d tests, %d errors, %d leaks\n
+
+xstc/Tests/Metadata/NISTXMLSchemaDatatypes.testSet
+
+xstc/Tests/Metadata/
+
+Ran %d tests (%d schemata), no errors\n
+
+Ran %d tests (%d schemata), %d errors (%d internals), %d leaks\n
+
+xstc/Tests/Metadata/SunXMLSchema1-0-20020116.testSet
+
+xstc/Tests/
+
+Ran %d tests (%d schemata), no errors\n
+
+Ran %d tests (%d schemata), %d errors (%d internals), %d leaks\n
+
+xstc/Tests/Metadata/MSXMLSchema1-0-20020116.testSet
+
+xstc/Tests/
+
+Ran %d tests (%d schemata), no errors\n
+
+Ran %d tests (%d schemata), %d errors (%d internals), %d leaks\n
+
+Total %d tests, no errors\n
+
+Total %d tests, %d errors, %d leaks\n
+
+runsuite requires support for schemas and xpath in libxml2\n
+

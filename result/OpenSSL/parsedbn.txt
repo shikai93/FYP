@@ -1,0 +1,122 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+64-bit processor with LP64 ABI
+
+64-bit processor other than LP64 ABI
+
+avoid leaking exponent information through timing, BN_mod_exp_mont() will call BN_mod_exp_mont_consttime, BN_div() will call BN_div_no_branch, BN_mod_inverse() will call BN_mod_inverse_no_branch.
+
+deprecated name for the flag
+
+used for debugging
+
+Values for |top| in BN_rand()
+
+Values for |bottom| in BN_rand()
+
+get a clone of a BIGNUM with changed flags, for temporary use only (the two BIGNUMs cannot be used in parallel!). Also only for read only use. The value |dest| should be a newly allocated BIGNUM obtained via BN_new() that has not been otherwise initialised or used.
+
+Wrapper function to make using BN_GENCB easier
+
+Populate a BN_GENCB structure with an "old"-style callback
+
+Populate a BN_GENCB structure with a "new"-style callback
+
+default: select number of iterations based on the size of the number
+
+number of Miller-Rabin iterations for an error rate of less than 2^-80 for random 'b'-bit input, b >= 100 (taken from table 4.4 in the Handbook of Applied Cryptography [Menezes, van Oorschot, Vanstone; CRC Press 1996]; original paper: Damgaard, Landrock, Pomerance: Average case error estimates for the strong probable prime test. -- Math. Comp. 61 (1993) 177-194)
+
+b >= 100
+
+BN_set_negative sets sign of a BIGNUM \param b pointer to the BIGNUM object \param n 0 if the BIGNUM b should be positive and a value != 0 otherwise
+
+BN_is_negative returns 1 if the BIGNUM is negative \param a pointer to the BIGNUM object \return 1 if a < 0 and 0 otherwise
+
+returns -2 for error
+
+Deprecated versions
+
+Newer versions
+
+BN_BLINDING flags
+
+0, mul, 1 high, 2 low, 3 mont
+
+Functions for arithmetic over binary polynomials represented by BIGNUMs. The BIGNUM::neg property of BIGNUMs representing binary polynomials is ignored. Note that input arguments are not const so that their bit arrays can be expanded to the appropriate size if needed.
+
+r = a + b
+
+r=a mod p
+
+r = (a b) mod p
+
+r = (a a) mod p
+
+r = (1 / b) mod p
+
+r = (a / b) mod p
+
+r = (a ^ b) mod p
+
+r = sqrt(a) mod p
+
+r^2 + r = a mod p
+
+Some functions allow for representation of the irreducible polynomials as an unsigned int[], say p. The irreducible f(t) is then of the form: t^p[0] + t^p[1] + ... + t^p[k] where m = p[0] > p[1] > ... > p[k] = 0.
+
+r = a mod p
+
+r = (a b) mod p
+
+r = (a a) mod p
+
+r = (1 / b) mod p
+
+r = (a / b) mod p
+
+r = (a ^ b) mod p
+
+r = sqrt(a) mod p
+
+r^2 + r = a mod p
+
+faster mod functions for the 'NIST primes' 0 <= a < p^2
+
+Primes from RFC 2409
+
+Primes from RFC 3526
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+old
+
+new
+
+b
+
+NIST primes
+
+0x01
+
+0x02
+
+0x04
+
+0x08
+
+0x00908000L
+
+0x8000
+
+0x00908000L
+
+0x00000001
+
+0x00000002
+
+0x10100000L
+

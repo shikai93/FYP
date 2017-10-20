@@ -1,0 +1,220 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+help
+
+-
+
+Display this summary
+
+inform
+
+F
+
+Input format; default PEM
+
+in
+
+<
+
+Input file - default stdin
+
+outform
+
+F
+
+Output format - default PEM
+
+out
+
+>
+
+output file - default stdout
+
+keyform
+
+F
+
+Private key file format (PEM or ENGINE)
+
+key
+
+<
+
+CRL signing Private key to use
+
+issuer
+
+-
+
+Print issuer DN
+
+lastupdate
+
+-
+
+Set lastUpdate field
+
+nextupdate
+
+-
+
+Set nextUpdate field
+
+noout
+
+-
+
+No CRL output
+
+fingerprint
+
+-
+
+Print the crl fingerprint
+
+crlnumber
+
+-
+
+Print CRL number
+
+badsig
+
+-
+
+Corrupt last byte of loaded CRL signature (for test)
+
+gendelta
+
+<
+
+Other CRL to compare/diff to the Input one
+
+CApath
+
+/
+
+Verify CRL using certificates in dir
+
+CAfile
+
+<
+
+Verify CRL using certificates in file name
+
+no-CAfile
+
+-
+
+Do not load the default certificates file
+
+no-CApath
+
+-
+
+Do not load certificates from the default certificates directory
+
+verify
+
+-
+
+Verify CRL signature
+
+text
+
+-
+
+Print out a text format version
+
+hash
+
+-
+
+Print hash value
+
+nameopt
+
+s
+
+Various certificate name options
+
+
+
+-
+
+Any supported digest
+
+hash_old
+
+-
+
+Print old-style (MD5) hash value
+
+%s: Use -help for summary.\n
+
+Error initialising X509 store\n
+
+Error getting CRL issuer certificate\n
+
+Error getting CRL issuer public key\n
+
+verify failure\n
+
+verify OK\n
+
+Missing CRL signing key\n
+
+CRL signing key
+
+Error creating delta CRL\n
+
+issuer=
+
+crlNumber=
+
+<NONE>
+
+\n
+
+%08lx\n
+
+%08lx\n
+
+lastUpdate=
+
+\n
+
+nextUpdate=
+
+NONE
+
+\n
+
+out of memory\n
+
+%s Fingerprint=
+
+%02X%c
+
+\n
+
+:
+
+w
+
+unable to write CRL\n
+
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL licenses, (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at https://www.openssl.org/source/license.html or in the file LICENSE in the source distribution.
+
+www.openssl.org/source/license.html
+
+License
+
+fuzzer.h
+

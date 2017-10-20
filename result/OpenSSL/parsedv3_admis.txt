@@ -1,0 +1,138 @@
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+.ext_nid =
+
+.ext_flags =
+
+.it =
+
+.i2s =
+
+.s2i =
+
+.i2v =
+
+.v2i =
+
+.i2r =
+
+.r2i =
+
+extension-specific data
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+v3_admis.h
+
+ext_dat.h
+
+%*snamingAuthority:
+
+
+
+%*s admissionAuthorityId:
+
+
+
+%s%s%s%s\n
+
+
+
+(
+
+
+
+)
+
+
+
+%*s namingAuthorityText:
+
+
+
+\n
+
+%*s namingAuthorityUrl:
+
+
+
+\n
+
+%*sadmissionAuthority:\n
+
+
+
+%*s
+
+
+
+\n
+
+%*sEntry %0d:\n
+
+
+
+%*s admissionAuthority:\n
+
+
+
+%*s
+
+
+
+\n
+
+%*s Profession Info Entry %0d:\n
+
+
+
+%*s registrationNumber:
+
+
+
+\n
+
+%*s Info Entries:\n
+
+
+
+%*s
+
+
+
+\n
+
+%*s Profession OIDs:\n
+
+
+
+%*s %s%s%s%s\n
+
+
+
+
+
+(
+
+
+
+)
+
+
+
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+i.e. DIRECTORYSTRING
+
+i.e. DIRECTORYSTRING
+
+www.openssl.org/source/license.html
+
+License
+
+C
+

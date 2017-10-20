@@ -1,0 +1,20 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Custom primitive type for BIGNUM handling. This reads in an ASN1_INTEGER as a BIGNUM directly. Currently it ignores the sign which isn't a problem since all BIGNUMs used are non negative and anything that looks negative is normally due to an encoding error.
+
+If MSB set in an octet we need a padding byte
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+BIGNUM
+
+CBIGNUM
+
+\n
+
+0x7)
+

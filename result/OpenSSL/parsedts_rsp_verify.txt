@@ -1,0 +1,126 @@
+Copyright 2006-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This must be large enough to hold all values in ts_status_text (with comma separator) or all text fields in ts_failure_info (also with comma).
+
+Local mapping between response codes and descriptions.
+
+This function carries out the following tasks: - Checks if there is one and only one signer. - Search for the signing certificate in 'certs' and in the response. - Check the extended key usage and key usage fields of the signer certificate (done by the path validation). - Build and validate the certificate path. - Check if the certificate path meets the requirements of the SigningCertificate ESS signed attribute. - Verify the signature value. - Returns the signer certificate in 'signer', if 'signer' is not NULL.
+
+Some sanity checks first.
+
+Get hold of the signer certificate, search only internal certificates if it was requested.
+
+We now have to 'read' from p7bio to calculate digests etc.
+
+The certificate chain is returned in chain. Caller is responsible for freeing the vector.
+
+Check the other certificates of the chain if there are more than one certificate ids in cert_ids.
+
+Check the other certificates of the chain if there are more than one certificate ids in cert_ids.
+
+Returns < 0 if certificate is not found, certificate index otherwise.
+
+Recompute SHA1 hash of certificate if necessary (side effect).
+
+Look for cert in the cert_ids vector.
+
+Returns < 0 if certificate is not found, certificate index otherwise.
+
+Look for cert in the cert_ids vector.
+
+Verifies whether 'response' contains a valid response with regards to the settings of the context: - Gives an error message if the TS_TST_INFO is not present. - Calls _TS_RESP_verify_token to verify the token content.
+
+Tries to extract a TS_TST_INFO structure from the PKCS7 token and calls the internal int_TS_RESP_verify_token function for verifying it.
+
+Verifies whether the 'token' contains a valid time stamp token with regards to the settings of the context. Only those checks are carried out that are specified in the context: - Verifies the signature of the TS_TST_INFO. - Checks the version number of the response. - Check if the requested and returned policies math. - Check if the message imprints are the same. - Check if the nonces are the same. - Check if the TSA name matches the signer. - Check if the TSA name is the expected TSA.
+
+Some options require us to also check the signature
+
+There was an error, get the description in status_text.
+
+Fill in failure_text with the failure information.
+
+separator character
+
+The parameter must be NULL in both.
+
+No error if a nonce is returned without being requested.
+
+Check if the specified TSA name matches either the subject or one of the subject alternative names of the TSA certificate.
+
+Get the next subject alternative name, although there should be no more than one.
+
+Returns 1 if name is in gen_names, 0 otherwise.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ts_lcl.h
+
+granted
+
+grantedWithMods
+
+rejection
+
+waiting
+
+revocationWarning
+
+revocationNotification
+
+badAlg
+
+badRequest
+
+badDataFormat
+
+timeNotAvailable
+
+unacceptedPolicy
+
+unacceptedExtension
+
+addInfoNotAvailable
+
+systemFailure
+
+certs
+
+signer
+
+signer
+
+read
+
+Verify error:
+
+response
+
+token
+
+
+
+unknown code
+
+,
+
+\0
+
+unspecified
+
+status code:
+
+, status text:
+
+unspecified
+
+, failure codes:
+
+/
+
+\0
+

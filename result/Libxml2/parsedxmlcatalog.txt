@@ -1,0 +1,234 @@
+xmlcatalog.c : a small utility program to handle XML catalogs See Copyright for the status of this software. daniel@veillard.com
+
+Shell Interface
+
+xmlShellReadline: @prompt: the prompt value Read a string Returns a pointer to it or NULL on EOF the caller is expected to free the returned string.
+
+Get a line from the user.
+
+If the line has any text in it, save it on the history.
+
+Parse the command itself
+
+Parse the argument string
+
+Parse the arguments
+
+start interpreting the command
+
+not xmlFree here !
+
+Main
+
+split into 2 printf's to avoid overly long string (gcc warning)
+
+No catalog entry specified
+
+Maintenance of SGML catalogs.
+
+Cleanup and check for memory leaks
+
+libxml.h
+
+/etc/sgml/catalog
+
+%s
+
+>
+
+
+
+\t
+
+
+
+\t
+
+\n
+
+\r
+
+
+
+\t
+
+\n
+
+\r
+
+
+
+\t
+
+\'
+
+\'
+
+\'
+
+"
+
+"
+
+"
+
+
+
+\t
+
+exit
+
+quit
+
+bye
+
+public
+
+public requires 1 arguments\n
+
+No entry for PUBLIC %s\n
+
+%s\n
+
+system
+
+system requires 1 arguments\n
+
+No entry for SYSTEM %s\n
+
+%s\n
+
+add
+
+add requires 2 or 3 arguments\n
+
+add command failed\n
+
+add requires 2 or 3 arguments\n
+
+add command failed\n
+
+del
+
+del requires 1\n
+
+del command failed\n
+
+resolve
+
+resolve requires 2 arguments\n
+
+Resolver failed to find an answer\n
+
+%s\n
+
+dump
+
+dump has no arguments\n
+
+debug
+
+debug has no arguments\n
+
+quiet
+
+quiet has no arguments\n
+
+help
+
+Unrecognized command %s\n
+
+Commands available:\n
+
+\tpublic PublicID: make a PUBLIC identifier lookup\n
+
+\tsystem SystemID: make a SYSTEM identifier lookup\n
+
+\tresolve PublicID SystemID: do a full resolver lookup\n
+
+\tadd 'type' 'orig' 'replace' : add an entry\n
+
+\tdel 'values' : remove values\n
+
+\tdump: print the current catalog state\n
+
+\tdebug: increase the verbosity level\n
+
+\tquiet: decrease the verbosity level\n
+
+\texit: quit the shell\n
+
+s to avoid overly long string (gcc warning) */ printf("\ Usage : %s [options] catalogfile entities...\n\ \tParse the catalog file and query it for the entities\n\ \t--sgml : handle SGML Super catalogs for --add and --del\n\ \t--shell : run a shell allowing interactive queries\n\ \t--create : create a new catalog\n\ \t--add
+
+
+
+
+
+: add an XML entry\n\ \t--add
+
+: add an SGML entry\n", name); printf("\ \t--del
+
+: remove values\n\ \t--noout: avoid dumping the result on stdout\n\ \t used with --add or --del, it saves the catalog changes\n\ \t and with --sgml it automatically updates the super catalog\n\ \t--no-super-update: do not update the SGML super catalog\n\ \t-v --verbose : provide debug informations\n"); } int main(int argc, char **argv) { int i; int ret; int exit_value = 0; if (argc <= 1) { usage(argv[0]); return(1); } LIBXML_TEST_VERSION for (i = 1; i < argc ; i++) { if (!strcmp(argv[i], "-")) break; if (argv[i][0] !=
+
+) break; if ((!strcmp(argv[i], "-verbose")) || (!strcmp(argv[i], "-v")) || (!strcmp(argv[i], "--verbose"))) { verbose++; xmlCatalogSetDebug(verbose); } else if ((!strcmp(argv[i], "-noout")) || (!strcmp(argv[i], "--noout"))) { noout = 1; } else if ((!strcmp(argv[i], "-shell")) || (!strcmp(argv[i], "--shell"))) { shell++; noout = 1; } else if ((!strcmp(argv[i], "-sgml")) || (!strcmp(argv[i], "--sgml"))) { sgml++; } else if ((!strcmp(argv[i], "-create")) || (!strcmp(argv[i], "--create"))) { create++; } else if ((!strcmp(argv[i], "-convert")) || (!strcmp(argv[i], "--convert"))) { convert++; } else if ((!strcmp(argv[i], "-no-super-update")) || (!strcmp(argv[i], "--no-super-update"))) { no_super_update++; } else if ((!strcmp(argv[i], "-add")) || (!strcmp(argv[i], "--add"))) { if (sgml) i += 2; else i += 3; add++; } else if ((!strcmp(argv[i], "-del")) || (!strcmp(argv[i], "--del"))) { i += 1; del++; } else { fprintf(stderr, "Unknown option %s\n", argv[i]); usage(argv[0]); return(1); } } for (i = 1; i < argc; i++) { if ((!strcmp(argv[i], "-add")) || (!strcmp(argv[i], "--add"))) { if (sgml) i += 2; else i += 3; continue; } else if ((!strcmp(argv[i], "-del")) || (!strcmp(argv[i], "--del"))) { i += 1; /* No catalog entry specified */ if (i == argc || (sgml && i + 1 == argc)) { fprintf(stderr, "No catalog entry specified to remove from\n"); usage (argv[0]); return(1); } continue; } else if (argv[i][0] ==
+
+) continue; filename = argv[i]; ret = xmlLoadCatalog(argv[i]); if ((ret < 0) && (create)) { xmlCatalogAdd(BAD_CAST "catalog", BAD_CAST argv[i], NULL); } break; } if (convert) ret = xmlCatalogConvert(); if ((add) || (del)) { for (i = 1; i < argc ; i++) { if (!strcmp(argv[i], "-")) break; if (argv[i][0] !=
+
+-add
+
+--add
+
+-del
+
+--del
+
+-add
+
+--add
+
+CATALOG
+
+CATALOG
+
+Failed to remove entry from %s\n
+
+Failed to remove entry from %s\n
+
+w
+
+could not open %s for saving\n
+
+w
+
+could not open %s for saving\n
+
+-add
+
+--add
+
+add command failed\n
+
+-del
+
+--del
+
+Failed to remove entry %s\n
+
+No entry for PUBLIC %s\n
+
+%s\n
+
+No entry for SYSTEM %s\n
+
+No entry for URI %s\n
+
+%s\n
+
+%s\n
+
+w
+
+could not open %s for saving\n
+
+libxml was not compiled with catalog and output support\n
+

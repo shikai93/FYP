@@ -1,0 +1,16 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+These functions write a private key in PKCS#8 format: it is a "drop in" replacement for PEM_write_bio_PrivateKey() and friends. As usual if 'enc' is NULL then it uses the unencrypted private key form. The 'nid' versions uses PKCS#5 v1.5 PBE algorithms whereas the others use PKCS#5 v2.0.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+drop in
+
+enc
+
+nid
+

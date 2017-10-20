@@ -1,0 +1,78 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Sanity check OID encoding. Need at least one content octet. MSB must be clear in the last octet. can't have leading 0x80 in subidentifiers, see: X.690 8.19.2
+
+Now 0 < len <= INT_MAX, so the cast is safe.
+
+Try to lookup OID in table: these are all valid encodings so if we get a match we know the OID is valid.
+
+Return shared registered OID object: this improves efficiency because we don't have to return a dynamically allocated OID and NID lookups can use the cached value.
+
+only the ASN1_OBJECTs from the 'table' will have values for ->sn or ->ln
+
+detach data from object
+
+once detached we can change it
+
+reattach data to object, after which it remains const
+
+ret->flags=ASN1_OBJECT_FLAG_DYNAMIC; we know it is dynamic
+
+disable purely for compile-time strict const checking. Doing this on a "real" compile will cause memory leaks
+
+www.openssl.org/source/license.html
+
+License
+
+internal/ctype.h
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+asn1_locl.h
+
+0
+
+2
+
+0
+
+.
+
+
+
+
+
+.
+
+0
+
+0
+
+NULL
+
+<INVALID>
+
+t have leading 0x80 in subidentifiers, * see: X.690 8.19.2 */ if (len <= 0 || len > INT_MAX || pp == NULL || (p = *pp) == NULL || p[len - 1] & 0x80) { ASN1err(ASN1_F_C2I_ASN1_OBJECT, ASN1_R_INVALID_OBJECT_ENCODING); return NULL; } /* Now 0 < len <= INT_MAX, so the cast is safe. */ length = (int)len; /* * Try to lookup OID in table: these are all valid encodings so if we get * a match we know the OID is valid. */ tobj.nid = NID_undef; tobj.data = p; tobj.length = length; tobj.flags = 0; i = OBJ_obj2nid(&tobj); if (i != NID_undef) { /* * Return shared registered OID object: this improves efficiency * because we don
+
+table
+
+real
+
+0x80L);
+
+0x7f;
+
+0x80;
+
+0x80)
+
+0x80
+
+0x80)
+
+0x80
+
+0x80)))
+

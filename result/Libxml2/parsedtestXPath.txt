@@ -1,0 +1,90 @@
+testXPath.c : a small tester program for XPath. See Copyright for the status of this software. daniel@veillard.com
+
+Default document
+
+res = xmlXPathEval(BAD_CAST str, ctxt);
+
+LIBXML_XPATH_ENABLED
+
+libxml.h
+
+<?xml version=\"1.0\"?>\n\ <EXAMPLE prop1=\"gnome is great\" prop2=\"&amp; linux too\">\n\ <head>\n\ <title>Welcome to Gnome</title>\n\ </head>\n\ <chapter>\n\ <title>The Linux adventure</title>\n\ <p>bla bla bla ...</p>\n\ <image href=\"linus.gif\"/>\n\ <p>...</p>\n\ </chapter>\n\ <chapter>\n\ <title>Chapter 2</title>\n\ <p>this is chapter 2 ...</p>\n\ </chapter>\n\ <chapter>\n\ <title>Chapter 3</title>\n\ <p>this is chapter 3 ...</p>\n\ </chapter>\n\ </EXAMPLE>\n\
+
+r
+
+Cannot open %s for reading\n
+
+\n
+
+\t
+
+\r
+
+
+
+\n========================\nExpression: %s\n
+
+-xptr
+
+--xptr
+
+-debug
+
+--debug
+
+-valid
+
+--valid
+
+-expr
+
+--expr
+
+-tree
+
+--tree
+
+-nocdata
+
+--nocdata
+
+-i
+
+--input
+
+-f
+
+--file
+
+-i
+
+--input
+
+-
+
+Usage : %s [--debug] [--copy] stringsorfiles ...\n
+
+\tParse the XPath strings and output the result of the parsing\n
+
+\t--debug : dump a debug version of the result\n
+
+\t--valid : switch on DTD support in the parser\n
+
+\t--xptr : expressions are XPointer expressions\n
+
+\t--expr : debug XPath expressions only\n
+
+\t--tree : show the compiled XPath tree\n
+
+\t--nocdata : do not generate CDATA nodes\n
+
+\t--input filename : or\n
+
+\t-i filename : read the document from filename\n
+
+\t--file : or\n
+
+\t-f : read queries from files, args\n
+
+%s : XPath/Debug support not compiled in\n
+

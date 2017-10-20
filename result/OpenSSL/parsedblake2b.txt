@@ -1,0 +1,76 @@
+Copyright 2016-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Derived from the BLAKE2 reference implementation written by Samuel Neves. Copyright 2012, Samuel Neves <sneves@dei.uc.pt> More information about the BLAKE2 hash function and its implementations can be found at https://blake2.net.
+
+Set that it's the last block we'll compress
+
+Initialize the hashing state.
+
+init xors IV with input parameter block
+
+The param struct is carefully hand packed, and should be 64 bytes on every platform.
+
+IV XOR ParamBlock
+
+Initialize the hashing context. Always returns 1.
+
+Permute the state while xoring in the block of data.
+
+There are two distinct usage vectors for this function: a) BLAKE2b_Update uses it to process complete blocks, possibly more than one at a time; b) BLAK2b_Final uses it to process last block, always single but possibly incomplete, in which case caller pads input with zeros.
+
+Since last block is always processed with separate call, |len| not being multiple of complete blocks can be observed only with |len| being less than BLAKE2B_BLOCKBYTES ("less" including even zero), which is why following assignment doesn't have to reside inside the main loop below.
+
+blake2b_increment_counter
+
+3x size reduction on x86_64, almost 7x on ARMv8, 9x on ARMv4
+
+Absorb the input data into the hash state. Always returns 1.
+
+Intuitively one would expect intermediate buffer, c->buf, to store incomplete blocks. But in this case we are interested to temporarily stash even complete blocks, because last one in the stream has to be treated in special way, and at this point we don't know if last block in this call is last one "ever". This is the reason for why |datalen| is compared as >, and not >=.
+
+Fill buffer
+
+If |datalen| is a multiple of the blocksize, stash last complete block, it can be final one...
+
+Be lazy, do not compress
+
+Calculate the final hash and save it in md. Always returns 1.
+
+Padding
+
+Output full hash to message digest
+
+www.openssl.org/source/license.html
+
+blake2.net.
+
+License
+
+blake2_locl.h
+
+blake2_impl.h
+
+s the last block we
+
+less
+
+t * have to reside inside the main loop below. */ increment = len < BLAKE2B_BLOCKBYTES ? len : BLAKE2B_BLOCKBYTES; for (i = 0; i < 8; ++i) { v[i] = S->h[i]; } do { for (i = 0; i < 16; ++i) { m[i] = load64(blocks + i * sizeof(m[i])); } /* blake2b_increment_counter */ S->t[0] += increment; S->t[1] += (S->t[0] < increment); v[8] = blake2b_IV[0]; v[9] = blake2b_IV[1]; v[10] = blake2b_IV[2]; v[11] = blake2b_IV[3]; v[12] = S->t[0] ^ blake2b_IV[4]; v[13] = S->t[1] ^ blake2b_IV[5]; v[14] = S->f[0] ^ blake2b_IV[6]; v[15] = S->f[1] ^ blake2b_IV[7]; #define G(r,i,a,b,c,d) \ do { \ a = a + b + m[blake2b_sigma[r][2*i+0]]; \ d = rotr64(d ^ a, 32); \ c = c + d; \ b = rotr64(b ^ c, 24); \ a = a + b + m[blake2b_sigma[r][2*i+1]]; \ d = rotr64(d ^ a, 16); \ c = c + d; \ b = rotr64(b ^ c, 63); \ } while (0) #define ROUND(r) \ do { \ G(r,0,v[ 0],v[ 4],v[ 8],v[12]); \ G(r,1,v[ 1],v[ 5],v[ 9],v[13]); \ G(r,2,v[ 2],v[ 6],v[10],v[14]); \ G(r,3,v[ 3],v[ 7],v[11],v[15]); \ G(r,4,v[ 0],v[ 5],v[10],v[15]); \ G(r,5,v[ 1],v[ 6],v[11],v[12]); \ G(r,6,v[ 2],v[ 7],v[ 8],v[13]); \ G(r,7,v[ 3],v[ 4],v[ 9],v[14]); \ } while (0) #if defined(OPENSSL_SMALL_FOOTPRINT) /* 3x size reduction on x86_64, almost 7x on ARMv8, 9x on ARMv4 */ for (i = 0; i < 12; i++) { ROUND(i); } #else ROUND(0); ROUND(1); ROUND(2); ROUND(3); ROUND(4); ROUND(5); ROUND(6); ROUND(7); ROUND(8); ROUND(9); ROUND(10); ROUND(11); #endif for (i = 0; i < 8; ++i) { S->h[i] = v[i] ^= v[i + 8] ^ S->h[i]; } #undef G #undef ROUND blocks += increment; len -= increment; } while (len); } /* Absorb the input data into the hash state. Always returns 1. */ int BLAKE2b_Update(BLAKE2B_CTX *c, const void *data, size_t datalen) { const uint8_t *in = data; size_t fill; /* * Intuitively one would expect intermediate buffer, c->buf, to * store incomplete blocks. But in this case we are interested to * temporarily stash even complete blocks, because last one in the * stream has to be treated in special way, and at this point we * don
+
+ever
+
+0x6a09e667f3bcc908U,
+
+0xbb67ae8584caa73bU,
+
+0x3c6ef372fe94f82bU,
+
+0xa54ff53a5f1d36f1U,
+
+0x510e527fade682d1U,
+
+0x9b05688c2b3e6c1fU,
+
+0x1f83d9abfb41bd6bU,
+
+0x5be0cd19137e2179U
+

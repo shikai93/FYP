@@ -1,0 +1,20 @@
+Copyright 2015-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Is NULL equivalent to all-bytes-zero?
+
+Enum size
+
+Basic two's complement checks.
+
+Check that values with sign bit 1 and value bits 0 are valid
+
+Check that unsigned-to-signed conversions preserve bit patterns
+
+www.openssl.org/source/license.html
+
+License
+
+internal/numbers.h
+
+testutil.h
+

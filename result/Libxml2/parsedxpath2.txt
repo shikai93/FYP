@@ -1,0 +1,56 @@
+section: XPath synopsis: Load a document, locate subelements with XPath, modify said elements and save the resulting document. purpose: Shows how to make a full round-trip from a load/edit/save usage:xpath2 <xml-file> <xpath-expr> <new-value> test:xpath2 test3.xml '//discarded' discarded > xpath2.tmp ; diff xpath2.tmp xpath2.res ; rm xpath2.tmp author: Aleksey Sanin and Daniel Veillard copy: see Copyright for the status of this software.
+
+Parse command line and process file
+
+Init libxml
+
+Do the main job
+
+Shutdown libxml
+
+this is to debug memory for regression tests
+
+usage: @name:the program name. Prints usage information.
+
+example4: @filename:the input XML filename. @xpathExpr:the xpath expression for evaluation. @value:the new node content. Parses input XML file, evaluates XPath expression and update the nodes then print the result. Returns 0 on success and a negative value otherwise.
+
+Load XML document
+
+Create xpath evaluation context
+
+Evaluate xpath expression
+
+update selected nodes
+
+Cleanup of XPath data
+
+dump the resulting document
+
+free the document
+
+update_xpath_nodes: @nodes:the nodes set. @value:the new value for the node(s) Prints the @nodes content to @output.
+
+NOTE: the nodes are processed in reverse order, i.e. reverse document order because xmlNodeSetContent can actually free up descendant of the node and such nodes may have been selected too ! Handling in reverse order ensure that descendant are accessed first, before they get removed. Mixing XPath and modifications on a tree must be done carefully !
+
+All the elements returned by an XPath query are pointers to elements from the tree except namespace nodes where the XPath semantic is different from the implementation in libxml2 tree. As a result when a returned node set is freed when xmlXPathFreeObject() is called, that routine must check the element type. But node from the returned set may have been removed by xmlNodeSetContent() resulting in access to freed data. This can be exercised by running valgrind xpath2 test3.xml '//discarded' discarded There is 2 ways around it: - make a copy of the pointers to the nodes from the result set then call xmlXPathFreeObject() and then modify the nodes or - remove the reference to the modified nodes from the node set as they are processed, if they are not namespace nodes.
+
+discarded' discarded > xpath2.tmp ; diff xpath2.tmp xpath2.res ; rm xpath2.tmp
+
+discarded' discarded
+
+//discarded
+
+Error: wrong number of arguments.\n
+
+Usage: %s <xml-file> <xpath-expr> <value>\n
+
+Error: unable to parse file \"%s\"\n
+
+Error: unable to create new XPath context\n
+
+Error: unable to evaluate xpath expression \"%s\"\n
+
+//discarded
+
+XPath support not compiled in\n
+

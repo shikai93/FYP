@@ -1,0 +1,58 @@
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Read all content through chain to process digest, decrypt etc
+
+Attempt to find all signer certificates
+
+Attempt to verify all signers certs
+
+Attempt to verify all SignerInfo signed attribute signatures
+
+Performance optimization: if the content is a memory BIO then store its contents in a temporary read only memory BIO. This avoids potentially large numbers of slow copies of data which will occur when reading from a read write memory BIO when signatures are calculated.
+
+If not binary mode and detached generate digests by writing through the BIO. That makes it possible to canonicalise the input.
+
+Create output BIO so we can either handle text or to ensure included content doesn't override detached content.
+
+Don't use SMIME_TEXT for verify: it adds headers and we want to remove them.
+
+Not really detached but avoids content being allocated
+
+Initialize signed data
+
+Set inner content type to signed receipt
+
+Set content to digest
+
+Add msgSigDigest attribute
+
+Finalize structure
+
+Set embedded content
+
+If we have a cert try matching RecipientInfo otherwise try them all.
+
+If not debugging clear any error and return success to avoid leaking of information useful to MMA
+
+If no cert and not debugging don't leave loop after first successful decrypt. Always attempt to decrypt all recipients to avoid leaking timing of a successful decrypt.
+
+If no cert, key transport and not debugging always return success
+
+If we have an id try matching RecipientInfo otherwise try them all.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+cms_lcl.h
+
+internal/asn1_int.h
+
+smime_sign
+
+Verify error:
+
+t override detached content. */ tmpout = cms_get_text_bio(out, flags); if (!tmpout) { CMSerr(CMS_F_CMS_VERIFY, ERR_R_MALLOC_FAILURE); goto err; } cmsbio = CMS_dataInit(cms, tmpout); if (!cmsbio) goto err; /* * Don
+

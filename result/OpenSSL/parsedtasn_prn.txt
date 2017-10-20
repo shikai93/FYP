@@ -1,0 +1,118 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Print routines.
+
+ASN1_PCTX routines
+
+flags
+
+nm_flags
+
+cert_flags
+
+oid_flags
+
+str_flags
+
+Main print routines
+
+fall through
+
+Use new style print routine if possible
+
+CHOICE type, get selector
+
+This should never happen...
+
+Print each field entry
+
+If field is embedded then fld needs fixing so it is a pointer to a pointer to a field.
+
+SET OF, SEQUENCE OF
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+asn1_locl.h
+
+<ABSENT>\n
+
+
+
+\n
+
+:EXTERNAL TYPE %s\n
+
+ERROR: selector [%d] invalid\n
+
+{\n
+
+\n
+
+%*s}\n
+
+
+
+Unprocessed type %d\n
+
+SET
+
+SEQUENCE
+
+%*s%s OF %s {\n
+
+
+
+%*s%s:\n
+
+
+
+\n
+
+%*s<%s>\n
+
+
+
+ABSENT
+
+EMPTY
+
+%*s}\n
+
+
+
+
+
+(%s)
+
+:
+
+BOOL ABSENT
+
+FALSE
+
+TRUE
+
+
+
+%s (%s)
+
+(%ld unused bits)\n
+
+\n
+
+NULL\n
+
+:
+
+\n
+
+\n
+
+0x7)
+

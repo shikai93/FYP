@@ -1,0 +1,90 @@
+Copyright 2014-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+This structure holds all parameters associated with a verify operation by including an X509_VERIFY_PARAM structure in related structures the parameters used can be customized
+
+Time to use
+
+Inheritance flags
+
+Various verify flags
+
+purpose to check untrusted certificates
+
+trust setting to check
+
+Verify depth
+
+Security level for chain verification
+
+Permissible policies
+
+Peer identity details
+
+Set of acceptable names
+
+Flags to control matching features
+
+Matching hostname in peer certificate
+
+If not NULL email address to match
+
+If not NULL IP address to match
+
+Length of IP address
+
+No error callback if depth < 0
+
+a sequence of these are used
+
+Method to handle CRL access. In general a CRL could be very large (several Mb) and can consume large amounts of resources if stored in memory by multiple processes. This method allows general CRL operations to be redirected to more efficient callbacks: for example a CRL entry database.
+
+This is the functions plus an instance of the local variables.
+
+have we been started
+
+don't use us.
+
+the functions
+
+method data
+
+who owns us
+
+This is used to hold everything. It is used for all certificate validation. Once we have a certificate chain, the 'verify' function is then called to actually check the cert chain.
+
+The following is a cache of trusted certs
+
+if true, stash any hits
+
+Cache of all objects
+
+These are external lookup methods
+
+Callbacks for various operations
+
+called to verify a certificate
+
+error callback
+
+get issuers cert from ctx
+
+check issued
+
+Check revocation status of chain
+
+retrieve CRL
+
+Check CRL validity
+
+Check certificate against CRL
+
+Check policy status of the chain
+
+www.openssl.org/source/license.html
+
+License
+
+internal/refcount.h
+
+t use us. */ X509_LOOKUP_METHOD *method; /* the functions */ char *method_data; /* method data */ X509_STORE *store_ctx; /* who owns us */ }; /* * This is used to hold everything. It is used for all certificate * validation. Once we have a certificate chain, the
+

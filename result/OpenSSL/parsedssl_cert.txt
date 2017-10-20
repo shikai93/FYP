@@ -1,0 +1,108 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2002, Oracle and/or its affiliates. All rights reserved Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Just copy everything.
+
+Configured sigalgs copied across
+
+Shared sigalgs also NULL
+
+Copy any custom client certificate types
+
+Free up and clear all certificates and chains
+
+XXX: Separate @AUTHSECLEVEL and @TLSSECLEVEL would be useful at some point, for now a single @SECLEVEL sets the same policy for TLS crypto and PKI authentication.
+
+Set suite B flags if needed
+
+Verify via DANE if enabled
+
+We need to inherit the verify parameters. These can be determined by the context: if its a server it will verify SSL client certificates or vice versa.
+
+Anything non-default in "s->param" should overwrite anything in the ctx.
+
+Move peername from the store context params to the SSL handle's
+
+Load CA certs from a file into a ::STACK. Note that it is somewhat misnamed; it doesn't really have anything to do with clients (except that a common use for a stack of CAs is to send it to the client). Actually, it doesn't have much to do with CAs, either, since it will load any old cert. \param file the file containing one or more certs. \return a ::STACK containing the certs.
+
+check for duplicates
+
+Duplicate.
+
+Add a file of certs to a stack. \param stack the stack to add to. \param file the file to add from. All certs in this file that are not already in the stack will be added. \return 1 for success, 0 for failure. Note that in the case of failure some certs may have been added to \c stack.
+
+Duplicate.
+
+Add a directory of certs to a stack. \param stack the stack to append to. \param dir the directory to append from. All files in this directory will be examined as potential certs. Any that are acceptable to SSL_add_dir_cert_subjects_to_stack() that are not already in the stack will be included. \return 1 for success, 0 for failure. Note that in the case of failure some certs may have been added to \c stack.
+
+Note that a side effect is that the CAs will be sorted by name
+
+Build a certificate chain for current certificate
+
+Rearranging and check the chain: add everything to a store
+
+Add EE cert too: it might be self signed
+
+Set suite B flags if needed
+
+Remove EE certificate from chain
+
+See if last cert is self signed
+
+Check security level of all CA certificates: EE will have been checked already.
+
+No EDH keys weaker than 1024-bits even at level 0, otherwise, anything goes.
+
+No ciphers below security level
+
+No unauthenticated ciphersuites
+
+No MD5 mac ciphersuites
+
+SHA1 HMAC is 160 bits of security
+
+Level 2: no RC4
+
+Level 3: forward secure ciphersuites only
+
+SSLv3 not allowed at level 2
+
+TLS v1.1 and above only for level 3
+
+TLS v1.2 only for level 4 and above
+
+DTLS v1.2 only for level 4 and above
+
+www.openssl.org/source/license.html
+
+License
+
+internal/nelem.h
+
+internal/o_dir.h
+
+internal/refcount.h
+
+ssl_locl.h
+
+ssl_cert_table.h
+
+internal/thread_once.h
+
+SSL for verify callback
+
+CERT
+
+ssl_client
+
+ssl_server
+
+s->param
+
+s */ X509_VERIFY_PARAM_move_peername(s->param, param); end: X509_STORE_CTX_free(ctx); return i; } static void set0_CA_list(STACK_OF(X509_NAME) **ca_list, STACK_OF(X509_NAME) *name_list) { sk_X509_NAME_pop_free(*ca_list, X509_NAME_free); *ca_list = name_list; } STACK_OF(X509_NAME) *SSL_dup_CA_list(const STACK_OF(X509_NAME) *sk) { int i; STACK_OF(X509_NAME) *ret; X509_NAME *name; ret = sk_X509_NAME_new_null(); if (ret == NULL) { SSLerr(SSL_F_SSL_DUP_CA_LIST, ERR_R_MALLOC_FAILURE); return NULL; } for (i = 0; i < sk_X509_NAME_num(sk); i++) { name = X509_NAME_dup(sk_X509_NAME_value(sk, i)); if (name == NULL || !sk_X509_NAME_push(ret, name)) { sk_X509_NAME_pop_free(ret, X509_NAME_free); X509_NAME_free(name); return NULL; } } return (ret); } void SSL_set0_CA_list(SSL *s, STACK_OF(X509_NAME) *name_list) { set0_CA_list(&s->ca_names, name_list); } void SSL_CTX_set0_CA_list(SSL_CTX *ctx, STACK_OF(X509_NAME) *name_list) { set0_CA_list(&ctx->ca_names, name_list); } const STACK_OF(X509_NAME) *SSL_CTX_get0_CA_list(const SSL_CTX *ctx) { return ctx->ca_names; } const STACK_OF(X509_NAME) *SSL_get0_CA_list(const SSL *s) { return s->ca_names != NULL ? s->ca_names : s->ctx->ca_names; } void SSL_CTX_set_client_CA_list(SSL_CTX *ctx, STACK_OF(X509_NAME) *name_list) { SSL_CTX_set0_CA_list(ctx, name_list); } STACK_OF(X509_NAME) *SSL_CTX_get_client_CA_list(const SSL_CTX *ctx) { return ctx->ca_names; } void SSL_set_client_CA_list(SSL *s, STACK_OF(X509_NAME) *name_list) { SSL_set0_CA_list(s, name_list); } const STACK_OF(X509_NAME) *SSL_get0_peer_CA_list(const SSL *s) { return s->s3 != NULL ? s->s3->tmp.peer_ca_names : NULL; } STACK_OF(X509_NAME) *SSL_get_client_CA_list(const SSL *s) { if (!s->server) return s->s3 != NULL ? s->s3->tmp.peer_ca_names : NULL; return s->ca_names != NULL ? s->ca_names : s->ctx->ca_names; } static int add_ca_name(STACK_OF(X509_NAME) **sk, const X509 *x) { X509_NAME *name; if (x == NULL) return 0; if (*sk == NULL && ((*sk = sk_X509_NAME_new_null()) == NULL)) return 0; if ((name = X509_NAME_dup(X509_get_subject_name(x))) == NULL) return 0; if (!sk_X509_NAME_push(*sk, name)) { X509_NAME_free(name); return 0; } return 1; } int SSL_add1_CA_list(SSL *ssl, const X509 *x) { return add_ca_name(&ssl->ca_names, x); } int SSL_CTX_add1_CA_list(SSL_CTX *ctx, const X509 *x) { return add_ca_name(&ctx->ca_names, x); } int SSL_add_client_CA(SSL *ssl, X509 *x) { return add_ca_name(&ssl->ca_names, x); } int SSL_CTX_add_client_CA(SSL_CTX *ctx, X509 *x) { return add_ca_name(&ctx->ca_names, x); } static int xname_sk_cmp(const X509_NAME *const *a, const X509_NAME *const *b) { return (X509_NAME_cmp(*a, *b)); } static int xname_cmp(const X509_NAME *a, const X509_NAME *b) { return X509_NAME_cmp(a, b); } static unsigned long xname_hash(const X509_NAME *a) { return X509_NAME_hash((X509_NAME *)a); } /** * Load CA certs from a file into a ::STACK. Note that it is somewhat misnamed; * it doesn
+
+t have * much to do with CAs, either, since it will load any old cert. * \param file the file containing one or more certs. * \return a ::STACK containing the certs. */ STACK_OF(X509_NAME) *SSL_load_client_CA_file(const char *file) { BIO *in = BIO_new(BIO_s_file()); X509 *x = NULL; X509_NAME *xn = NULL; STACK_OF(X509_NAME) *ret = NULL; LHASH_OF(X509_NAME) *name_hash = lh_X509_NAME_new(xname_hash, xname_cmp); if ((name_hash == NULL) || (in == NULL)) { SSLerr(SSL_F_SSL_LOAD_CLIENT_CA_FILE, ERR_R_MALLOC_FAILURE); goto err; } if (!BIO_read_filename(in, file)) goto err; for (;;) { if (PEM_read_bio_X509(in, &x, NULL, NULL) == NULL) break; if (ret == NULL) { ret = sk_X509_NAME_new_null(); if (ret == NULL) { SSLerr(SSL_F_SSL_LOAD_CLIENT_CA_FILE, ERR_R_MALLOC_FAILURE); goto err; } } if ((xn = X509_get_subject_name(x)) == NULL) goto err; /* check for duplicates */ xn = X509_NAME_dup(xn); if (xn == NULL) goto err; if (lh_X509_NAME_retrieve(name_hash, xn) != NULL) { /* Duplicate. */ X509_NAME_free(xn); xn = NULL; } else { lh_X509_NAME_insert(name_hash, xn); if (!sk_X509_NAME_push(ret, xn)) goto err; } } goto done; err: X509_NAME_free(xn); sk_X509_NAME_pop_free(ret, X509_NAME_free); ret = NULL; done: BIO_free(in); X509_free(x); lh_X509_NAME_free(name_hash); if (ret != NULL) ERR_clear_error(); return (ret); } /** * Add a file of certs to a stack. * \param stack the stack to add to. * \param file the file to add from. All certs in this file that are not * already in the stack will be added. * \return 1 for success, 0 for failure. Note that in the case of failure some * certs may have been added to \c stack. */ int SSL_add_file_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack, const char *file) { BIO *in; X509 *x = NULL; X509_NAME *xn = NULL; int ret = 1; int (*oldcmp) (const X509_NAME *const *a, const X509_NAME *const *b); oldcmp = sk_X509_NAME_set_cmp_func(stack, xname_sk_cmp); in = BIO_new(BIO_s_file()); if (in == NULL) { SSLerr(SSL_F_SSL_ADD_FILE_CERT_SUBJECTS_TO_STACK, ERR_R_MALLOC_FAILURE); goto err; } if (!BIO_read_filename(in, file)) goto err; for (;;) { if (PEM_read_bio_X509(in, &x, NULL, NULL) == NULL) break; if ((xn = X509_get_subject_name(x)) == NULL) goto err; xn = X509_NAME_dup(xn); if (xn == NULL) goto err; if (sk_X509_NAME_find(stack, xn) >= 0) { /* Duplicate. */ X509_NAME_free(xn); } else if (!sk_X509_NAME_push(stack, xn)) { X509_NAME_free(xn); goto err; } } ERR_clear_error(); goto done; err: ret = 0; done: BIO_free(in); X509_free(x); (void)sk_X509_NAME_set_cmp_func(stack, oldcmp); return ret; } /** * Add a directory of certs to a stack. * \param stack the stack to append to. * \param dir the directory to append from. All files in this directory will be * examined as potential certs. Any that are acceptable to * SSL_add_dir_cert_subjects_to_stack() that are not already in the stack will be * included. * \return 1 for success, 0 for failure. Note that in the case of failure some * certs may have been added to \c stack. */ int SSL_add_dir_cert_subjects_to_stack(STACK_OF(X509_NAME) *stack, const char *dir) { OPENSSL_DIR_CTX *d = NULL; const char *filename; int ret = 0; /* Note that a side effect is that the CAs will be sorted by name */ while ((filename = OPENSSL_DIR_read(&d, dir))) { char buf[1024]; int r; if (strlen(dir) + strlen(filename) + 2 > sizeof buf) { SSLerr(SSL_F_SSL_ADD_DIR_CERT_SUBJECTS_TO_STACK, SSL_R_PATH_TOO_LONG); goto err; } #ifdef OPENSSL_SYS_VMS r = BIO_snprintf(buf, sizeof buf, "%s%s", dir, filename); #else r = BIO_snprintf(buf, sizeof buf, "%s/%s", dir, filename); #endif if (r <= 0 || r >= (int)sizeof(buf)) goto err; if (!SSL_add_file_cert_subjects_to_stack(stack, buf)) goto err; } if (errno) { SYSerr(SYS_F_OPENDIR, get_last_sys_error()); ERR_add_error_data(3, "OPENSSL_DIR_read(&ctx,
+
+, dir,
+
+); SSLerr(SSL_F_SSL_ADD_DIR_CERT_SUBJECTS_TO_STACK, ERR_R_SYS_LIB); goto err; } ret = 1; err: if (d) OPENSSL_DIR_end(&d); return ret; } /* Build a certificate chain for current certificate */ int ssl_build_cert_chain(SSL *s, SSL_CTX *ctx, int flags) { CERT *c = s ? s->cert : ctx->cert; CERT_PKEY *cpk = c->key; X509_STORE *chain_store = NULL; X509_STORE_CTX *xs_ctx = NULL; STACK_OF(X509) *chain = NULL, *untrusted = NULL; X509 *x; int i, rv = 0; if (!cpk->x509) { SSLerr(SSL_F_SSL_BUILD_CERT_CHAIN, SSL_R_NO_CERTIFICATE_SET); goto err; } /* Rearranging and check the chain: add everything to a store */ if (flags & SSL_BUILD_CHAIN_FLAG_CHECK) { chain_store = X509_STORE_new(); if (chain_store == NULL) goto err; for (i = 0; i < sk_X509_num(cpk->chain); i++) { x = sk_X509_value(cpk->chain, i); if (!X509_STORE_add_cert(chain_store, x)) goto err; } /* Add EE cert too: it might be self signed */ if (!X509_STORE_add_cert(chain_store, cpk->x509)) goto err; } else { if (c->chain_store) chain_store = c->chain_store; else if (s) chain_store = s->ctx->cert_store; else chain_store = ctx->cert_store; if (flags & SSL_BUILD_CHAIN_FLAG_UNTRUSTED) untrusted = cpk->chain; } xs_ctx = X509_STORE_CTX_new(); if (xs_ctx == NULL) { SSLerr(SSL_F_SSL_BUILD_CERT_CHAIN, ERR_R_MALLOC_FAILURE); goto err; } if (!X509_STORE_CTX_init(xs_ctx, chain_store, cpk->x509, untrusted)) { SSLerr(SSL_F_SSL_BUILD_CERT_CHAIN, ERR_R_X509_LIB); goto err; } /* Set suite B flags if needed */ X509_STORE_CTX_set_flags(xs_ctx, c->cert_flags & SSL_CERT_FLAG_SUITEB_128_LOS); i = X509_verify_cert(xs_ctx); if (i <= 0 && flags & SSL_BUILD_CHAIN_FLAG_IGNORE_ERROR) { if (flags & SSL_BUILD_CHAIN_FLAG_CLEAR_ERROR) ERR_clear_error(); i = 1; rv = 2; } if (i > 0) chain = X509_STORE_CTX_get1_chain(xs_ctx); if (i <= 0) { SSLerr(SSL_F_SSL_BUILD_CERT_CHAIN, SSL_R_CERTIFICATE_VERIFY_FAILED); i = X509_STORE_CTX_get_error(xs_ctx); ERR_add_error_data(2,
+

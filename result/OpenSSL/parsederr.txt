@@ -1,0 +1,372 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The internal state
+
+SYS_str_reasons is filled with copies of strerror() results at initialization. 'errno' values up to 127 should cover all usual errors, others will be displayed numerically by ERR_error_string. It is crucial that we have something for each reason code that occurs in ERR_str_reasons, or bogus reason strings will be returned for SYSerr(), which always gets an errno value and never one of those 'standard' reason codes.
+
+OPENSSL_malloc cannot be used here, use static storage instead
+
+Now we still have SYS_str_reasons[NUM_SYS_STR_REASONS] = {0, NULL}, as required by ERR_load_strings.
+
+Legacy; pack in the library.
+
+Hash in |str| error strings. Assumes the URN_ONCE was done.
+
+We don't need to ERR_PACK the lib, since that was done (to the table) when it was loaded.
+
+
+
+In the BS2000-OSD POSIX subsystem, the compiler generates path names in the form "POSIX(/etc/passwd)". This dirty hack strips them to something sensible. @@@ We shouldn't modify a const string, though.
+
+Skip the "POSIX(" prefix
+
+Optional: use the basename of the path only.
+
+last error
+
+first error
+
+output may be truncated; make sure we always have 5 colon-separated fields, i.e. 4 colons ...
+
+... if possible
+
+set colon no. i at last possible position (buf[len-1] is the terminating 0)
+
+ERR_error_string_n should be used instead for ret != NULL as ERR_error_string cannot know how large the buffer is
+
+Ignore failures from these
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib_int.h
+
+internal/err.h
+
+internal/err_int.h
+
+internal/thread_once.h
+
+unknown library
+
+system library
+
+bignum routines
+
+rsa routines
+
+Diffie-Hellman routines
+
+digital envelope routines
+
+memory buffer routines
+
+object identifier routines
+
+PEM routines
+
+dsa routines
+
+x509 certificate routines
+
+asn1 encoding routines
+
+configuration file routines
+
+common libcrypto routines
+
+elliptic curve routines
+
+ECDSA routines
+
+ECDH routines
+
+SSL routines
+
+BIO routines
+
+PKCS7 routines
+
+X509 V3 routines
+
+PKCS12 routines
+
+random number generator
+
+DSO support routines
+
+time stamp routines
+
+engine routines
+
+OCSP routines
+
+UI routines
+
+FIPS routines
+
+CMS routines
+
+HMAC routines
+
+CT routines
+
+ASYNC routines
+
+KDF routines
+
+STORE routines
+
+fopen
+
+connect
+
+getservbyname
+
+socket
+
+ioctlsocket
+
+bind
+
+listen
+
+accept
+
+WSAstartup
+
+opendir
+
+fread
+
+getaddrinfo
+
+getnameinfo
+
+setsockopt
+
+getsockopt
+
+getsockname
+
+gethostbyname
+
+fflush
+
+open
+
+close
+
+ioctl
+
+stat
+
+fcntl
+
+system lib
+
+BN lib
+
+RSA lib
+
+DH lib
+
+EVP lib
+
+BUF lib
+
+OBJ lib
+
+PEM lib
+
+DSA lib
+
+X509 lib
+
+ASN1 lib
+
+EC lib
+
+BIO lib
+
+PKCS7 lib
+
+X509V3 lib
+
+ENGINE lib
+
+UI lib
+
+STORE lib
+
+ECDSA lib
+
+nested asn1 error
+
+missing asn1 eos
+
+fatal
+
+malloc failure
+
+called a function you should not call
+
+passed a null parameter
+
+internal error
+
+called a function that was disabled at compile-time
+
+init fail
+
+operation fail
+
+errno
+
+standard
+
+unknown
+
+t need to ERR_PACK the lib, since that was done (to * the table) when it was loaded. */ for (; str->error; str++) (void)lh_ERR_STRING_DATA_delete(int_error_hash, str); CRYPTO_THREAD_unlock(err_string_lock); return 1; } void err_free_strings_int(void) { if (!RUN_ONCE(&err_string_init, do_err_strings_init)) return; } /********************************************************/ void ERR_put_error(int lib, int func, int reason, const char *file, int line) { ERR_STATE *es; #ifdef _OSD_POSIX /* * In the BS2000-OSD POSIX subsystem, the compiler generates path names * in the form "*POSIX(/etc/passwd)". This dirty hack strips them to * something sensible. @@@ We shouldn
+
+*POSIX(
+
+*POSIX(
+
+*POSIX(
+
+*POSIX(
+
+)
+
+\0
+
+/
+
+
+
+
+
+NA
+
+
+
+lib(%lu)
+
+func(%lu)
+
+reason(%lu)
+
+error:%08lX:%s:%s:%s
+
+:
+
+:
+
+\0
+
+<NULL>
+
+0x10100000L
+
+0x10000000L
+
+Copyright 2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+library
+
+#define ERR_LIB_METH 12
+
+#define ERR_LIB_SSL23 21
+
+#define ERR_LIB_SSL2 22
+
+#define ERR_LIB_SSL3 23
+
+#define ERR_LIB_RSAREF 30
+
+#define ERR_LIB_PROXY 31
+
+# define ERR_LIB_JPAKE 49
+
+OS functions
+
+Winsock stuff
+
+reasons
+
+2
+
+3
+
+4
+
+5
+
+6
+
+7
+
+8
+
+9
+
+10
+
+11
+
+13
+
+16
+
+32
+
+33
+
+34
+
+38
+
+40
+
+42
+
+44
+
+fatal error
+
+99 is the maximum possible ERR_R_... code, higher values are reserved for the individual libraries
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+0x01
+
+0x02
+
+0x01
+
+0x0FF)
+
+0xFFF)
+
+0xFFF)
+
+0x0FFL)
+
+0xFFFL)
+
+0xFFFL)
+
+0x10100000L
+

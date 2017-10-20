@@ -1,0 +1,102 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Copyright 2005 Nokia. All rights reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+TODO(size_t): Convert this call
+
+print session id and master key in NSS keylog format (RSA Session-ID:<session id> Master-Key:<master key>)
+
+the RSA prefix is required by the format's definition although there's nothing RSA-specific in the output, therefore, we don't have to check if the cipher suite is based on RSA
+
+www.openssl.org/source/license.html
+
+License
+
+ssl_locl.h
+
+SSL-Session:\n
+
+Protocol : %s\n
+
+Cipher : %06lX\n
+
+Cipher : %04lX\n
+
+Cipher : %s\n
+
+unknown
+
+Session-ID:
+
+%02X
+
+\n Session-ID-ctx:
+
+%02X
+
+\n Master-Key:
+
+%02X
+
+\n PSK identity:
+
+%s
+
+None
+
+\n PSK identity hint:
+
+%s
+
+None
+
+\n SRP username:
+
+%s
+
+None
+
+\n TLS session ticket lifetime hint: %ld (seconds)
+
+\n TLS session ticket:\n
+
+\n Compression: %d
+
+\n Compression: %d (%s)
+
+\n Start Time: %ld
+
+\n Timeout : %ld (sec)
+
+\n
+
+Verify return code:
+
+%ld (%s)\n
+
+Extended master secret: %s\n
+
+yes
+
+no
+
+s definition although there
+
+RSA
+
+Session-ID:
+
+%02X
+
+Master-Key:
+
+%02X
+
+\n
+
+0xff000000)
+
+0x02000000)
+
+0xffffff)
+
+0xffff)
+

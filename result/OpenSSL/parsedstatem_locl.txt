@@ -1,0 +1,54 @@
+Copyright 2015-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The following definitions are PRIVATE to the state machine. They should NOT be used outside of the state machine.
+
+Max message length definitions
+
+The spec allows for a longer length than this, but we limit it
+
+Max should actually be 36 but we are generous
+
+The maximum number of incoming KeyUpdate messages we will accept
+
+Dummy message type
+
+Message processing return codes
+
+Something bad happened
+
+We've finished reading - swap to writing
+
+We've completed the main processing of this message but there is some post processing to be done.
+
+We've finished this message - read the next message
+
+Flush the write BIO
+
+TLS/DTLS client state machine functions
+
+TLS/DTLS server state machine functions
+
+Functions for getting new message data
+
+Message construction and processing functions
+
+some client-only functions
+
+some server-only functions
+
+Extension processing
+
+Server Extension processing
+
+Not in public headers as this is not an official extension. Only used when SSL_OP_CRYPTOPRO_TLSEXT_BUG is set.
+
+Client Extension processing
+
+www.openssl.org/source/license.html
+
+License
+
+ve finished reading - swap to writing */ MSG_PROCESS_FINISHED_READING, /* * We
+
+0xfde8
+

@@ -1,0 +1,74 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+should not happen
+
+We do this to preserve the settings. If we modify the settings, via the _set_bit function, we will recalculate on output
+
+clear
+
+set
+
+using one because of the bits left byte
+
+These next 2 functions from Goetz Babin-Ebell <babinebell@trustcenter.de>
+
+clear, set on write
+
+Don't need to set
+
+Checks if the given bit string contains only bits specified by the flags vector. Returns 0 if there is at least one bit set in 'a' which is not specified in 'flags', 1 otherwise. 'len' is the length of 'flags'.
+
+Check if there is one bit set at all.
+
+Check each byte of the internal representation of the bit string.
+
+We are done if there is an unneeded bit set.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+asn1_locl.h
+
+t need to set */ c = OPENSSL_clear_realloc(a->data, a->length, w + 1); if (c == NULL) { ASN1err(ASN1_F_ASN1_BIT_STRING_SET_BIT, ERR_R_MALLOC_FAILURE); return 0; } if (w + 1 - a->length > 0) memset(c + a->length, 0, w + 1 - a->length); a->data = c; a->length = w + 1; } a->data[w] = ((a->data[w]) & iv) | v; while ((a->length > 0) && (a->data[a->length - 1] == 0)) a->length--; return (1); } int ASN1_BIT_STRING_get_bit(const ASN1_BIT_STRING *a, int n) { int w, v; w = n / 8; v = 1 << (7 - (n & 0x07)); if ((a == NULL) || (a->length < (w + 1)) || (a->data == NULL)) return (0); return ((a->data[w] & v) != 0); } /* * Checks if the given bit string contains only bits specified by * the flags vector. Returns 0 if there is at least one bit set in
+
+* which is not specified in
+
+, 1 otherwise. *
+
+is the length of
+
+0x07;
+
+0x01)
+
+0x02)
+
+0x04)
+
+0x08)
+
+0x10)
+
+0x20)
+
+0x40)
+
+0x80)
+
+0xff
+
+0x07);
+
+0xff
+
+0x07));
+
+0x07);
+
+0x07));
+
+0xff;
+

@@ -1,0 +1,44 @@
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+CMS SignedData Utilities
+
+Just initialise SignedData e.g. for certs only structure
+
+Check structures and fixup version numbers (if necessary)
+
+Copy an existing messageDigest value
+
+Call for side-effect of computing hash and caching extensions
+
+See if digest is present in digestAlgorithms
+
+Initialize signed attributes structure so other attributes such as signing time etc are added later even if we add none here.
+
+NB ignore -1 return for duplicate cert
+
+Set SignerInfo algorithm details if we used custom parameter
+
+If any signed attributes calculate and add messageDigest attribute
+
+Copy content type across
+
+Create a chain of digest BIOs from a CMS ContentInfo
+
+If we have any signed attributes look for messageDigest value
+
+If messageDigest found compare it
+
+Check to see if a cipher exists and if so add S/MIME capabilities
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+cms_lcl.h
+
+internal/asn1_int.h
+
+internal/evp_int.h
+

@@ -1,0 +1,702 @@
+Copyright 2015-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Structure holding test information
+
+Common test stanza
+
+Current test should be skipped
+
+method for this test
+
+Error string for test
+
+Expected error value of test
+
+Expected error function string
+
+Expected error reason string
+
+test specific data
+
+Test method structure
+
+Name of test as it appears in file
+
+Initialise test for "alg"
+
+Clean up method
+
+Test specific name value pair processing
+
+Run the test itself
+
+Linked list of named keys.
+
+List of public and private keys
+
+Structure used to hold a list of blocks of memory to test calls to "update" like functions.
+
+append buffer to a list
+
+replace last buffer in list with copies of itself
+
+set repeat count for last buffer in list
+
+call "fn" with each element of the list in turn
+
+Unescape some sequences in string literals (only \n for now). Return an allocated buffer, set |out_len|. If |input_len| is zero, get an empty buffer but set length to zero.
+
+Escaping is non-expanding; over-allocate original size for simplicity.
+
+For a hex string "value" convert to a binary allocated buffer. Return 1 on success or 0 on failure.
+
+Check for NULL literal
+
+Check for empty value
+
+Don't return NULL for zero length buffer. This is needed for some tests with empty keys: HMAC_Init_ex() expects a non-NULL key buffer even if the key length is 0, in order to detect key reset.
+
+Check for string literal
+
+Otherwise assume as hex literal and convert it to binary buffer
+
+Size of input buffer means we'll never overflow
+
+MESSAGE DIGEST TESTS
+
+Digest this test is for
+
+Input to digest
+
+Expected output
+
+If alg has an OID assume disabled algorithm
+
+CIPHER TESTS
+
+EVP_CIPH_GCM_MODE, EVP_CIPH_CCM_MODE or EVP_CIPH_OCB_MODE if AEAD
+
+GCM, CCM only
+
+If alg has an OID assume disabled algorithm
+
+Exercise in-place encryption
+
+'tmp' will store both output and copy of input. We make the copy of input to specifically aligned part of 'tmp'. So we just figured out how much padding would ensure the required alignment, now we allocate extended buffer and finally copy the input just past inp_misalign in expression below. Output will be written past out_misalign...
+
+If encrypting or OCB just set tag length initially, otherwise set tag length and value.
+
+Supply the AAD in chunks less than the block size where possible
+
+We supply the data all in one go
+
+Supply the data in chunks less than the block size where possible
+
+IV is optional and usually omitted in wrap mode
+
+kludge: inp_misalign == -1 means "exercise in-place"
+
+Not fatal errors: return
+
+Not fatal errors: return
+
+XTS, CCM and Wrap modes have special requirements about input lengths so we don't fragment for those
+
+MAC TESTS
+
+MAC type
+
+Algorithm string for this MAC
+
+MAC key
+
+Input to MAC
+
+Expected output
+
+Skip DES
+
+PUBLIC KEY TESTS These are all very similar and share much common code.
+
+Context for this operation
+
+Key operation to perform
+
+Input to MAC
+
+Expected output
+
+Perform public key operation setup: lookup key, allocated ctx and call the appropriate initialisation function
+
+If p has an OID and lookup fails assume disabled algorithm
+
+PBE TESTS
+
+scrypt parameters
+
+PKCS#12 parameters
+
+password
+
+salt
+
+Expected output
+
+Parse unsigned decimal 64 bit integer value
+
+BASE64 TESTS
+
+Input to encoding
+
+Expected output
+
+KDF TESTS
+
+Context for this operation
+
+Expected output
+
+Perform public key operation setup: lookup key, allocated ctx and call the appropriate initialisation function
+
+KEYPAIR TESTS
+
+Split private and public names.
+
+Both keys are listed but unsupported: skip this test
+
+For tests that do not accept any custom keywords.
+
+this can only happen if only one of the keys is not set which means that one of them was unsupported while the other isn't: hence a key type mismatch.
+
+KEYGEN TEST
+
+Keygen context to use
+
+Key name to store key or NULL
+
+assume algorithm disabled
+
+DIGEST SIGN+VERIFY TESTS
+
+Set to 1 if verifying
+
+Set to 1 for one shot operation
+
+Digest to use
+
+Digest context
+
+Input data: streaming
+
+Input data if one shot
+
+Input length data if one shot
+
+Expected output
+
+Expected output length
+
+If alg has an OID assume disabled algorithm
+
+PARSING AND DISPATCH
+
+Text literal.
+
+Check for errors in the test structure; return 1 if okay, else 0.
+
+Run a parsed test. Log a message and return 0 on error.
+
+run the test
+
+clean it up
+
+Is the key type an unsupported algorithm?
+
+If EC support is enabled we should catch also EC_R_UNKNOWN_GROUP as an hint to an unsupported algorithm/curve (e.g. if binary EC support is disabled).
+
+OPENSSL_NO_EC
+
+NULL out the value from |pp| but return it. This "steals" a pointer.
+
+Read and parse one test. Return 0 if failure, 1 if okay.
+
+Are we adding a key?
+
+If we have a key add to list
+
+Go back and start a new stanza.
+
+Find the test, based on first keyword.
+
+TEST_info("skipping %s %s", pp->key, pp->value);
+
+Must be test specific line: try to parse it
+
+www.openssl.org/source/license.html
+
+License
+
+internal/numbers.h
+
+testutil.h
+
+evp_test.h
+
+alg
+
+update
+
+fn
+
+\\
+
+n
+
+Bad escape sequence in file
+
+\n
+
+value
+
+NULL
+
+\0
+
+t return NULL for zero length buffer. This is needed for * some tests with empty keys: HMAC_Init_ex() expects a non-NULL key * buffer even if the key length is 0, in order to detect key reset. */ *buf = OPENSSL_malloc(1); if (*buf == NULL) return 0; **buf = 0; *buflen = 0; return 1; } /* Check for string literal */ if (value[0] ==
+
+') { size_t vlen = strlen(++value); if (vlen == 0 || value[vlen - 1] != '
+
+) return 0; vlen--; *buf = unescape(value, vlen, buflen); return *buf == NULL ? 0 : 1; } /* Otherwise assume as hex literal and convert it to binary buffer */ if (!TEST_ptr(*buf = OPENSSL_hexstr2buf(value, &len))) { TEST_info("Can
+
+, value); TEST_openssl_errors(); return -1; } /* Size of input buffer means we'll never overflow */ *buflen = len; return 1; } /** *** MESSAGE DIGEST TESTS **/ typedef struct digest_data_st { /* Digest this test is for */ const EVP_MD *digest; /* Input to digest */ STACK_OF(EVP_TEST_BUFFER) *input; /* Expected output */ unsigned char *output; size_t output_len; } DIGEST_DATA; static int digest_test_init(EVP_TEST *t, const char *alg) { DIGEST_DATA *mdat; const EVP_MD *digest; if ((digest = EVP_get_digestbyname(alg)) == NULL) { /* If alg has an OID assume disabled algorithm */ if (OBJ_sn2nid(alg) != NID_undef || OBJ_ln2nid(alg) != NID_undef) { t->skip = 1; return 1; } return 0; } if (!TEST_ptr(mdat = OPENSSL_zalloc(sizeof(*mdat)))) return 0; t->data = mdat; mdat->digest = digest; return 1; } static void digest_test_cleanup(EVP_TEST *t) { DIGEST_DATA *mdat = t->data; sk_EVP_TEST_BUFFER_pop_free(mdat->input, evp_test_buffer_free); OPENSSL_free(mdat->output); } static int digest_test_parse(EVP_TEST *t, const char *keyword, const char *value) { DIGEST_DATA *mdata = t->data; if (strcmp(keyword,
+
+) == 0) return evp_test_buffer_append(value, &mdata->input); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &mdata->output, &mdata->output_len); if (strcmp(keyword,
+
+) == 0) return evp_test_buffer_set_count(value, mdata->input); if (strcmp(keyword,
+
+) == 0) return evp_test_buffer_ncopy(value, mdata->input); return 0; } static int digest_update_fn(void *ctx, const unsigned char *buf, size_t buflen) { return EVP_DigestUpdate(ctx, buf, buflen); } static int digest_test_run(EVP_TEST *t) { DIGEST_DATA *expected = t->data; EVP_MD_CTX *mctx; unsigned char *got = NULL; unsigned int got_len; t->err =
+
+; if (!TEST_ptr(mctx = EVP_MD_CTX_new())) goto err; got = OPENSSL_malloc(expected->output_len > EVP_MAX_MD_SIZE ? expected->output_len : EVP_MAX_MD_SIZE); if (!TEST_ptr(got)) goto err; if (!EVP_DigestInit_ex(mctx, expected->digest, NULL)) { t->err =
+
+; goto err; } if (!evp_test_buffer_do(expected->input, digest_update_fn, mctx)) { t->err =
+
+; goto err; } if (EVP_MD_flags(expected->digest) & EVP_MD_FLAG_XOF) { got_len = expected->output_len; if (!EVP_DigestFinalXOF(mctx, got, got_len)) { t->err =
+
+; goto err; } } else { if (!EVP_DigestFinal(mctx, got, &got_len)) { t->err =
+
+; goto err; } } if (!TEST_int_eq(expected->output_len, got_len)) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(got); EVP_MD_CTX_free(mctx); return 1; } static const EVP_TEST_METHOD digest_test_method = {
+
+, digest_test_init, digest_test_cleanup, digest_test_parse, digest_test_run }; /** *** CIPHER TESTS **/ typedef struct cipher_data_st { const EVP_CIPHER *cipher; int enc; /* EVP_CIPH_GCM_MODE, EVP_CIPH_CCM_MODE or EVP_CIPH_OCB_MODE if AEAD */ int aead; unsigned char *key; size_t key_len; unsigned char *iv; size_t iv_len; unsigned char *plaintext; size_t plaintext_len; unsigned char *ciphertext; size_t ciphertext_len; /* GCM, CCM only */ unsigned char *aad; size_t aad_len; unsigned char *tag; size_t tag_len; } CIPHER_DATA; static int cipher_test_init(EVP_TEST *t, const char *alg) { const EVP_CIPHER *cipher; CIPHER_DATA *cdat; int m; if ((cipher = EVP_get_cipherbyname(alg)) == NULL) { /* If alg has an OID assume disabled algorithm */ if (OBJ_sn2nid(alg) != NID_undef || OBJ_ln2nid(alg) != NID_undef) { t->skip = 1; return 1; } return 0; } cdat = OPENSSL_zalloc(sizeof(*cdat)); cdat->cipher = cipher; cdat->enc = -1; m = EVP_CIPHER_mode(cipher); if (m == EVP_CIPH_GCM_MODE || m == EVP_CIPH_OCB_MODE || m == EVP_CIPH_CCM_MODE) cdat->aead = EVP_CIPHER_mode(cipher); else if (EVP_CIPHER_flags(cipher) & EVP_CIPH_FLAG_AEAD_CIPHER) cdat->aead = -1; else cdat->aead = 0; t->data = cdat; return 1; } static void cipher_test_cleanup(EVP_TEST *t) { CIPHER_DATA *cdat = t->data; OPENSSL_free(cdat->key); OPENSSL_free(cdat->iv); OPENSSL_free(cdat->ciphertext); OPENSSL_free(cdat->plaintext); OPENSSL_free(cdat->aad); OPENSSL_free(cdat->tag); } static int cipher_test_parse(EVP_TEST *t, const char *keyword, const char *value) { CIPHER_DATA *cdat = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->key, &cdat->key_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->iv, &cdat->iv_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->plaintext, &cdat->plaintext_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->ciphertext, &cdat->ciphertext_len); if (cdat->aead) { if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->aad, &cdat->aad_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &cdat->tag, &cdat->tag_len); } if (strcmp(keyword,
+
+) == 0) { if (strcmp(value,
+
+) == 0) cdat->enc = 1; else if (strcmp(value,
+
+) == 0) cdat->enc = 0; else return 0; return 1; } return 0; } static int cipher_test_enc(EVP_TEST *t, int enc, size_t out_misalign, size_t inp_misalign, int frag) { CIPHER_DATA *expected = t->data; unsigned char *in, *expected_out, *tmp = NULL; size_t in_len, out_len, donelen = 0; int ok = 0, tmplen, chunklen, tmpflen; EVP_CIPHER_CTX *ctx = NULL; t->err =
+
+; if (!TEST_ptr(ctx = EVP_CIPHER_CTX_new())) goto err; EVP_CIPHER_CTX_set_flags(ctx, EVP_CIPHER_CTX_FLAG_WRAP_ALLOW); if (enc) { in = expected->plaintext; in_len = expected->plaintext_len; expected_out = expected->ciphertext; out_len = expected->ciphertext_len; } else { in = expected->ciphertext; in_len = expected->ciphertext_len; expected_out = expected->plaintext; out_len = expected->plaintext_len; } if (inp_misalign == (size_t)-1) { /* * Exercise in-place encryption */ tmp = OPENSSL_malloc(out_misalign + in_len + 2 * EVP_MAX_BLOCK_LENGTH); if (!tmp) goto err; in = memcpy(tmp + out_misalign, in, in_len); } else { inp_misalign += 16 - ((out_misalign + in_len) & 15); /* * 'tmp' will store both output and copy of input. We make the copy * of input to specifically aligned part of 'tmp'. So we just * figured out how much padding would ensure the required alignment, * now we allocate extended buffer and finally copy the input just * past inp_misalign in expression below. Output will be written * past out_misalign... */ tmp = OPENSSL_malloc(out_misalign + in_len + 2 * EVP_MAX_BLOCK_LENGTH + inp_misalign + in_len); if (!tmp) goto err; in = memcpy(tmp + out_misalign + in_len + 2 * EVP_MAX_BLOCK_LENGTH + inp_misalign, in, in_len); } if (!EVP_CipherInit_ex(ctx, expected->cipher, NULL, NULL, NULL, enc)) { t->err =
+
+; goto err; } if (expected->iv) { if (expected->aead) { if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_IVLEN, expected->iv_len, 0)) { t->err =
+
+; goto err; } } else if (expected->iv_len != (size_t)EVP_CIPHER_CTX_iv_length(ctx)) { t->err =
+
+; goto err; } } if (expected->aead) { unsigned char *tag; /* * If encrypting or OCB just set tag length initially, otherwise * set tag length and value. */ if (enc || expected->aead == EVP_CIPH_OCB_MODE) { t->err =
+
+; tag = NULL; } else { t->err =
+
+; tag = expected->tag; } if (tag || expected->aead != EVP_CIPH_GCM_MODE) { if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, expected->tag_len, tag)) goto err; } } if (!EVP_CIPHER_CTX_set_key_length(ctx, expected->key_len)) { t->err =
+
+; goto err; } if (!EVP_CipherInit_ex(ctx, NULL, NULL, expected->key, expected->iv, -1)) { t->err =
+
+; goto err; } if (!enc && expected->aead == EVP_CIPH_OCB_MODE) { if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, expected->tag_len, expected->tag)) { t->err =
+
+; goto err; } } if (expected->aead == EVP_CIPH_CCM_MODE) { if (!EVP_CipherUpdate(ctx, NULL, &tmplen, NULL, out_len)) { t->err =
+
+; goto err; } } if (expected->aad) { t->err =
+
+; if (!frag) { if (!EVP_CipherUpdate(ctx, NULL, &chunklen, expected->aad, expected->aad_len)) goto err; } else { /* * Supply the AAD in chunks less than the block size where possible */ if (expected->aad_len > 0) { if (!EVP_CipherUpdate(ctx, NULL, &chunklen, expected->aad, 1)) goto err; donelen++; } if (expected->aad_len > 2) { if (!EVP_CipherUpdate(ctx, NULL, &chunklen, expected->aad + donelen, expected->aad_len - 2)) goto err; donelen += expected->aad_len - 2; } if (expected->aad_len > 1 && !EVP_CipherUpdate(ctx, NULL, &chunklen, expected->aad + donelen, 1)) goto err; } } EVP_CIPHER_CTX_set_padding(ctx, 0); t->err =
+
+; tmplen = 0; if (!frag) { /* We supply the data all in one go */ if (!EVP_CipherUpdate(ctx, tmp + out_misalign, &tmplen, in, in_len)) goto err; } else { /* Supply the data in chunks less than the block size where possible */ if (in_len > 0) { if (!EVP_CipherUpdate(ctx, tmp + out_misalign, &chunklen, in, 1)) goto err; tmplen += chunklen; in++; in_len--; } if (in_len > 1) { if (!EVP_CipherUpdate(ctx, tmp + out_misalign + tmplen, &chunklen, in, in_len - 1)) goto err; tmplen += chunklen; in += in_len - 1; in_len = 1; } if (in_len > 0 ) { if (!EVP_CipherUpdate(ctx, tmp + out_misalign + tmplen, &chunklen, in, 1)) goto err; tmplen += chunklen; } } if (!EVP_CipherFinal_ex(ctx, tmp + out_misalign + tmplen, &tmpflen)) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected_out, out_len, tmp + out_misalign, tmplen + tmpflen)) { t->err =
+
+; goto err; } if (enc && expected->aead) { unsigned char rtag[16]; if (!TEST_size_t_le(expected->tag_len, sizeof(rtag))) { t->err =
+
+; goto err; } if (!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, expected->tag_len, rtag)) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->tag, expected->tag_len, rtag, expected->tag_len)) { t->err =
+
+; goto err; } } t->err = NULL; ok = 1; err: OPENSSL_free(tmp); EVP_CIPHER_CTX_free(ctx); return ok; } static int cipher_test_run(EVP_TEST *t) { CIPHER_DATA *cdat = t->data; int rv, frag = 0; size_t out_misalign, inp_misalign; if (!cdat->key) { t->err =
+
+; return 0; } if (!cdat->iv && EVP_CIPHER_iv_length(cdat->cipher)) { /* IV is optional and usually omitted in wrap mode */ if (EVP_CIPHER_mode(cdat->cipher) != EVP_CIPH_WRAP_MODE) { t->err =
+
+; return 0; } } if (cdat->aead && !cdat->tag) { t->err =
+
+; return 0; } for (out_misalign = 0; out_misalign <= 1;) { static char aux_err[64]; t->aux_err = aux_err; for (inp_misalign = (size_t)-1; inp_misalign != 2; inp_misalign++) { if (inp_misalign == (size_t)-1) { /* kludge: inp_misalign == -1 means
+
+*/ BIO_snprintf(aux_err, sizeof(aux_err),
+
+, out_misalign ?
+
+:
+
+, frag ?
+
+:
+
+); } else { BIO_snprintf(aux_err, sizeof(aux_err),
+
+, out_misalign ?
+
+:
+
+, inp_misalign ?
+
+:
+
+, frag ?
+
+:
+
+); } if (cdat->enc) { rv = cipher_test_enc(t, 1, out_misalign, inp_misalign, frag); /* Not fatal errors: return */ if (rv != 1) { if (rv < 0) return 0; return 1; } } if (cdat->enc != 1) { rv = cipher_test_enc(t, 0, out_misalign, inp_misalign, frag); /* Not fatal errors: return */ if (rv != 1) { if (rv < 0) return 0; return 1; } } } if (out_misalign == 1 && frag == 0) { /* * XTS, CCM and Wrap modes have special requirements about input * lengths so we don't fragment for those */ if (cdat->aead == EVP_CIPH_CCM_MODE || EVP_CIPHER_mode(cdat->cipher) == EVP_CIPH_XTS_MODE || EVP_CIPHER_mode(cdat->cipher) == EVP_CIPH_WRAP_MODE) break; out_misalign = 0; frag++; } else { out_misalign++; } } t->aux_err = NULL; return 1; } static const EVP_TEST_METHOD cipher_test_method = {
+
+, cipher_test_init, cipher_test_cleanup, cipher_test_parse, cipher_test_run }; /** *** MAC TESTS **/ typedef struct mac_data_st { /* MAC type */ int type; /* Algorithm string for this MAC */ char *alg; /* MAC key */ unsigned char *key; size_t key_len; /* Input to MAC */ unsigned char *input; size_t input_len; /* Expected output */ unsigned char *output; size_t output_len; } MAC_DATA; static int mac_test_init(EVP_TEST *t, const char *alg) { int type; MAC_DATA *mdat; if (strcmp(alg,
+
+) == 0) { type = EVP_PKEY_HMAC; } else if (strcmp(alg,
+
+) == 0) { #ifndef OPENSSL_NO_CMAC type = EVP_PKEY_CMAC; #else t->skip = 1; return 1; #endif } else if (strcmp(alg,
+
+) == 0) { #ifndef OPENSSL_NO_POLY1305 type = EVP_PKEY_POLY1305; #else t->skip = 1; return 1; #endif } else if (strcmp(alg,
+
+) == 0) { #ifndef OPENSSL_NO_SIPHASH type = EVP_PKEY_SIPHASH; #else t->skip = 1; return 1; #endif } else return 0; mdat = OPENSSL_zalloc(sizeof(*mdat)); mdat->type = type; t->data = mdat; return 1; } static void mac_test_cleanup(EVP_TEST *t) { MAC_DATA *mdat = t->data; OPENSSL_free(mdat->alg); OPENSSL_free(mdat->key); OPENSSL_free(mdat->input); OPENSSL_free(mdat->output); } static int mac_test_parse(EVP_TEST *t, const char *keyword, const char *value) { MAC_DATA *mdata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &mdata->key, &mdata->key_len); if (strcmp(keyword,
+
+) == 0) { mdata->alg = OPENSSL_strdup(value); if (!mdata->alg) return 0; return 1; } if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &mdata->input, &mdata->input_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &mdata->output, &mdata->output_len); return 0; } static int mac_test_run(EVP_TEST *t) { MAC_DATA *expected = t->data; EVP_MD_CTX *mctx = NULL; EVP_PKEY_CTX *pctx = NULL, *genctx = NULL; EVP_PKEY *key = NULL; const EVP_MD *md = NULL; unsigned char *got = NULL; size_t got_len; #ifdef OPENSSL_NO_DES if (expected->alg != NULL && strstr(expected->alg,
+
+) != NULL) { /* Skip DES */ t->err = NULL; goto err; } #endif if (!TEST_ptr(genctx = EVP_PKEY_CTX_new_id(expected->type, NULL))) { t->err =
+
+; goto err; } if (EVP_PKEY_keygen_init(genctx) <= 0) { t->err =
+
+; goto err; } if (expected->type == EVP_PKEY_CMAC && EVP_PKEY_CTX_ctrl_str(genctx,
+
+, expected->alg) <= 0) { t->err =
+
+; goto err; } if (EVP_PKEY_CTX_set_mac_key(genctx, expected->key, expected->key_len) <= 0) { t->err =
+
+; goto err; } if (EVP_PKEY_keygen(genctx, &key) <= 0) { t->err =
+
+; goto err; } if (expected->type == EVP_PKEY_HMAC) { if (!TEST_ptr(md = EVP_get_digestbyname(expected->alg))) { t->err =
+
+; goto err; } } if (!TEST_ptr(mctx = EVP_MD_CTX_new())) { t->err =
+
+; goto err; } if (!EVP_DigestSignInit(mctx, &pctx, md, NULL, key)) { t->err =
+
+; goto err; } if (!EVP_DigestSignUpdate(mctx, expected->input, expected->input_len)) { t->err =
+
+; goto err; } if (!EVP_DigestSignFinal(mctx, NULL, &got_len)) { t->err =
+
+; goto err; } if (!TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (!EVP_DigestSignFinal(mctx, got, &got_len) || !TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } t->err = NULL; err: EVP_MD_CTX_free(mctx); OPENSSL_free(got); EVP_PKEY_CTX_free(genctx); EVP_PKEY_free(key); return 1; } static const EVP_TEST_METHOD mac_test_method = {
+
+, mac_test_init, mac_test_cleanup, mac_test_parse, mac_test_run }; /** *** PUBLIC KEY TESTS *** These are all very similar and share much common code. **/ typedef struct pkey_data_st { /* Context for this operation */ EVP_PKEY_CTX *ctx; /* Key operation to perform */ int (*keyop) (EVP_PKEY_CTX *ctx, unsigned char *sig, size_t *siglen, const unsigned char *tbs, size_t tbslen); /* Input to MAC */ unsigned char *input; size_t input_len; /* Expected output */ unsigned char *output; size_t output_len; } PKEY_DATA; /* * Perform public key operation setup: lookup key, allocated ctx and call * the appropriate initialisation function */ static int pkey_test_init(EVP_TEST *t, const char *name, int use_public, int (*keyopinit) (EVP_PKEY_CTX *ctx), int (*keyop)(EVP_PKEY_CTX *ctx, unsigned char *sig, size_t *siglen, const unsigned char *tbs, size_t tbslen)) { PKEY_DATA *kdata; EVP_PKEY *pkey = NULL; int rv = 0; if (use_public) rv = find_key(&pkey, name, public_keys); if (rv == 0) rv = find_key(&pkey, name, private_keys); if (rv == 0 || pkey == NULL) { t->skip = 1; return 1; } if (!TEST_ptr(kdata = OPENSSL_zalloc(sizeof(*kdata)))) { EVP_PKEY_free(pkey); return 0; } kdata->keyop = keyop; if (!TEST_ptr(kdata->ctx = EVP_PKEY_CTX_new(pkey, NULL))) { EVP_PKEY_free(pkey); OPENSSL_free(kdata); return 0; } if (keyopinit(kdata->ctx) <= 0) t->err =
+
+; t->data = kdata; return 1; } static void pkey_test_cleanup(EVP_TEST *t) { PKEY_DATA *kdata = t->data; OPENSSL_free(kdata->input); OPENSSL_free(kdata->output); EVP_PKEY_CTX_free(kdata->ctx); } static int pkey_test_ctrl(EVP_TEST *t, EVP_PKEY_CTX *pctx, const char *value) { int rv; char *p, *tmpval; if (!TEST_ptr(tmpval = OPENSSL_strdup(value))) return 0; p = strchr(tmpval, ':'); if (p != NULL) *p++ = '\0'; rv = EVP_PKEY_CTX_ctrl_str(pctx, tmpval, p); if (rv == -2) { t->err =
+
+; rv = 1; } else if (p != NULL && rv <= 0) { /* If p has an OID and lookup fails assume disabled algorithm */ int nid = OBJ_sn2nid(p); if (nid == NID_undef) nid = OBJ_ln2nid(p); if (nid != NID_undef && EVP_get_digestbynid(nid) == NULL && EVP_get_cipherbynid(nid) == NULL) { t->skip = 1; rv = 1; } else { t->err =
+
+; rv = 1; } } OPENSSL_free(tmpval); return rv > 0; } static int pkey_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PKEY_DATA *kdata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &kdata->input, &kdata->input_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &kdata->output, &kdata->output_len); if (strcmp(keyword,
+
+) == 0) return pkey_test_ctrl(t, kdata->ctx, value); return 0; } static int pkey_test_run(EVP_TEST *t) { PKEY_DATA *expected = t->data; unsigned char *got = NULL; size_t got_len; if (expected->keyop(expected->ctx, NULL, &got_len, expected->input, expected->input_len) <= 0 || !TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (expected->keyop(expected->ctx, got, &got_len, expected->input, expected->input_len) <= 0) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(got); return 1; } static int sign_test_init(EVP_TEST *t, const char *name) { return pkey_test_init(t, name, 0, EVP_PKEY_sign_init, EVP_PKEY_sign); } static const EVP_TEST_METHOD psign_test_method = {
+
+, sign_test_init, pkey_test_cleanup, pkey_test_parse, pkey_test_run }; static int verify_recover_test_init(EVP_TEST *t, const char *name) { return pkey_test_init(t, name, 1, EVP_PKEY_verify_recover_init, EVP_PKEY_verify_recover); } static const EVP_TEST_METHOD pverify_recover_test_method = {
+
+, verify_recover_test_init, pkey_test_cleanup, pkey_test_parse, pkey_test_run }; static int decrypt_test_init(EVP_TEST *t, const char *name) { return pkey_test_init(t, name, 0, EVP_PKEY_decrypt_init, EVP_PKEY_decrypt); } static const EVP_TEST_METHOD pdecrypt_test_method = {
+
+, decrypt_test_init, pkey_test_cleanup, pkey_test_parse, pkey_test_run }; static int verify_test_init(EVP_TEST *t, const char *name) { return pkey_test_init(t, name, 1, EVP_PKEY_verify_init, 0); } static int verify_test_run(EVP_TEST *t) { PKEY_DATA *kdata = t->data; if (EVP_PKEY_verify(kdata->ctx, kdata->output, kdata->output_len, kdata->input, kdata->input_len) <= 0) t->err =
+
+; return 1; } static const EVP_TEST_METHOD pverify_test_method = {
+
+, verify_test_init, pkey_test_cleanup, pkey_test_parse, verify_test_run }; static int pderive_test_init(EVP_TEST *t, const char *name) { return pkey_test_init(t, name, 0, EVP_PKEY_derive_init, 0); } static int pderive_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PKEY_DATA *kdata = t->data; if (strcmp(keyword,
+
+) == 0) { EVP_PKEY *peer; if (find_key(&peer, value, public_keys) == 0) return 0; if (EVP_PKEY_derive_set_peer(kdata->ctx, peer) <= 0) return 0; return 1; } if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &kdata->output, &kdata->output_len); if (strcmp(keyword,
+
+) == 0) return pkey_test_ctrl(t, kdata->ctx, value); return 0; } static int pderive_test_run(EVP_TEST *t) { PKEY_DATA *expected = t->data; unsigned char *got = NULL; size_t got_len; got_len = expected->output_len; if (!TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (EVP_PKEY_derive(expected->ctx, got, &got_len) <= 0) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(got); return 1; } static const EVP_TEST_METHOD pderive_test_method = {
+
+, pderive_test_init, pkey_test_cleanup, pderive_test_parse, pderive_test_run }; /** *** PBE TESTS **/ typedef enum pbe_type_enum { PBE_TYPE_INVALID = 0, PBE_TYPE_SCRYPT, PBE_TYPE_PBKDF2, PBE_TYPE_PKCS12 } PBE_TYPE; typedef struct pbe_data_st { PBE_TYPE pbe_type; /* scrypt parameters */ uint64_t N, r, p, maxmem; /* PKCS#12 parameters */ int id, iter; const EVP_MD *md; /* password */ unsigned char *pass; size_t pass_len; /* salt */ unsigned char *salt; size_t salt_len; /* Expected output */ unsigned char *key; size_t key_len; } PBE_DATA; #ifndef OPENSSL_NO_SCRYPT /* * Parse unsigned decimal 64 bit integer value */ static int parse_uint64(const char *value, uint64_t *pr) { const char *p = value; if (!TEST_true(*p)) { TEST_info(
+
+); return -1; } for (*pr = 0; *p; ) { if (*pr > UINT64_MAX / 10) { TEST_error(
+
+, value); return -1; } *pr *= 10; if (!TEST_true(isdigit((unsigned char)*p))) { TEST_error(
+
+, value); return -1; } *pr += *p - '0'; p++; } return 1; } static int scrypt_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PBE_DATA *pdata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_uint64(value, &pdata->N); if (strcmp(keyword,
+
+) == 0) return parse_uint64(value, &pdata->p); if (strcmp(keyword,
+
+) == 0) return parse_uint64(value, &pdata->r); if (strcmp(keyword,
+
+) == 0) return parse_uint64(value, &pdata->maxmem); return 0; } #endif static int pbkdf2_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PBE_DATA *pdata = t->data; if (strcmp(keyword,
+
+) == 0) { pdata->iter = atoi(value); if (pdata->iter <= 0) return -1; return 1; } if (strcmp(keyword,
+
+) == 0) { pdata->md = EVP_get_digestbyname(value); if (pdata->md == NULL) return -1; return 1; } return 0; } static int pkcs12_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PBE_DATA *pdata = t->data; if (strcmp(keyword,
+
+) == 0) { pdata->id = atoi(value); if (pdata->id <= 0) return -1; return 1; } return pbkdf2_test_parse(t, keyword, value); } static int pbe_test_init(EVP_TEST *t, const char *alg) { PBE_DATA *pdat; PBE_TYPE pbe_type = PBE_TYPE_INVALID; if (strcmp(alg,
+
+) == 0) { #ifndef OPENSSL_NO_SCRYPT pbe_type = PBE_TYPE_SCRYPT; #else t->skip = 1; return 1; #endif } else if (strcmp(alg,
+
+) == 0) { pbe_type = PBE_TYPE_PBKDF2; } else if (strcmp(alg,
+
+) == 0) { pbe_type = PBE_TYPE_PKCS12; } else { TEST_error(
+
+, alg); } pdat = OPENSSL_zalloc(sizeof(*pdat)); pdat->pbe_type = pbe_type; t->data = pdat; return 1; } static void pbe_test_cleanup(EVP_TEST *t) { PBE_DATA *pdat = t->data; OPENSSL_free(pdat->pass); OPENSSL_free(pdat->salt); OPENSSL_free(pdat->key); } static int pbe_test_parse(EVP_TEST *t, const char *keyword, const char *value) { PBE_DATA *pdata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &pdata->pass, &pdata->pass_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &pdata->salt, &pdata->salt_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &pdata->key, &pdata->key_len); if (pdata->pbe_type == PBE_TYPE_PBKDF2) return pbkdf2_test_parse(t, keyword, value); else if (pdata->pbe_type == PBE_TYPE_PKCS12) return pkcs12_test_parse(t, keyword, value); #ifndef OPENSSL_NO_SCRYPT else if (pdata->pbe_type == PBE_TYPE_SCRYPT) return scrypt_test_parse(t, keyword, value); #endif return 0; } static int pbe_test_run(EVP_TEST *t) { PBE_DATA *expected = t->data; unsigned char *key; if (!TEST_ptr(key = OPENSSL_malloc(expected->key_len))) { t->err =
+
+; goto err; } if (expected->pbe_type == PBE_TYPE_PBKDF2) { if (PKCS5_PBKDF2_HMAC((char *)expected->pass, expected->pass_len, expected->salt, expected->salt_len, expected->iter, expected->md, expected->key_len, key) == 0) { t->err =
+
+; goto err; } #ifndef OPENSSL_NO_SCRYPT } else if (expected->pbe_type == PBE_TYPE_SCRYPT) { if (EVP_PBE_scrypt((const char *)expected->pass, expected->pass_len, expected->salt, expected->salt_len, expected->N, expected->r, expected->p, expected->maxmem, key, expected->key_len) == 0) { t->err =
+
+; goto err; } #endif } else if (expected->pbe_type == PBE_TYPE_PKCS12) { if (PKCS12_key_gen_uni(expected->pass, expected->pass_len, expected->salt, expected->salt_len, expected->id, expected->iter, expected->key_len, key, expected->md) == 0) { t->err =
+
+; goto err; } } if (!TEST_mem_eq(expected->key, expected->key_len, key, expected->key_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(key); return 1; } static const EVP_TEST_METHOD pbe_test_method = {
+
+, pbe_test_init, pbe_test_cleanup, pbe_test_parse, pbe_test_run }; /** *** BASE64 TESTS **/ typedef enum { BASE64_CANONICAL_ENCODING = 0, BASE64_VALID_ENCODING = 1, BASE64_INVALID_ENCODING = 2 } base64_encoding_type; typedef struct encode_data_st { /* Input to encoding */ unsigned char *input; size_t input_len; /* Expected output */ unsigned char *output; size_t output_len; base64_encoding_type encoding; } ENCODE_DATA; static int encode_test_init(EVP_TEST *t, const char *encoding) { ENCODE_DATA *edata; if (!TEST_ptr(edata = OPENSSL_zalloc(sizeof(*edata)))) return 0; if (strcmp(encoding,
+
+) == 0) { edata->encoding = BASE64_CANONICAL_ENCODING; } else if (strcmp(encoding,
+
+) == 0) { edata->encoding = BASE64_VALID_ENCODING; } else if (strcmp(encoding,
+
+) == 0) { edata->encoding = BASE64_INVALID_ENCODING; if (!TEST_ptr(t->expected_err = OPENSSL_strdup(
+
+))) return 0; } else { TEST_error(
+
+
+
+, encoding); return 0; } t->data = edata; return 1; } static void encode_test_cleanup(EVP_TEST *t) { ENCODE_DATA *edata = t->data; OPENSSL_free(edata->input); OPENSSL_free(edata->output); memset(edata, 0, sizeof(*edata)); } static int encode_test_parse(EVP_TEST *t, const char *keyword, const char *value) { ENCODE_DATA *edata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &edata->input, &edata->input_len); if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &edata->output, &edata->output_len); return 0; } static int encode_test_run(EVP_TEST *t) { ENCODE_DATA *expected = t->data; unsigned char *encode_out = NULL, *decode_out = NULL; int output_len, chunk_len; EVP_ENCODE_CTX *decode_ctx; if (!TEST_ptr(decode_ctx = EVP_ENCODE_CTX_new())) { t->err =
+
+; goto err; } if (expected->encoding == BASE64_CANONICAL_ENCODING) { EVP_ENCODE_CTX *encode_ctx; if (!TEST_ptr(encode_ctx = EVP_ENCODE_CTX_new()) || !TEST_ptr(encode_out = OPENSSL_malloc(EVP_ENCODE_LENGTH(expected->input_len)))) goto err; EVP_EncodeInit(encode_ctx); EVP_EncodeUpdate(encode_ctx, encode_out, &chunk_len, expected->input, expected->input_len); output_len = chunk_len; EVP_EncodeFinal(encode_ctx, encode_out + chunk_len, &chunk_len); output_len += chunk_len; EVP_ENCODE_CTX_free(encode_ctx); if (!TEST_mem_eq(expected->output, expected->output_len, encode_out, output_len)) { t->err =
+
+; goto err; } } if (!TEST_ptr(decode_out = OPENSSL_malloc(EVP_DECODE_LENGTH(expected->output_len)))) goto err; EVP_DecodeInit(decode_ctx); if (EVP_DecodeUpdate(decode_ctx, decode_out, &chunk_len, expected->output, expected->output_len) < 0) { t->err =
+
+; goto err; } output_len = chunk_len; if (EVP_DecodeFinal(decode_ctx, decode_out + chunk_len, &chunk_len) != 1) { t->err =
+
+; goto err; } output_len += chunk_len; if (expected->encoding != BASE64_INVALID_ENCODING && !TEST_mem_eq(expected->input, expected->input_len, decode_out, output_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(encode_out); OPENSSL_free(decode_out); EVP_ENCODE_CTX_free(decode_ctx); return 1; } static const EVP_TEST_METHOD encode_test_method = {
+
+, encode_test_init, encode_test_cleanup, encode_test_parse, encode_test_run, }; /** *** KDF TESTS **/ typedef struct kdf_data_st { /* Context for this operation */ EVP_PKEY_CTX *ctx; /* Expected output */ unsigned char *output; size_t output_len; } KDF_DATA; /* * Perform public key operation setup: lookup key, allocated ctx and call * the appropriate initialisation function */ static int kdf_test_init(EVP_TEST *t, const char *name) { KDF_DATA *kdata; int kdf_nid = OBJ_sn2nid(name); #ifdef OPENSSL_NO_SCRYPT if (strcmp(name,
+
+) == 0) { t->skip = 1; return 1; } #endif if (kdf_nid == NID_undef) kdf_nid = OBJ_ln2nid(name); if (!TEST_ptr(kdata = OPENSSL_zalloc(sizeof(*kdata)))) return 0; kdata->ctx = EVP_PKEY_CTX_new_id(kdf_nid, NULL); if (kdata->ctx == NULL) { OPENSSL_free(kdata); return 0; } if (EVP_PKEY_derive_init(kdata->ctx) <= 0) { EVP_PKEY_CTX_free(kdata->ctx); OPENSSL_free(kdata); return 0; } t->data = kdata; return 1; } static void kdf_test_cleanup(EVP_TEST *t) { KDF_DATA *kdata = t->data; OPENSSL_free(kdata->output); EVP_PKEY_CTX_free(kdata->ctx); } static int kdf_test_parse(EVP_TEST *t, const char *keyword, const char *value) { KDF_DATA *kdata = t->data; if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &kdata->output, &kdata->output_len); if (strncmp(keyword,
+
+, 4) == 0) return pkey_test_ctrl(t, kdata->ctx, value); return 0; } static int kdf_test_run(EVP_TEST *t) { KDF_DATA *expected = t->data; unsigned char *got = NULL; size_t got_len = expected->output_len; if (!TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (EVP_PKEY_derive(expected->ctx, got, &got_len) <= 0) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } t->err = NULL; err: OPENSSL_free(got); return 1; } static const EVP_TEST_METHOD kdf_test_method = {
+
+, kdf_test_init, kdf_test_cleanup, kdf_test_parse, kdf_test_run }; /** *** KEYPAIR TESTS **/ typedef struct keypair_test_data_st { EVP_PKEY *privk; EVP_PKEY *pubk; } KEYPAIR_TEST_DATA; static int keypair_test_init(EVP_TEST *t, const char *pair) { KEYPAIR_TEST_DATA *data; int rv = 0; EVP_PKEY *pk = NULL, *pubk = NULL; char *pub, *priv = NULL; /* Split private and public names. */ if (!TEST_ptr(priv = OPENSSL_strdup(pair)) || !TEST_ptr(pub = strchr(priv, ':'))) { t->err =
+
+; goto end; } *pub++ = '\0'; if (!TEST_true(find_key(&pk, priv, private_keys))) { TEST_info(
+
+t find private key: %s", priv); t->err = "MISSING_PRIVATE_KEY"; goto end; } if (!TEST_true(find_key(&pubk, pub, public_keys))) { TEST_info("Can
+
+, pub); t->err =
+
+; goto end; } if (pk == NULL && pubk == NULL) { /* Both keys are listed but unsupported: skip this test */ t->skip = 1; rv = 1; goto end; } if (!TEST_ptr(data = OPENSSL_malloc(sizeof(*data)))) goto end; data->privk = pk; data->pubk = pubk; t->data = data; rv = 1; t->err = NULL; end: OPENSSL_free(priv); return rv; } static void keypair_test_cleanup(EVP_TEST *t) { OPENSSL_free(t->data); t->data = NULL; } /* * For tests that do not accept any custom keywords. */ static int void_test_parse(EVP_TEST *t, const char *keyword, const char *value) { return 0; } static int keypair_test_run(EVP_TEST *t) { int rv = 0; const KEYPAIR_TEST_DATA *pair = t->data; if (pair->privk == NULL || pair->pubk == NULL) { /* * this can only happen if only one of the keys is not set * which means that one of them was unsupported while the * other isn't: hence a key type mismatch. */ t->err =
+
+; rv = 1; goto end; } if ((rv = EVP_PKEY_cmp(pair->privk, pair->pubk)) != 1 ) { if ( 0 == rv ) { t->err =
+
+; } else if ( -1 == rv ) { t->err =
+
+; } else if ( -2 == rv ) { t->err =
+
+; } else { TEST_error(
+
+); rv = 0; goto end; } rv = 1; goto end; } rv = 1; t->err = NULL; end: return rv; } static const EVP_TEST_METHOD keypair_test_method = {
+
+, keypair_test_init, keypair_test_cleanup, void_test_parse, keypair_test_run }; /** *** KEYGEN TEST **/ typedef struct keygen_test_data_st { EVP_PKEY_CTX *genctx; /* Keygen context to use */ char *keyname; /* Key name to store key or NULL */ } KEYGEN_TEST_DATA; static int keygen_test_init(EVP_TEST *t, const char *alg) { KEYGEN_TEST_DATA *data; EVP_PKEY_CTX *genctx; int nid = OBJ_sn2nid(alg); if (nid == NID_undef) { nid = OBJ_ln2nid(alg); if (nid == NID_undef) return 0; } if (!TEST_ptr(genctx = EVP_PKEY_CTX_new_id(nid, NULL))) { /* assume algorithm disabled */ t->skip = 1; return 1; } if (EVP_PKEY_keygen_init(genctx) <= 0) { t->err =
+
+; goto err; } if (!TEST_ptr(data = OPENSSL_malloc(sizeof(*data)))) goto err; data->genctx = genctx; data->keyname = NULL; t->data = data; t->err = NULL; return 1; err: EVP_PKEY_CTX_free(genctx); return 0; } static void keygen_test_cleanup(EVP_TEST *t) { KEYGEN_TEST_DATA *keygen = t->data; EVP_PKEY_CTX_free(keygen->genctx); OPENSSL_free(keygen->keyname); OPENSSL_free(t->data); t->data = NULL; } static int keygen_test_parse(EVP_TEST *t, const char *keyword, const char *value) { KEYGEN_TEST_DATA *keygen = t->data; if (strcmp(keyword,
+
+) == 0) return TEST_ptr(keygen->keyname = OPENSSL_strdup(value)); if (strcmp(keyword,
+
+) == 0) return pkey_test_ctrl(t, keygen->genctx, value); return 0; } static int keygen_test_run(EVP_TEST *t) { KEYGEN_TEST_DATA *keygen = t->data; EVP_PKEY *pkey = NULL; t->err = NULL; if (EVP_PKEY_keygen(keygen->genctx, &pkey) <= 0) { t->err =
+
+; goto err; } if (keygen->keyname != NULL) { KEY_LIST *key; if (find_key(NULL, keygen->keyname, private_keys)) { TEST_info(
+
+, keygen->keyname); goto err; } if (!TEST_ptr(key = OPENSSL_malloc(sizeof(*key)))) goto err; key->name = keygen->keyname; keygen->keyname = NULL; key->key = pkey; key->next = private_keys; private_keys = key; } else { EVP_PKEY_free(pkey); } return 1; err: EVP_PKEY_free(pkey); return 0; } static const EVP_TEST_METHOD keygen_test_method = {
+
+, keygen_test_init, keygen_test_cleanup, keygen_test_parse, keygen_test_run, }; /** *** DIGEST SIGN+VERIFY TESTS **/ typedef struct { int is_verify; /* Set to 1 if verifying */ int is_oneshot; /* Set to 1 for one shot operation */ const EVP_MD *md; /* Digest to use */ EVP_MD_CTX *ctx; /* Digest context */ EVP_PKEY_CTX *pctx; STACK_OF(EVP_TEST_BUFFER) *input; /* Input data: streaming */ unsigned char *osin; /* Input data if one shot */ size_t osin_len; /* Input length data if one shot */ unsigned char *output; /* Expected output */ size_t output_len; /* Expected output length */ } DIGESTSIGN_DATA; static int digestsigver_test_init(EVP_TEST *t, const char *alg, int is_verify, int is_oneshot) { const EVP_MD *md = NULL; DIGESTSIGN_DATA *mdat; if (strcmp(alg,
+
+) != 0) { if ((md = EVP_get_digestbyname(alg)) == NULL) { /* If alg has an OID assume disabled algorithm */ if (OBJ_sn2nid(alg) != NID_undef || OBJ_ln2nid(alg) != NID_undef) { t->skip = 1; return 1; } return 0; } } if (!TEST_ptr(mdat = OPENSSL_zalloc(sizeof(*mdat)))) return 0; mdat->md = md; if (!TEST_ptr(mdat->ctx = EVP_MD_CTX_new())) { OPENSSL_free(mdat); return 0; } mdat->is_verify = is_verify; mdat->is_oneshot = is_oneshot; t->data = mdat; return 1; } static int digestsign_test_init(EVP_TEST *t, const char *alg) { return digestsigver_test_init(t, alg, 0, 0); } static void digestsigver_test_cleanup(EVP_TEST *t) { DIGESTSIGN_DATA *mdata = t->data; EVP_MD_CTX_free(mdata->ctx); sk_EVP_TEST_BUFFER_pop_free(mdata->input, evp_test_buffer_free); OPENSSL_free(mdata->osin); OPENSSL_free(mdata->output); OPENSSL_free(mdata); t->data = NULL; } static int digestsigver_test_parse(EVP_TEST *t, const char *keyword, const char *value) { DIGESTSIGN_DATA *mdata = t->data; if (strcmp(keyword,
+
+) == 0) { EVP_PKEY *pkey = NULL; int rv = 0; if (mdata->is_verify) rv = find_key(&pkey, value, public_keys); if (rv == 0) rv = find_key(&pkey, value, private_keys); if (rv == 0 || pkey == NULL) { t->skip = 1; return 1; } if (mdata->is_verify) { if (!EVP_DigestVerifyInit(mdata->ctx, &mdata->pctx, mdata->md, NULL, pkey)) t->err =
+
+; return 1; } if (!EVP_DigestSignInit(mdata->ctx, &mdata->pctx, mdata->md, NULL, pkey)) t->err =
+
+; return 1; } if (strcmp(keyword,
+
+) == 0) { if (mdata->is_oneshot) return parse_bin(value, &mdata->osin, &mdata->osin_len); return evp_test_buffer_append(value, &mdata->input); } if (strcmp(keyword,
+
+) == 0) return parse_bin(value, &mdata->output, &mdata->output_len); if (!mdata->is_oneshot) { if (strcmp(keyword,
+
+) == 0) return evp_test_buffer_set_count(value, mdata->input); if (strcmp(keyword,
+
+) == 0) return evp_test_buffer_ncopy(value, mdata->input); } if (strcmp(keyword,
+
+) == 0) { if (mdata->pctx == NULL) return 0; return pkey_test_ctrl(t, mdata->pctx, value); } return 0; } static int digestsign_update_fn(void *ctx, const unsigned char *buf, size_t buflen) { return EVP_DigestSignUpdate(ctx, buf, buflen); } static int digestsign_test_run(EVP_TEST *t) { DIGESTSIGN_DATA *expected = t->data; unsigned char *got = NULL; size_t got_len; if (!evp_test_buffer_do(expected->input, digestsign_update_fn, expected->ctx)) { t->err =
+
+; goto err; } if (!EVP_DigestSignFinal(expected->ctx, NULL, &got_len)) { t->err =
+
+; goto err; } if (!TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (!EVP_DigestSignFinal(expected->ctx, got, &got_len)) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } err: OPENSSL_free(got); return 1; } static const EVP_TEST_METHOD digestsign_test_method = {
+
+, digestsign_test_init, digestsigver_test_cleanup, digestsigver_test_parse, digestsign_test_run }; static int digestverify_test_init(EVP_TEST *t, const char *alg) { return digestsigver_test_init(t, alg, 1, 0); } static int digestverify_update_fn(void *ctx, const unsigned char *buf, size_t buflen) { return EVP_DigestVerifyUpdate(ctx, buf, buflen); } static int digestverify_test_run(EVP_TEST *t) { DIGESTSIGN_DATA *mdata = t->data; if (!evp_test_buffer_do(mdata->input, digestverify_update_fn, mdata->ctx)) { t->err =
+
+; return 1; } if (EVP_DigestVerifyFinal(mdata->ctx, mdata->output, mdata->output_len) <= 0) t->err =
+
+; return 1; } static const EVP_TEST_METHOD digestverify_test_method = {
+
+, digestverify_test_init, digestsigver_test_cleanup, digestsigver_test_parse, digestverify_test_run }; static int oneshot_digestsign_test_init(EVP_TEST *t, const char *alg) { return digestsigver_test_init(t, alg, 0, 1); } static int oneshot_digestsign_test_run(EVP_TEST *t) { DIGESTSIGN_DATA *expected = t->data; unsigned char *got = NULL; size_t got_len; if (!EVP_DigestSign(expected->ctx, NULL, &got_len, expected->osin, expected->osin_len)) { t->err =
+
+; goto err; } if (!TEST_ptr(got = OPENSSL_malloc(got_len))) { t->err =
+
+; goto err; } if (!EVP_DigestSign(expected->ctx, got, &got_len, expected->osin, expected->osin_len)) { t->err =
+
+; goto err; } if (!TEST_mem_eq(expected->output, expected->output_len, got, got_len)) { t->err =
+
+; goto err; } err: OPENSSL_free(got); return 1; } static const EVP_TEST_METHOD oneshot_digestsign_test_method = {
+
+, oneshot_digestsign_test_init, digestsigver_test_cleanup, digestsigver_test_parse, oneshot_digestsign_test_run }; static int oneshot_digestverify_test_init(EVP_TEST *t, const char *alg) { return digestsigver_test_init(t, alg, 1, 1); } static int oneshot_digestverify_test_run(EVP_TEST *t) { DIGESTSIGN_DATA *mdata = t->data; if (EVP_DigestVerify(mdata->ctx, mdata->output, mdata->output_len, mdata->osin, mdata->osin_len) <= 0) t->err =
+
+; return 1; } static const EVP_TEST_METHOD oneshot_digestverify_test_method = {
+
+, oneshot_digestverify_test_init, digestsigver_test_cleanup, digestsigver_test_parse, oneshot_digestverify_test_run }; /** *** PARSING AND DISPATCH **/ static const EVP_TEST_METHOD *evp_test_list[] = { &cipher_test_method, &digest_test_method, &digestsign_test_method, &digestverify_test_method, &encode_test_method, &kdf_test_method, &keypair_test_method, &keygen_test_method, &mac_test_method, &oneshot_digestsign_test_method, &oneshot_digestverify_test_method, &pbe_test_method, &pdecrypt_test_method, &pderive_test_method, &psign_test_method, &pverify_recover_test_method, &pverify_test_method, NULL }; static const EVP_TEST_METHOD *find_test(const char *name) { const EVP_TEST_METHOD **tt; for (tt = evp_test_list; *tt; tt++) { if (strcmp(name, (*tt)->name) == 0) return *tt; } return NULL; } static void clear_test(EVP_TEST *t) { test_clearstanza(&t->s); ERR_clear_error(); if (t->data != NULL) { if (t->meth != NULL) t->meth->cleanup(t); OPENSSL_free(t->data); t->data = NULL; } OPENSSL_free(t->expected_err); t->expected_err = NULL; OPENSSL_free(t->func); t->func = NULL; OPENSSL_free(t->reason); t->reason = NULL; /* Text literal. */ t->err = NULL; t->skip = 0; t->meth = NULL; } /* * Check for errors in the test structure; return 1 if okay, else 0. */ static int check_test_error(EVP_TEST *t) { unsigned long err; const char *func; const char *reason; if (t->err == NULL && t->expected_err == NULL) return 1; if (t->err != NULL && t->expected_err == NULL) { if (t->aux_err != NULL) { TEST_info(
+
+, t->s.test_file, t->s.start, t->aux_err, t->err); } else { TEST_info(
+
+, t->s.test_file, t->s.start, t->err); } return 0; } if (t->err == NULL && t->expected_err != NULL) { TEST_info(
+
+, t->s.test_file, t->s.start, t->expected_err); return 0; } if (strcmp(t->err, t->expected_err) != 0) { TEST_info(
+
+, t->s.test_file, t->s.start, t->expected_err, t->err); return 0; } if (t->func == NULL && t->reason == NULL) return 1; if (t->func == NULL || t->reason == NULL) { TEST_info(
+
+, t->s.test_file, t->s.start); return 0; } err = ERR_peek_error(); if (err == 0) { TEST_info(
+
+%s:%s\" not set
+
+%s:%d: Expected error \"%s:%s\", no strings available.
+
+Assuming ok.
+
+%s:%d: Expected error \"%s:%s\", got \"%s:%s\"
+
+%s:%d %s error
+
+steals
+
+PrivateKey
+
+Can't read private key %s
+
+PublicKey
+
+Can't read public key %s
+
+Duplicate key %s
+
+Line %d: missing blank line\n
+
+unknown %s: %s\n
+
+skipping %s %s
+
+Result
+
+Line %d: multiple result lines
+
+Function
+
+Line %d: multiple function lines\n
+
+Reason
+
+Line %d: multiple reason lines
+
+Line %d: unknown keyword %s
+
+Line %d: error processing keyword %s\n
+
+Usage: %s file...
+
+Copyright 2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+www.openssl.org/source/license.html
+
+License
+

@@ -1,0 +1,28 @@
+Copyright 2011-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+DTLS code by Eric Rescorla <ekr@rtfm.com> Copyright (C) 2006, Network Resonance, Inc. Copyright (C) 2011, RTFM, Inc.
+
+AEAD SRTP protection profiles from RFC 7714
+
+www.openssl.org/source/license.html
+
+License
+
+C
+
+0x0001
+
+0x0002
+
+0x0003
+
+0x0004
+
+0x0005
+
+0x0006
+
+0x0007
+
+0x0008
+

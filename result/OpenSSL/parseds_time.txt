@@ -1,0 +1,194 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+no default cert.
+
+#define TEST_CERT "client.pem"
+
+Define a HTTP get command globally. Also define the size of the command, this is two bytes less than the size of the string because the %s is replaced by the URL.
+
+Loop and time how long it takes to make connections
+
+Add the time for this iteration
+
+Now loop and time connections using the same session id over and over
+
+Get an SSL object so we can reuse the session id
+
+Add the time for this iteration
+
+doConnection - make a connection
+
+ok, lets connect
+
+Note: under VMS with SOCKETSHR the 2nd parameter is currently of type (int ) whereas under other systems it is (void ) if you don't have a cast it will choke the compiler: if you do have a cast then you can either go for (int ) or (void ).
+
+OPENSSL_NO_SOCK
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+s_apps.h
+
+localhost:4433
+
+client.pem
+
+30
+
+GET %s HTTP/1.0\r\n\r\n
+
+help
+
+-
+
+Display this summary
+
+connect
+
+s
+
+Where to connect as post:port (default is
+
+)
+
+cipher
+
+s
+
+Cipher to use, see 'openssl ciphers'
+
+cert
+
+<
+
+Cert file to use, PEM format assumed
+
+nameopt
+
+s
+
+Various certificate name options
+
+key
+
+<
+
+File with key, PEM; default is -cert file
+
+CApath
+
+/
+
+PEM format directory of CA's
+
+cafile
+
+<
+
+PEM format file of CA's
+
+no-CAfile
+
+-
+
+Do not load the default certificates file
+
+no-CApath
+
+-
+
+Do not load certificates from the default certificates directory
+
+new
+
+-
+
+Just time new connections
+
+reuse
+
+-
+
+Just time connection reuse
+
+bugs
+
+-
+
+Turn on SSL bug compatibility
+
+verify
+
+p
+
+Turn on peer certificate verification, set depth
+
+time
+
+p
+
+Seconds to collect data, default
+
+www
+
+s
+
+Fetch specified page from the site
+
+ssl3
+
+-
+
+Just use SSLv3
+
+%s: Use -help for summary.\n
+
+%s: verify depth is %d\n
+
+%s: -www option is too long\n
+
+SSL_CIPHER
+
+No CIPHER specified\n
+
+Collecting connection statistics for %d seconds\n
+
+r
+
+t
+
+3
+
+*
+
+\n\n%d connections in %.2fs; %.2f connections/user sec, bytes read %ld\n
+
+%d connections in %ld real seconds, %ld bytes read per connection\n
+
+\n\nNow timing with session id reuse.\n
+
+Unable to get connection\n
+
+starting\n
+
+r
+
+t
+
+3
+
+*
+
+\n\n%d connections in %.2fs; %.2f connections/user sec, bytes read %ld\n
+
+%d connections in %ld real seconds, %ld bytes read per connection\n
+
+DELAY\n
+
+ERROR\n
+
+verify error:%s\n
+

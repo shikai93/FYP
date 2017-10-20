@@ -1,0 +1,22 @@
+www.openssl.org/docs/apps/ca.html.
+
+www.openssl.org/docs/apps/config.html.
+
+www.openssl.org/docs/HOWTO/keys.txt.
+
+www.openssl.org/docs/apps/ca.html.
+
+-config {file}
+
+openssl genrsa -out privkey.pem
+
+openssl dsaparam -out dsaparam.pem 2048; openssl gendsa -out privkey.pem dsaparam.pem
+
+certificate signing request
+
+s exactly what they do, they sign it and give you the result back, thus making it authentic according to their policies). A certificate request is sent to a certificate authority to get it signed into a certificate. You can also sign the certificate yourself if you have your own certificate authority or create a self-signed certificate (typically for testing purpose). The certificate request is created like this: openssl req -new -key privkey.pem -out cert.csr Now, cert.csr can be sent to the certificate authority, if they can handle files in PEM format. If not, use the extra argument
+
+followed by the keyword for the format to use (see another HOWTO <formats.txt?>). In some cases, -outform does not let you output the certificate request in the right format and you will have to use one of the various other commands that are exposed by openssl (or get creative and use a combination of tools). The certificate authority performs various checks (according to their policies) and usually waits for payment from you. Once that is complete, they send you your new certificate. Section 5 will tell you more on how to handle the certificate you received. 4. Creating a self-signed test certificate You can create a self-signed certificate if you don
+
+s all right for your applications, simply concatenating the certificate and the key into a new file and using that one should be enough. With some applications, you don
+

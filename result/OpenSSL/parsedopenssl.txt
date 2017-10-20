@@ -1,0 +1,370 @@
+Copyright 1995-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Needed to get the other O_xxx flags.
+
+Structure to hold the number of columns to be displayed and the field width used to display them.
+
+Special sentinel to exit the program.
+
+The LHASH callbacks ("hash" & "cmp") have been replaced by functions with the base prototypes (we cast each variable inside the function to the required type of "FUNCTION"). This removes the necessity for macro-generated wrapper functions.
+
+Set non-default library initialisation settings
+
+Set up some of the environment.
+
+Replace argv[] with UTF-8 encoded strings.
+
+first check the program name
+
+If there is stuff on the command line, run with that.
+
+ok, lets enter interactive mode
+
+Read a line, continue reading if line ends with \
+
+If there is help, list what flags are not documented.
+
+If not aliased to the dgst command,
+
+Unified enum for help and list commands.
+
+Never hit, but suppresses warning
+
+User is asking if foo is unsupported, by trying to "run" the no-foo command. Strange.
+
+Special value to mean "exit the program.
+
+Sort alphabetically within category. For nicer help displays.
+
+www.openssl.org/source/license.html
+
+License
+
+s_apps.h
+
+apps.h
+
+hash
+
+cmp
+
+FUNCTION*
+
+OPENSSL_CONF
+
+config filename buffer
+
+/
+
+OPENSSL_DEBUG_MEMORY
+
+on
+
+OPENSSL_FIPS
+
+FIPS mode not supported.\n
+
+FATAL: Startup failure (dev note: apps_startup() failed)\n
+
+OpenSSL>
+
+>
+
+\0
+
+\0
+
+\\
+
+\\
+
+\0
+
+Can't parse (no memory?)\n
+
+error in %s\n
+
+%s\n
+
+<undefined>
+
+<undefined>
+
+%s => %s\n
+
+%s\n
+
+<undefined>
+
+<undefined>
+
+%s => %s\n
+
+%s %s\n
+
+%s *\n
+
+Invalid command '%s'; type \"help\" for a list.\n
+
+\0
+
+%s %c\n
+
+help
+
+-
+
+Display this summary
+
+1
+
+-
+
+List in one column
+
+commands
+
+-
+
+List of standard commands
+
+digest-commands
+
+-
+
+List of message digest commands
+
+digest-algorithms
+
+-
+
+List of message digest algorithms
+
+cipher-commands
+
+-
+
+List of cipher commands
+
+cipher-algorithms
+
+-
+
+List of cipher algorithms
+
+public-key-algorithms
+
+-
+
+List of public key algorithms
+
+public-key-methods
+
+-
+
+List of public key methods
+
+disabled
+
+-
+
+List of disabled features
+
+missing-help
+
+-
+
+List missing detailed help strings
+
+options
+
+s
+
+List options for specified command
+
+%s: Use -help for summary.\n
+
+Extra arguments given.\n
+
+help
+
+-
+
+Display this summary
+
+%s: Use -help for summary.\n
+
+Usage: %s\n
+
+Standard commands
+
+\n
+
+\n
+
+\nMessage Digest commands (see the `dgst' command for more details)\n
+
+\nCipher commands (see the `enc' command for more details)\n
+
+%-*s
+
+\n\n
+
+%s\n
+
+\n
+
+%-*s
+
+\n\n
+
+no-
+
+run
+
+%s\n
+
+%s\n
+
+quit
+
+q
+
+exit
+
+bye
+
+exit the program. */ return EXIT_THE_PROGRAM; BIO_printf(bio_err,
+
+%s
+
+help\" for a list.\n
+
+Name: %s\n
+
+\tAlias for: %s\n
+
+Name: %s\n
+
+\tType: %s Algorithm\n
+
+External
+
+Builtin
+
+\tOID: %s\n
+
+(none)
+
+\tPEM string: %s\n
+
+%s\n
+
+\tType: %s Algorithm\n
+
+External
+
+Builtin
+
+Disabled algorithms:\n
+
+ARIA\n
+
+BF\n
+
+BLAKE2\n
+
+CAMELLIA\n
+
+CAST\n
+
+CMAC\n
+
+CMS\n
+
+COMP\n
+
+DES\n
+
+DGRAM\n
+
+DH\n
+
+DSA\n
+
+DTLS\n
+
+DTLS1\n
+
+DTLS1_2\n
+
+EC\n
+
+EC2M\n
+
+ENGINE\n
+
+GOST\n
+
+HEARTBEATS\n
+
+IDEA\n
+
+MD2\n
+
+MD4\n
+
+MD5\n
+
+MDC2\n
+
+OCB\n
+
+OCSP\n
+
+PSK\n
+
+RC2\n
+
+RC4\n
+
+RC5\n
+
+RMD160\n
+
+RSA\n
+
+SCRYPT\n
+
+SCTP\n
+
+SEED\n
+
+SOCK\n
+
+SRP\n
+
+SRTP\n
+
+SSL3\n
+
+TLS1\n
+
+TLS1_1\n
+
+TLS1_2\n
+
+WHIRLPOOL\n
+
+ZLIB\n
+
+www.openssl.org/source/license.html
+
+License
+
+id
+
+name
+
+t find SRP server param SSL_R_MISSING_SUPPORTED_GROUPS_EXTENSION:209:missing supported groups extension SSL_R_MISSING_TMP_DH_KEY:171:missing tmp dh key SSL_R_MISSING_TMP_ECDH_KEY:311:missing tmp ecdh key SSL_R_NOT_ON_RECORD_BOUNDARY:182:not on record boundary SSL_R_NO_CERTIFICATES_RETURNED:176:no certificates returned SSL_R_NO_CERTIFICATE_ASSIGNED:177:no certificate assigned SSL_R_NO_CERTIFICATE_SET:179:no certificate set SSL_R_NO_CHANGE_FOLLOWING_HRR:214:no change following hrr SSL_R_NO_CIPHERS_AVAILABLE:181:no ciphers available SSL_R_NO_CIPHERS_SPECIFIED:183:no ciphers specified SSL_R_NO_CIPHER_MATCH:185:no cipher match SSL_R_NO_CLIENT_CERT_METHOD:331:no client cert method SSL_R_NO_COMPRESSION_SPECIFIED:187:no compression specified SSL_R_NO_GOST_CERTIFICATE_SENT_BY_PEER:330:\ Peer haven
+

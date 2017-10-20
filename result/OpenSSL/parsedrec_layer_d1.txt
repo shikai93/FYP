@@ -1,0 +1,198 @@
+Copyright 2005-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+copy buffered record into SSL structure
+
+Set proper sequence number for mac calculation
+
+Limit the size of the queue to prevent DOS attacks
+
+Store bio_dgram_sctp_rcvinfo struct
+
+insert should not fail, since duplicates are dropped
+
+retrieve a buffered record that belongs to the new epoch, i.e., not processed yet
+
+Check if epoch is current.
+
+Nothing to do.
+
+We've still got data from the current packet to read. There could be a record from the new epoch in it - so don't overwrite it with the unprocessed records yet (we'll do it when we've finished reading the current packet).
+
+Process all the records.
+
+Should not happen. This will only ever be NULL when the current record is from a different epoch. But that cannot be the case because we already checked the epoch above
+
+Only do replay check if no SCTP bio
+
+Check whether this is a repeat, or aged record. We did this check once already when we first received the record - but we might have updated the window since then due to records we subsequently processed.
+
+dump this record
+
+sync epoch numbers once all the unprocessed records have been processed
+
+Return up to 'len' payload bytes received in 'type' records. 'type' is one of the following: - SSL3_RT_HANDSHAKE (when ssl3_get_message calls us) - SSL3_RT_APPLICATION_DATA (when ssl3_read calls us) - 0 (during a shutdown, no data has to be returned) If we don't have stored data to work from, read a SSL/TLS record first (possibly multiple records if we still don't have anything to return). This function must handle any surprises the peer may have for us, such as Alert records (e.g. close_notify) or renegotiation requests. ChangeCipherSpec messages are treated as if they were handshake messages if the |recd_type| argument is non NULL. Also if record payloads contain fragments too small to process, we store them until there is enough for the respective protocol (the record protocol may use arbitrary fragmentation and even interleaving): Change cipher spec protocol just 1 byte needed, no need for keeping anything stored Alert protocol 2 bytes needed (AlertLevel, AlertDescription) Handshake protocol 4 bytes needed (HandshakeType, uint24 length) -- we just have to detect unexpected Client Hello and Hello Request messages here, anything else is handled by higher layers Application data protocol none of our business
+
+Not initialized yet
+
+type == SSL3_RT_APPLICATION_DATA
+
+s->s3->rrec.type - is the type of record s->s3->rrec.data, - data s->s3->rrec.off, - offset into 'data' for next read s->s3->rrec.length, - number of bytes.
+
+We are not handshaking and have no data yet, so process data buffered during the last handshake in advance, if any.
+
+Restore bio_dgram_sctp_rcvinfo struct
+
+Check for timeout
+
+get new packet if necessary
+
+anything other than a timeout is an error
+
+Reset the count of consecutive warning alerts if we've got a non-empty record that isn't an alert.
+
+we now have a packet which can be read and processed
+
+set when we receive ChangeCipherSpec, reset by ssl3_get_finished
+
+We now have application data between CCS and Finished. Most likely the packets were reordered on their way, so buffer the application data for later processing rather than dropping the connection.
+
+If the other end has shut down, throw anything we read away (even in 'peek' mode)
+
+SSL3_RT_APPLICATION_DATA or SSL3_RT_HANDSHAKE or SSL3_RT_CHANGE_CIPHER_SPEC
+
+make sure that we are not getting application data when we are doing a handshake for the first time
+
+We might had to delay a close_notify alert because of reordered app data. If there was an alert and there is no message to read anymore, finally set shutdown.
+
+If we get here, then type != rr->type; if we have a handshake message, then it was unexpected (Hello Request or Client Hello).
+
+With SCTP and streams the socket may deliver app data after a close_notify alert. We have to check this first so that nothing gets discarded.
+
+but we have not received a shutdown
+
+We can't process a CCS now, because previous handshake messages are still missing, so just drop it.
+
+Unexpected handshake message (Client Hello, or protocol violation)
+
+This may just be a stale retransmit. Also sanity check that we have at least enough record bytes for a message header
+
+If we are server, we may have a repeated FINISHED of the client here, then retransmit our CCS and FINISHED.
+
+To get here we must be trying to read app data but found handshake data. But if we're trying to read app data, and we're not in init (which is tested for at the top of this function) then init must be finished
+
+We found handshake data, so we're going back into init
+
+no read-ahead left?
+
+In the case where we try to read application data, but we trigger an SSL handshake, we return -1 with the retry option set. Otherwise renegotiation may cause nasty problems in the blocking world
+
+we already handled all of these, with the possible exception of SSL3_RT_HANDSHAKE when ossl_statem_get_in_handshake(s) is true, but that should not happen when type != rr->type
+
+At this point, we were expecting handshake data, but have application data. If the library was running inside ssl3_read() (i.e. in_read_app_data is set) and it makes sense to read application data at this point (session renegotiation not yet started), we will indulge it.
+
+not reached
+
+Call this to write data in records of type 'type' It will return <= 0 if not all data has been sent or non-blocking IO.
+
+first check if there is a SSL3_BUFFER still being written out. This will happen with non blocking IO
+
+If we have an alert to send, lets send it
+
+if it went, fall through and send more stuff
+
+write the header
+
+Special case: for hello verify request, client version 1.0 and we haven't decided which version to use yet send back using version 1.0 header: otherwise some clients will ignore it.
+
+field where we are to write out packet epoch, seq num and len
+
+Explicit IV length, block ciphers appropriate version flag
+
+Need explicit part of IV for GCM mode
+
+lets setup the record stuff.
+
+make room for IV in case of CBC
+
+we now 'read' from wr.input, wr.length bytes into wr.data
+
+first we compress
+
+we should still have the output to wr.data and the input from wr.input. Length should be wr.length. wr.data still points in the wb->buf
+
+this is true regardless of mac size
+
+record length after mac and block padding
+
+there's only one epoch between handshake and app data
+
+we should now have wr.data pointing to the encrypted data, which is wr->length long
+
+not needed but helps for debugging
+
+we are in a recursive call; just return the length, don't write out anything here
+
+now let's set up wb
+
+memorize arguments so that ssl3_write_pending can detect bad write retries later
+
+we now just need to write the buffer
+
+In current epoch, accept HM, CCS, DATA, & ALERT
+
+Only HM and ALERT messages can be from the next epoch and only if we have already processed all of the unprocessed records from the last epoch
+
+We must not use any buffered messages received from the previous epoch
+
+www.openssl.org/source/license.html
+
+License
+
+../ssl_locl.h
+
+record_locl.h
+
+../packet_locl.h
+
+internal/cryptlib.h
+
+ve still got data from the current packet to read. There could * be a record from the new epoch in it - so don
+
+ll do it when we
+
+len
+
+type
+
+type
+
+t have stored data to work from, read a SSL/TLS record first * (possibly multiple records if we still don
+
+data
+
+ve got a non-empty * record that isn
+
+peek
+
+%d
+
+SSL alert number
+
+t process a CCS now, because previous handshake messages * are still missing, so just drop it. */ SSL3_RECORD_set_length(rr, 0); goto start; } /* * Unexpected handshake message (Client Hello, or protocol violation) */ if ((SSL3_RECORD_get_type(rr) == SSL3_RT_HANDSHAKE) && !ossl_statem_get_in_handshake(s)) { struct hm_header_st msg_hdr; /* * This may just be a stale retransmit. Also sanity check that we have * at least enough record bytes for a message header */ if (SSL3_RECORD_get_epoch(rr) != s->rlayer.d->r_epoch || SSL3_RECORD_get_length(rr) < DTLS1_HM_HEADER_LENGTH) { SSL3_RECORD_set_length(rr, 0); goto start; } dtls1_get_message_header(rr->data, &msg_hdr); /* * If we are server, we may have a repeated FINISHED of the client * here, then retransmit our CCS and FINISHED. */ if (msg_hdr.type == SSL3_MT_FINISHED) { if (dtls1_check_timeout_num(s) < 0) return -1; dtls1_retransmit_buffered_messages(s); SSL3_RECORD_set_length(rr, 0); goto start; } /* * To get here we must be trying to read app data but found handshake * data. But if we
+
+re not in init * (which is tested for at the top of this function) then init must be * finished */ if (!ossl_assert(SSL_is_init_finished(s))) { al = SSL_AD_INTERNAL_ERROR; SSLerr(SSL_F_DTLS1_READ_BYTES, ERR_R_INTERNAL_ERROR); goto f_err; } /* We found handshake data, so we
+
+type
+
+t decided which version to use yet send back using version 1.0 * header: otherwise some clients will ignore it. */ if (s->method->version == DTLS_ANY_VERSION && s->max_proto_version != DTLS1_BAD_VER) { *(p++) = DTLS1_VERSION >> 8; *(p++) = DTLS1_VERSION & 0xff; } else { *(p++) = s->version >> 8; *(p++) = s->version & 0xff; } /* field where we are to write out packet epoch, seq num and len */ pseq = p; p += 10; /* Explicit IV length, block ciphers appropriate version flag */ if (s->enc_write_ctx) { int mode = EVP_CIPHER_CTX_mode(s->enc_write_ctx); if (mode == EVP_CIPH_CBC_MODE) { eivlen = EVP_CIPHER_CTX_iv_length(s->enc_write_ctx); if (eivlen <= 1) eivlen = 0; } /* Need explicit part of IV for GCM mode */ else if (mode == EVP_CIPH_GCM_MODE) eivlen = EVP_GCM_TLS_EXPLICIT_IV_LEN; else if (mode == EVP_CIPH_CCM_MODE) eivlen = EVP_CCM_TLS_EXPLICIT_IV_LEN; else eivlen = 0; } else eivlen = 0; /* lets setup the record stuff. */ SSL3_RECORD_set_data(&wr, p + eivlen); /* make room for IV in case of CBC */ SSL3_RECORD_set_length(&wr, len); SSL3_RECORD_set_input(&wr, (unsigned char *)buf); /* * we now
+
+from wr.input, wr.length bytes into wr.data */ /* first we compress */ if (s->compress != NULL) { if (!ssl3_do_compress(s, &wr)) { SSLerr(SSL_F_DO_DTLS1_WRITE, SSL_R_COMPRESSION_FAILURE); goto err; } } else { memcpy(SSL3_RECORD_get_data(&wr), SSL3_RECORD_get_input(&wr), SSL3_RECORD_get_length(&wr)); SSL3_RECORD_reset_input(&wr); } /* * we should still have the output to wr.data and the input from * wr.input. Length should be wr.length. wr.data still points in the * wb->buf */ if (!SSL_WRITE_ETM(s) && mac_size != 0) { if (!s->method->ssl3_enc->mac(s, &wr, &(p[SSL3_RECORD_get_length(&wr) + eivlen]), 1)) goto err; SSL3_RECORD_add_length(&wr, mac_size); } /* this is true regardless of mac size */ SSL3_RECORD_set_data(&wr, p); SSL3_RECORD_reset_input(&wr); if (eivlen) SSL3_RECORD_add_length(&wr, eivlen); if (s->method->ssl3_enc->enc(s, &wr, 1, 1) < 1) goto err; if (SSL_WRITE_ETM(s) && mac_size != 0) { if (!s->method->ssl3_enc->mac(s, &wr, &(p[SSL3_RECORD_get_length(&wr)]), 1)) goto err; SSL3_RECORD_add_length(&wr, mac_size); } /* record length after mac and block padding */ /* there
+
+t write * out anything here */ *written = wr.length; return 1; } /* now let
+
+0xff;
+
+0xff;
+
+0xff;
+

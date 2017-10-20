@@ -1,0 +1,64 @@
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+CMS EncryptedData Utilities
+
+Return BIO based on EncryptedContentInfo and key
+
+If not keeping key set cipher to NULL so subsequent calls decrypt.
+
+Generate a random IV if we need one
+
+Generate random session key
+
+If necessary set key length
+
+Only reveal failure if debugging so we don't leak information which may be useful in MMA.
+
+Use random key
+
+If parameter type not set omit parameter
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+cms_lcl.h
+
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Simple S/MIME encrypt example
+
+On OpenSSL 1.0.0 and later only: for streaming set CMS_STREAM
+
+Read in recipient certificate
+
+Create recipient STACK and add recipient cert to it
+
+sk_X509_pop_free will free up recipient STACK and its contents so set rcert to NULL so it isn't freed up twice.
+
+Open content being encrypted
+
+encrypt content
+
+Write out S/MIME message
+
+www.openssl.org/source/license.html
+
+License
+
+signer.pem
+
+r
+
+encr.txt
+
+r
+
+smencr.txt
+
+w
+
+Error Encrypting Data\n
+

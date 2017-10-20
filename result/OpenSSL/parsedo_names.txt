@@ -1,0 +1,38 @@
+Copyright 1998-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+We define this wrapper for two reasons. Firstly, later versions of DEC C add linkage information to certain functions, which makes it tricky to use them as values to regular function pointers. Secondly, in the EDK2 build environment, the strcmp function is actually an external function (AsciiStrCmp) with the Microsoft ABI, so we can't transparently assign function pointers to it. Arguably the latter is a stupidity of the UEFI environment, but since the wrapper solves the DEC C issue too, let's just use the same solution.
+
+I use the ex_data stuff to manage the identifiers for the obj_name_types that applications may define. I only really use the free function field.
+
+The LHASH callbacks now use the raw "void " prototypes and do per-variable casting in the functions. This prevents function pointer casting without the need for macro-generated wrapper functions.
+
+ERROR
+
+ERROR
+
+free things
+
+XXX: I'm not sure I understand why the free function should get three arguments... -- Richard Levitte
+
+ERROR
+
+free things
+
+XXX: I'm not sure I understand why the free function should get three arguments... -- Richard Levitte
+
+Really should return an error if !d.names...but its a void function!
+
+www.openssl.org/source/license.html
+
+License
+
+internal/thread_once.h
+
+obj_lcl.h
+
+t transparently assign function pointers to it. * Arguably the latter is a stupidity of the UEFI environment, but * since the wrapper solves the DEC C issue too, let
+
+void *
+
+m not sure I understand why the free function should * get three arguments... -- Richard Levitte */ sk_NAME_FUNCS_value(name_funcs_stack, ret->type)->free_func(ret->name, ret->type, ret->data); } OPENSSL_free(ret); } else { if (lh_OBJ_NAME_error(names_lh)) { /* ERROR */ OPENSSL_free(onp); goto unlock; } } ok = 1; unlock: CRYPTO_THREAD_unlock(obj_lock); return ok; } int OBJ_NAME_remove(const char *name, int type) { OBJ_NAME on, *ret; int ok = 0; if (!OBJ_NAME_init()) return 0; CRYPTO_THREAD_write_lock(obj_lock); type &= ~OBJ_NAME_ALIAS; on.name = name; on.type = type; ret = lh_OBJ_NAME_delete(names_lh, &on); if (ret != NULL) { /* free things */ if ((name_funcs_stack != NULL) && (sk_NAME_FUNCS_num(name_funcs_stack) > ret->type)) { /* * XXX: I
+

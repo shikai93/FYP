@@ -1,0 +1,146 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Top level i2d equivalents: the 'ndef' variant instructs the encoder to use indefinite length constructed encoding, where appropriate
+
+Encode an ASN1 item, this is use by the standard 'i2d' function. 'out' points to a buffer to output the data to. The new i2d has one additional feature. If the output buffer is NULL (i.e. out == NULL) then a buffer is allocated and populated with the encoding.
+
+Encode an item, taking care of IMPLICIT tagging (if any). This function performs the normal item handling: it can be used in external types.
+
+Fixme: error condition if selector out of range
+
+If new style i2d it does all the work
+
+Use indefinite length constructed if requested
+
+fall through
+
+An error occurred
+
+We have a valid cached encoding...
+
+Otherwise carry on
+
+If no IMPLICIT tagging set to SEQUENCE, UNIVERSAL
+
+Retain any other flags in aclass
+
+First work out sequence content length
+
+Output SEQUENCE header
+
+FIXME: check for errors in enhanced version
+
+If field is embedded then val needs fixing so it is a pointer to a pointer to a field.
+
+Work out tag and class to use: tagging may come either from the template or the arguments, not both because this would create ambiguity. Additionally the iclass argument may contain some additional flags which should be noted and passed down to other levels.
+
+Error if argument and template tagging
+
+FIXME: error code here
+
+Get tagging from template
+
+No template tagging, get from arguments
+
+Remove any class mask from iflag.
+
+At this point 'ttag' contains the outer tag to use, 'tclass' is the class and iclass is any flags passed to this function.
+
+if template and arguments require ndef, use it
+
+SET OF, SEQUENCE OF
+
+2 means we reorder
+
+Work out inner tag value: if EXPLICIT or no tagging use underlying type.
+
+Determine total length of items
+
+If EXPLICIT need length of surrounding tag
+
+Now encode this lot...
+
+EXPLICIT tag
+
+SET or SEQUENCE and IMPLICIT tag
+
+And the stuff itself
+
+EXPLICIT tagging
+
+Find length of tagged item
+
+Find length of EXPLICIT tag
+
+Output tag and item
+
+Either normal or IMPLICIT tagging: combine class and flags
+
+Temporary structure used to hold DER encoding of items for SET OF
+
+Output the content octets of SET OF or SEQUENCE OF
+
+Don't need to sort less than 2 items
+
+If not sorting just output each item
+
+Doing sort: build up a list of each member's DER encoding
+
+Now sort them
+
+Output sorted DER encoding
+
+If do_sort is 2 then reorder the STACK
+
+Get length of content octets and maybe find out the underlying type.
+
+If SEQUENCE, SET or OTHER then header is included in pseudo content octets so don't include tag+length. We need to check here because the call to asn1_ex_i2c() could change utype.
+
+-1 means omit type
+
+-2 return is special meaning use ndef
+
+If not implicitly tagged get tag from underlying type
+
+Output tag+length followed by content octets
+
+Produce content octets from a structure
+
+Should type be omitted?
+
+If MSTRING type set the underlying type
+
+If ANY set type and pointer to value
+
+Default handling if value == size field then omit
+
+These are all have the same content format as ASN1_INTEGER
+
+All based on ASN1_STRING and handled the same
+
+Special handling for NDEF
+
+Special return code
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/asn1_int.h
+
+asn1_locl.h
+
+ndef
+
+i2d
+
+out
+
+ttag
+
+tclass
+
+t need to sort less than 2 items */ if (sk_ASN1_VALUE_num(sk) < 2) do_sort = 0; else { derlst = OPENSSL_malloc(sk_ASN1_VALUE_num(sk) * sizeof(*derlst)); if (derlst == NULL) return 0; tmpdat = OPENSSL_malloc(skcontlen); if (tmpdat == NULL) { OPENSSL_free(derlst); return 0; } } } /* If not sorting just output each item */ if (!do_sort) { for (i = 0; i < sk_ASN1_VALUE_num(sk); i++) { skitem = sk_ASN1_VALUE_value(sk, i); ASN1_item_ex_i2d(&skitem, out, item, -1, iclass); } return 1; } p = tmpdat; /* Doing sort: build up a list of each member
+

@@ -1,0 +1,16 @@
+Summary: API to build regexp automata Description: the API to build regexp automata Copy: See Copyright for the status of this software. Author: Daniel Veillard
+
+xmlAutomataPtr: A libxml automata description, It can be compiled into a regexp
+
+xmlAutomataStatePtr: A state int the automata description,
+
+Building API
+
+LIBXML_AUTOMATA_ENABLED
+
+LIBXML_REGEXP_ENABLED
+
+__XML_AUTOMATA_H__
+
+C
+

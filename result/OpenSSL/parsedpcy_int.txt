@@ -1,0 +1,90 @@
+Copyright 2004-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Internal structures
+
+This structure and the field names correspond to the Policy 'node' of RFC3280. NB this structure contains no pointers to parent or child data: X509_POLICY_NODE contains that. This means that the main policy data can be kept static and cached with the certificate.
+
+Policy OID and qualifiers for this data
+
+X509_POLICY_DATA flags values
+
+This flag indicates the structure has been mapped using a policy mapping extension. If policy mapping is not active its references get deleted.
+
+This flag indicates the data doesn't correspond to a policy in Certificate Policies: it has been mapped to any policy.
+
+AND with flags to see if any mapping has occurred
+
+qualifiers are shared and shouldn't be freed
+
+Parent node is an extra node and should be freed
+
+Corresponding CertificatePolicies is critical
+
+This structure is cached with a certificate
+
+anyPolicy data or NULL if no anyPolicy
+
+other policy data
+
+If InhibitAnyPolicy present this is its value or -1 if absent.
+
+If policyConstraints and requireExplicitPolicy present this is its value or -1 if absent.
+
+If policyConstraints and policyMapping present this is its value or -1 if absent.
+
+#define POLICY_CACHE_FLAG_CRITICAL POLICY_DATA_FLAG_CRITICAL
+
+This structure represents the relationship between nodes
+
+node data this refers to
+
+Parent node
+
+Number of child nodes
+
+Cert for this level
+
+nodes at this level
+
+anyPolicy node
+
+Extra data
+
+STACK_OF(X509_POLICY_DATA) extra_data;
+
+This is the tree 'level' data
+
+Extra policy data when additional nodes (not from the certificate) are required.
+
+This is the authority constrained policy set
+
+Set if anyPolicy present in user policies
+
+Useful macros
+
+Internal functions
+
+www.openssl.org/source/license.html
+
+License
+
+node
+
+t correspond to a policy in Certificate * Policies: it has been mapped to any policy. */ #define POLICY_DATA_FLAG_MAPPED_ANY 0x2 /* AND with flags to see if any mapping has occurred */ #define POLICY_DATA_FLAG_MAP_MASK 0x3 /* qualifiers are shared and shouldn
+
+level
+
+0x1
+
+0x2
+
+0x3
+
+0x4
+
+0x8
+
+0x10
+
+0x2
+

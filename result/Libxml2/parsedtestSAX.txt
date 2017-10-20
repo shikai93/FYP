@@ -1,0 +1,324 @@
+testSAX.c : a small tester program for parsing using the SAX API. See Copyright for the status of this software. daniel@veillard.com
+
+only for xmlNewInputFromFile()
+
+Timing routines.
+
+Internal timing routines to remove the necessity to have unix-specific function calls
+
+HAVE_FTIME
+
+HAVE_SYS_TIME_H
+
+HAVE_SYS_TIMEB_H
+
+!HAVE_GETTIMEOFDAY
+
+startTimer: call where you want to start timing
+
+endTimer: call where you want to stop timing and to print out a message about the timing performed; format is a printf type argument
+
+No gettimeofday function, so we have to make do with calling clock. This is obviously less accurate, but there's little we can do about that.
+
+We don't have a gettimeofday or time.h, so we just don't do timing
+
+Do nothing
+
+We cannot do anything because we don't have a timing function
+
+We don't have gettimeofday, time or stdarg.h, what crazy world is this ?!
+
+empty SAX block
+
+internalSubset
+
+isStandalone
+
+hasInternalSubset
+
+hasExternalSubset
+
+resolveEntity
+
+getEntity
+
+entityDecl
+
+notationDecl
+
+attributeDecl
+
+elementDecl
+
+unparsedEntityDecl
+
+setDocumentLocator
+
+startDocument
+
+endDocument
+
+startElement
+
+endElement
+
+reference
+
+characters
+
+ignorableWhitespace
+
+processingInstruction
+
+comment
+
+xmlParserWarning
+
+xmlParserError
+
+xmlParserError
+
+getParameterEntity
+
+cdataBlock;
+
+externalSubset;
+
+startElementNs
+
+endElementNs
+
+xmlStructuredErrorFunc
+
+Debug Handlers
+
+isStandaloneDebug: @ctxt: An XML parser context Is this document tagged standalone ? Returns 1 if true
+
+hasInternalSubsetDebug: @ctxt: An XML parser context Does this document has an internal subset Returns 1 if true
+
+hasExternalSubsetDebug: @ctxt: An XML parser context Does this document has an external subset Returns 1 if true
+
+internalSubsetDebug: @ctxt: An XML parser context Does this document has an internal subset
+
+externalSubsetDebug: @ctxt: An XML parser context Does this document has an external subset
+
+resolveEntityDebug: @ctxt: An XML parser context @publicId: The public ID of the entity @systemId: The system ID of the entity Special entity resolver, better left to the parser, it has more context than the application layer. The default behaviour is to NOT resolve the entities, in that case the ENTITY_REF nodes are built in the structure (and the parameter values). Returns the xmlParserInputPtr if inlined or NULL for DOM behaviour.
+
+xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) ctx;
+
+if (systemId != NULL) { return(xmlNewInputFromFile(ctxt, (char ) systemId)); }
+
+getEntityDebug: @ctxt: An XML parser context @name: The entity name Get an entity by name Returns the xmlParserInputPtr if inlined or NULL for DOM behaviour.
+
+getParameterEntityDebug: @ctxt: An XML parser context @name: The entity name Get a parameter entity by name Returns the xmlParserInputPtr
+
+entityDeclDebug: @ctxt: An XML parser context @name: the entity name @type: the entity type @publicId: The public ID of the entity @systemId: The system ID of the entity @content: the entity value (without processing). An entity definition has been parsed
+
+not all libraries handle printing null pointers nicely
+
+attributeDeclDebug: @ctxt: An XML parser context @name: the attribute name @type: the attribute type An attribute definition has been parsed
+
+elementDeclDebug: @ctxt: An XML parser context @name: the element name @type: the element type @content: the element value (without processing). An element definition has been parsed
+
+notationDeclDebug: @ctxt: An XML parser context @name: The name of the notation @publicId: The public ID of the entity @systemId: The system ID of the entity What to do when a notation declaration has been parsed.
+
+unparsedEntityDeclDebug: @ctxt: An XML parser context @name: The name of the entity @publicId: The public ID of the entity @systemId: The system ID of the entity @notationName: the name of the notation What to do when an unparsed entity declaration is parsed
+
+setDocumentLocatorDebug: @ctxt: An XML parser context @loc: A SAX Locator Receive the document locator at startup, actually xmlDefaultSAXLocator Everything is available on the context, so this is useless in our case.
+
+startDocumentDebug: @ctxt: An XML parser context called when the document start being processed.
+
+endDocumentDebug: @ctxt: An XML parser context called when the document end has been detected.
+
+startElementDebug: @ctxt: An XML parser context @name: The element name called when an opening tag has been processed.
+
+endElementDebug: @ctxt: An XML parser context @name: The element name called when the end of an element has been detected.
+
+charactersDebug: @ctxt: An XML parser context @ch: a xmlChar string @len: the number of xmlChar receiving some chars from the parser. Question: how much at a time ???
+
+referenceDebug: @ctxt: An XML parser context @name: The entity name called when an entity reference is detected.
+
+ignorableWhitespaceDebug: @ctxt: An XML parser context @ch: a xmlChar string @start: the first char in the string @len: the number of xmlChar receiving some ignorable whitespaces from the parser. Question: how much at a time ???
+
+processingInstructionDebug: @ctxt: An XML parser context @target: the target name @data: the PI data's @len: the number of xmlChar A processing instruction has been parsed.
+
+cdataBlockDebug: @ctx: the user data (XML parser context) @value: The pcdata content @len: the block length called when a pcdata block has been parsed
+
+commentDebug: @ctxt: An XML parser context @value: the comment content A comment has been parsed.
+
+warningDebug: @ctxt: An XML parser context @msg: the message to display/transmit @...: extra parameters for the message display Display and format a warning messages, gives file, line, position and extra parameters.
+
+errorDebug: @ctxt: An XML parser context @msg: the message to display/transmit @...: extra parameters for the message display Display and format a error messages, gives file, line, position and extra parameters.
+
+fatalErrorDebug: @ctxt: An XML parser context @msg: the message to display/transmit @...: extra parameters for the message display Display and format a fatalError messages, gives file, line, position and extra parameters.
+
+SAX2 specific callbacks
+
+startElementNsDebug: @ctxt: An XML parser context @name: The element name called when an opening tag has been processed.
+
+endElementDebug: @ctxt: An XML parser context @name: The element name called when the end of an element has been detected.
+
+Debug
+
+Empty callbacks for checking
+
+Debug callback
+
+LIBXML_PUSH_ENABLED
+
+Empty callbacks for checking
+
+Debug callback
+
+test 100x the SAX parse
+
+be safe, plus calls xmlInitParser
+
+LIBXML_PUSH_ENABLED
+
+LIBXML_SAX1_ENABLED
+
+libxml.h
+
+endTimer required stdarg functions
+
+took %ld ms\n
+
+s little we can do about * that. */ #ifndef CLOCKS_PER_SEC #define CLOCKS_PER_SEC 100 #endif static clock_t begin, end; static void startTimer(void) { begin = clock(); } static void XMLCDECL endTimer(const char *fmt, ...) { long msec; va_list ap; end = clock(); msec = ((end - begin) * 1000) / CLOCKS_PER_SEC; #ifndef HAVE_STDARG_H #error "endTimer required stdarg functions" #endif va_start(ap, fmt); vfprintf(stderr, fmt, ap); va_end(ap); fprintf(stderr, " took %ld ms\n", msec); } #else /* * We don
+
+t do timing */ static void startTimer(void) { /* * Do nothing */ } static void XMLCDECL endTimer(char *format, ...) { /* * We cannot do anything because we don
+
+was not timed\n
+
+t have gettimeofday, time or stdarg.h, what crazy world is * this ?! */ #endif } #endif /* * empty SAX block */ static xmlSAXHandler emptySAXHandlerStruct = { NULL, /* internalSubset */ NULL, /* isStandalone */ NULL, /* hasInternalSubset */ NULL, /* hasExternalSubset */ NULL, /* resolveEntity */ NULL, /* getEntity */ NULL, /* entityDecl */ NULL, /* notationDecl */ NULL, /* attributeDecl */ NULL, /* elementDecl */ NULL, /* unparsedEntityDecl */ NULL, /* setDocumentLocator */ NULL, /* startDocument */ NULL, /* endDocument */ NULL, /* startElement */ NULL, /* endElement */ NULL, /* reference */ NULL, /* characters */ NULL, /* ignorableWhitespace */ NULL, /* processingInstruction */ NULL, /* comment */ NULL, /* xmlParserWarning */ NULL, /* xmlParserError */ NULL, /* xmlParserError */ NULL, /* getParameterEntity */ NULL, /* cdataBlock; */ NULL, /* externalSubset; */ 1, NULL, NULL, /* startElementNs */ NULL, /* endElementNs */ NULL /* xmlStructuredErrorFunc */ }; static xmlSAXHandlerPtr emptySAXHandler = &emptySAXHandlerStruct; extern xmlSAXHandlerPtr debugSAXHandler; /************************************************************************ * * * Debug Handlers * * * ************************************************************************/ /** * isStandaloneDebug: * @ctxt: An XML parser context * * Is this document tagged standalone ? * * Returns 1 if true */ static int isStandaloneDebug(void *ctx ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return(0); fprintf(stdout, "SAX.isStandalone()\n"); return(0); } /** * hasInternalSubsetDebug: * @ctxt: An XML parser context * * Does this document has an internal subset * * Returns 1 if true */ static int hasInternalSubsetDebug(void *ctx ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return(0); fprintf(stdout, "SAX.hasInternalSubset()\n"); return(0); } /** * hasExternalSubsetDebug: * @ctxt: An XML parser context * * Does this document has an external subset * * Returns 1 if true */ static int hasExternalSubsetDebug(void *ctx ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return(0); fprintf(stdout, "SAX.hasExternalSubset()\n"); return(0); } /** * internalSubsetDebug: * @ctxt: An XML parser context * * Does this document has an internal subset */ static void internalSubsetDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, const xmlChar *ExternalID, const xmlChar *SystemID) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.internalSubset(%s,", name); if (ExternalID == NULL) fprintf(stdout, " ,"); else fprintf(stdout, " %s,", ExternalID); if (SystemID == NULL) fprintf(stdout, " )\n"); else fprintf(stdout, " %s)\n", SystemID); } /** * externalSubsetDebug: * @ctxt: An XML parser context * * Does this document has an external subset */ static void externalSubsetDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, const xmlChar *ExternalID, const xmlChar *SystemID) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.externalSubset(%s,", name); if (ExternalID == NULL) fprintf(stdout, " ,"); else fprintf(stdout, " %s,", ExternalID); if (SystemID == NULL) fprintf(stdout, " )\n"); else fprintf(stdout, " %s)\n", SystemID); } /** * resolveEntityDebug: * @ctxt: An XML parser context * @publicId: The public ID of the entity * @systemId: The system ID of the entity * * Special entity resolver, better left to the parser, it has * more context than the application layer. * The default behaviour is to NOT resolve the entities, in that case * the ENTITY_REF nodes are built in the structure (and the parameter * values). * * Returns the xmlParserInputPtr if inlined or NULL for DOM behaviour. */ static xmlParserInputPtr resolveEntityDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *publicId, const xmlChar *systemId) { callbacks++; if (quiet) return(NULL); /* xmlParserCtxtPtr ctxt = (xmlParserCtxtPtr) ctx; */ fprintf(stdout, "SAX.resolveEntity("); if (publicId != NULL) fprintf(stdout, "%s", (char *)publicId); else fprintf(stdout, " "); if (systemId != NULL) fprintf(stdout, ", %s)\n", (char *)systemId); else fprintf(stdout, ", )\n"); /********* if (systemId != NULL) { return(xmlNewInputFromFile(ctxt, (char *) systemId)); } *********/ return(NULL); } /** * getEntityDebug: * @ctxt: An XML parser context * @name: The entity name * * Get an entity by name * * Returns the xmlParserInputPtr if inlined or NULL for DOM behaviour. */ static xmlEntityPtr getEntityDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name) { callbacks++; if (quiet) return(NULL); fprintf(stdout, "SAX.getEntity(%s)\n", name); return(NULL); } /** * getParameterEntityDebug: * @ctxt: An XML parser context * @name: The entity name * * Get a parameter entity by name * * Returns the xmlParserInputPtr */ static xmlEntityPtr getParameterEntityDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name) { callbacks++; if (quiet) return(NULL); fprintf(stdout, "SAX.getParameterEntity(%s)\n", name); return(NULL); } /** * entityDeclDebug: * @ctxt: An XML parser context * @name: the entity name * @type: the entity type * @publicId: The public ID of the entity * @systemId: The system ID of the entity * @content: the entity value (without processing). * * An entity definition has been parsed */ static void entityDeclDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, int type, const xmlChar *publicId, const xmlChar *systemId, xmlChar *content) { const xmlChar *nullstr = BAD_CAST "(null)"; /* not all libraries handle printing null pointers nicely */ if (publicId == NULL) publicId = nullstr; if (systemId == NULL) systemId = nullstr; if (content == NULL) content = (xmlChar *)nullstr; callbacks++; if (quiet) return; fprintf(stdout, "SAX.entityDecl(%s, %d, %s, %s, %s)\n", name, type, publicId, systemId, content); } /** * attributeDeclDebug: * @ctxt: An XML parser context * @name: the attribute name * @type: the attribute type * * An attribute definition has been parsed */ static void attributeDeclDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar * elem, const xmlChar * name, int type, int def, const xmlChar * defaultValue, xmlEnumerationPtr tree) { callbacks++; if (quiet) return; if (defaultValue == NULL) fprintf(stdout, "SAX.attributeDecl(%s, %s, %d, %d, NULL, ...)\n", elem, name, type, def); else fprintf(stdout, "SAX.attributeDecl(%s, %s, %d, %d, %s, ...)\n", elem, name, type, def, defaultValue); xmlFreeEnumeration(tree); } /** * elementDeclDebug: * @ctxt: An XML parser context * @name: the element name * @type: the element type * @content: the element value (without processing). * * An element definition has been parsed */ static void elementDeclDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, int type, xmlElementContentPtr content ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.elementDecl(%s, %d, ...)\n", name, type); } /** * notationDeclDebug: * @ctxt: An XML parser context * @name: The name of the notation * @publicId: The public ID of the entity * @systemId: The system ID of the entity * * What to do when a notation declaration has been parsed. */ static void notationDeclDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, const xmlChar *publicId, const xmlChar *systemId) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.notationDecl(%s, %s, %s)\n", (char *) name, (char *) publicId, (char *) systemId); } /** * unparsedEntityDeclDebug: * @ctxt: An XML parser context * @name: The name of the entity * @publicId: The public ID of the entity * @systemId: The system ID of the entity * @notationName: the name of the notation * * What to do when an unparsed entity declaration is parsed */ static void unparsedEntityDeclDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, const xmlChar *publicId, const xmlChar *systemId, const xmlChar *notationName) { const xmlChar *nullstr = BAD_CAST "(null)"; if (publicId == NULL) publicId = nullstr; if (systemId == NULL) systemId = nullstr; if (notationName == NULL) notationName = nullstr; callbacks++; if (quiet) return; fprintf(stdout, "SAX.unparsedEntityDecl(%s, %s, %s, %s)\n", (char *) name, (char *) publicId, (char *) systemId, (char *) notationName); } /** * setDocumentLocatorDebug: * @ctxt: An XML parser context * @loc: A SAX Locator * * Receive the document locator at startup, actually xmlDefaultSAXLocator * Everything is available on the context, so this is useless in our case. */ static void setDocumentLocatorDebug(void *ctx ATTRIBUTE_UNUSED, xmlSAXLocatorPtr loc ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.setDocumentLocator()\n"); } /** * startDocumentDebug: * @ctxt: An XML parser context * * called when the document start being processed. */ static void startDocumentDebug(void *ctx ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.startDocument()\n"); } /** * endDocumentDebug: * @ctxt: An XML parser context * * called when the document end has been detected. */ static void endDocumentDebug(void *ctx ATTRIBUTE_UNUSED) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.endDocument()\n"); } /** * startElementDebug: * @ctxt: An XML parser context * @name: The element name * * called when an opening tag has been processed. */ static void startElementDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name, const xmlChar **atts) { int i; callbacks++; if (quiet) return; fprintf(stdout, "SAX.startElement(%s", (char *) name); if (atts != NULL) { for (i = 0;(atts[i] != NULL);i++) { fprintf(stdout, ", %s=
+
+, atts[i++]); if (atts[i] != NULL) fprintf(stdout,
+
+", atts[i]); } } fprintf(stdout, ")\n"); } /** * endElementDebug: * @ctxt: An XML parser context * @name: The element name * * called when the end of an element has been detected. */ static void endElementDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.endElement(%s)\n", (char *) name); } /** * charactersDebug: * @ctxt: An XML parser context * @ch: a xmlChar string * @len: the number of xmlChar * * receiving some chars from the parser. * Question: how much at a time ??? */ static void charactersDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *ch, int len) { char output[40]; int i; callbacks++; if (quiet) return; for (i = 0;(i<len) && (i < 30);i++) output[i] = ch[i]; output[i] = 0; fprintf(stdout, "SAX.characters(%s, %d)\n", output, len); } /** * referenceDebug: * @ctxt: An XML parser context * @name: The entity name * * called when an entity reference is detected. */ static void referenceDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *name) { callbacks++; if (quiet) return; fprintf(stdout, "SAX.reference(%s)\n", name); } /** * ignorableWhitespaceDebug: * @ctxt: An XML parser context * @ch: a xmlChar string * @start: the first char in the string * @len: the number of xmlChar * * receiving some ignorable whitespaces from the parser. * Question: how much at a time ??? */ static void ignorableWhitespaceDebug(void *ctx ATTRIBUTE_UNUSED, const xmlChar *ch, int len) { char output[40]; int i; callbacks++; if (quiet) return; for (i = 0;(i<len) && (i < 30);i++) output[i] = ch[i]; output[i] = 0; fprintf(stdout, "SAX.ignorableWhitespace(%s, %d)\n", output, len); } /** * processingInstructionDebug: * @ctxt: An XML parser context * @target: the target name * @data: the PI data
+
+SAX.processingInstruction(%s, %s)\n
+
+SAX.processingInstruction(%s, NULL)\n
+
+SAX.pcdata(%.20s, %d)\n
+
+SAX.comment(%s)\n
+
+SAX.warning:
+
+SAX.error:
+
+SAX.fatalError:
+
+SAX.startElementNs(%s
+
+, NULL
+
+, %s
+
+, NULL
+
+, '%s'
+
+, %d
+
+, xmlns
+
+:%s
+
+='%s'
+
+, %d, %d
+
+, %s:%s='
+
+, %s='
+
+%.4s...', %d
+
+)\n
+
+SAX.endElementNs(%s
+
+, NULL
+
+, %s
+
+, NULL)\n
+
+, '%s')\n
+
+rb
+
+r
+
+Cannot read file %s\n
+
+rb
+
+r
+
+xmlSAXUserParseFile returned error %d\n
+
+xmlSAXUserParseFile returned error %d\n
+
+xmlSAXUserParseFile returned error %d\n
+
+%d callbacks generated\n
+
+xmlSAXUserParseFile returned error %d\n
+
+-debug
+
+--debug
+
+-copy
+
+--copy
+
+-recover
+
+--recover
+
+-push
+
+--push
+
+'push' not enabled in library - ignoring\n
+
+-speed
+
+--speed
+
+-timing
+
+--timing
+
+-repeat
+
+--repeat
+
+-noent
+
+--noent
+
+-quiet
+
+--quiet
+
+-sax2
+
+--sax2
+
+-nonull
+
+--nonull
+
+-
+
+Parsing
+
+%s : SAX1 parsing support not compiled in\n
+
+0x
+

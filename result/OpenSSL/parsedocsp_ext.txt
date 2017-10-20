@@ -1,0 +1,58 @@
+Copyright 2000-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Standard wrapper functions for extensions
+
+OCSP request extensions
+
+Single extensions
+
+OCSP Basic response
+
+OCSP single response extensions
+
+also CRL Entry Extensions
+
+Nonce handling functions
+
+Add a nonce to an extension stack. A nonce can be specified or if NULL a random nonce will be generated. Note: OpenSSL 0.9.7d and later create an OCTET STRING containing the nonce, previous versions used the raw nonce.
+
+Create the OCTET STRING manually by writing out the header and appending the content octets. This avoids an extra memory allocation operation in some cases. Applications should NOT do this because it relies on library internals.
+
+Add nonce to an OCSP request
+
+Same as above but for a response
+
+Check nonce validity in a request and response. Return value reflects result: 1: nonces present and equal. 2: nonces both absent. 3: nonce present in response only. 0: nonces both present and not equal. -1: nonce in request only. For most responders clients can check return > 0. If responder doesn't handle nonces return != 0 may be necessary. return == 0 is always an error.
+
+Since we are only interested in the presence or absence of the nonce and comparing its value there is no need to use the X509V3 routines: this way we can avoid them allocating an ASN1_OCTET_STRING structure for the value which would be freed immediately anyway.
+
+Check both absent
+
+Check in request only
+
+Check in response but not request
+
+Otherwise nonce in request and response so retrieve the extensions
+
+Copy the nonce value (if any) from an OCSP request to a response.
+
+Check for nonce in request
+
+If no nonce that's OK
+
+AcceptableResponses ::= SEQUENCE OF OBJECT IDENTIFIER
+
+ArchiveCutoff ::= GeneralizedTime
+
+per ACCESS_DESCRIPTION parameter are oids, of which there are currently two--NID_ad_ocsp, NID_id_ad_caIssuers--and GeneralName value. This method forces NID_ad_ocsp and uniformResourceLocator [6] IA5String.
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+ocsp_lcl.h
+
+t handle nonces return != 0 may be * necessary. return == 0 is always an error. */ int OCSP_check_nonce(OCSP_REQUEST *req, OCSP_BASICRESP *bs) { /* * Since we are only interested in the presence or absence of * the nonce and comparing its value there is no need to use * the X509V3 routines: this way we can avoid them allocating an * ASN1_OCTET_STRING structure for the value which would be * freed immediately anyway. */ int req_idx, resp_idx; X509_EXTENSION *req_ext, *resp_ext; req_idx = OCSP_REQUEST_get_ext_by_NID(req, NID_id_pkix_OCSP_Nonce, -1); resp_idx = OCSP_BASICRESP_get_ext_by_NID(bs, NID_id_pkix_OCSP_Nonce, -1); /* Check both absent */ if ((req_idx < 0) && (resp_idx < 0)) return 2; /* Check in request only */ if ((req_idx >= 0) && (resp_idx < 0)) return -1; /* Check in response but not request */ if ((req_idx < 0) && (resp_idx >= 0)) return 3; /* * Otherwise nonce in request and response so retrieve the extensions */ req_ext = OCSP_REQUEST_get_ext(req, req_idx); resp_ext = OCSP_BASICRESP_get_ext(bs, resp_idx); if (ASN1_OCTET_STRING_cmp(X509_EXTENSION_get_data(req_ext), X509_EXTENSION_get_data(resp_ext))) return 0; return 1; } /* * Copy the nonce value (if any) from an OCSP request to a response. */ int OCSP_copy_nonce(OCSP_BASICRESP *resp, OCSP_REQUEST *req) { X509_EXTENSION *req_ext; int req_idx; /* Check for nonce in request */ req_idx = OCSP_REQUEST_get_ext_by_NID(req, NID_id_pkix_OCSP_Nonce, -1); /* If no nonce that
+

@@ -1,0 +1,14 @@
+Document not parsed successfully. \n
+
+empty document\n
+
+story
+
+document of the wrong type, root node != story
+
+reference
+
+uri
+
+Usage: %s docname, uri\n
+

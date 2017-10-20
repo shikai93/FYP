@@ -1,0 +1,62 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Helper macro for the callback to determine whether an operator expects a len parameter or not
+
+Helper function to work out whether to call the new style callback or the old one, and translate between the two. This has a long return type for consistency with the old callback. Similarly for the "long" used for "inret"
+
+Strip off any BIO_CB_RETURN flag
+
+We have an old style callback, so we will have to do nasty casts and check for overflows.
+
+In this case |len| is set, and should be used instead of |argi|
+
+This is essentially the same as BIO_read_ex() except that it allows 0 or a negative value to indicate failure (retryable or not) in the return. This is for compatibility with the old style BIO_read(), where existing code may make assumptions about the return value that it might get.
+
+Shouldn't happen
+
+readbytes should always be <= dlen
+
+written should always be <= dlen
+
+Shouldn't happen
+
+It is unfortunate to duplicate in functions what the BIO_(w)pending macros do; but those macros have inappropriate return type, and for interfacing from other programming languages, C macros aren't much of a help anyway.
+
+put the 'bio' on the end of b's list of operators
+
+called to do internal processing
+
+Remove the first and return the rest
+
+Since ref count > 1, don't free anyone else.
+
+This will let SSL_s_sock() work with stdin/stdout
+
+copy app data
+
+www.openssl.org/source/license.html
+
+License
+
+bio_lcl.h
+
+internal/cryptlib.h
+
+long
+
+inret
+
+BIO
+
+BIO
+
+t happen */ if (ret > 0 && *readbytes > dlen) { BIOerr(BIO_F_BIO_READ_INTERN, ERR_R_INTERNAL_ERROR); return -1; } return ret; } int BIO_read(BIO *b, void *data, int dlen) { size_t readbytes; int ret; if (dlen < 0) return 0; ret = bio_read_intern(b, data, (size_t)dlen, &readbytes); if (ret > 0) { /* *readbytes should always be <= dlen */ ret = (int)readbytes; } return ret; } int BIO_read_ex(BIO *b, void *data, size_t dlen, size_t *readbytes) { int ret; ret = bio_read_intern(b, data, dlen, readbytes); if (ret > 0) ret = 1; else ret = 0; return ret; } static int bio_write_intern(BIO *b, const void *data, size_t dlen, size_t *written) { int ret; if (b == NULL) return 0; if ((b->method == NULL) || (b->method->bwrite == NULL)) { BIOerr(BIO_F_BIO_WRITE_INTERN, BIO_R_UNSUPPORTED_METHOD); return -2; } if ((b->callback != NULL || b->callback_ex != NULL) && ((ret = (int)bio_call_callback(b, BIO_CB_WRITE, data, dlen, 0, 0L, 1L, written)) <= 0)) return ret; if (!b->init) { BIOerr(BIO_F_BIO_WRITE_INTERN, BIO_R_UNINITIALIZED); return -2; } ret = b->method->bwrite(b, data, dlen, written); if (ret > 0) b->num_write += (uint64_t)*written; if (b->callback != NULL || b->callback_ex != NULL) ret = (int)bio_call_callback(b, BIO_CB_WRITE | BIO_CB_RETURN, data, dlen, 0, 0L, ret, written); return ret; } int BIO_write(BIO *b, const void *data, int dlen) { size_t written; int ret; if (dlen < 0) return 0; ret = bio_write_intern(b, data, (size_t)dlen, &written); if (ret > 0) { /* *written should always be <= dlen */ ret = (int)written; } return ret; } int BIO_write_ex(BIO *b, const void *data, size_t dlen, size_t *written) { int ret; ret = bio_write_intern(b, data, dlen, written); if (ret > 0) ret = 1; else ret = 0; return ret; } int BIO_puts(BIO *b, const char *buf) { int ret; size_t written = 0; if ((b == NULL) || (b->method == NULL) || (b->method->bputs == NULL)) { BIOerr(BIO_F_BIO_PUTS, BIO_R_UNSUPPORTED_METHOD); return -2; } if (b->callback != NULL || b->callback_ex != NULL) { ret = (int)bio_call_callback(b, BIO_CB_PUTS, buf, 0, 0, 0L, 1L, NULL); if (ret <= 0) return ret; } if (!b->init) { BIOerr(BIO_F_BIO_PUTS, BIO_R_UNINITIALIZED); return -2; } ret = b->method->bputs(b, buf); if (ret > 0) { b->num_write += (uint64_t)ret; written = ret; ret = 1; } if (b->callback != NULL || b->callback_ex != NULL) ret = (int)bio_call_callback(b, BIO_CB_PUTS | BIO_CB_RETURN, buf, 0, 0, 0L, ret, &written); if (ret > 0) { if (written > INT_MAX) { BIOerr(BIO_F_BIO_PUTS, BIO_R_LENGTH_TOO_LONG); ret = -1; } else { ret = (int)written; } } return ret; } int BIO_gets(BIO *b, char *buf, int size) { int ret; size_t readbytes = 0; if ((b == NULL) || (b->method == NULL) || (b->method->bgets == NULL)) { BIOerr(BIO_F_BIO_GETS, BIO_R_UNSUPPORTED_METHOD); return (-2); } if (size < 0) { BIOerr(BIO_F_BIO_GETS, BIO_R_INVALID_ARGUMENT); return 0; } if (b->callback != NULL || b->callback_ex != NULL) { ret = (int)bio_call_callback(b, BIO_CB_GETS, buf, size, 0, 0L, 1, NULL); if (ret <= 0) return ret; } if (!b->init) { BIOerr(BIO_F_BIO_GETS, BIO_R_UNINITIALIZED); return (-2); } ret = b->method->bgets(b, buf, size); if (ret > 0) { readbytes = ret; ret = 1; } if (b->callback != NULL || b->callback_ex != NULL) ret = (int)bio_call_callback(b, BIO_CB_GETS | BIO_CB_RETURN, buf, size, 0, 0L, ret, &readbytes); if (ret > 0) { /* Shouldn
+
+
+
+t much of a help anyway. */ size_t BIO_ctrl_pending(BIO *bio) { return BIO_ctrl(bio, BIO_CTRL_PENDING, 0, NULL); } size_t BIO_ctrl_wpending(BIO *bio) { return BIO_ctrl(bio, BIO_CTRL_WPENDING, 0, NULL); } /* put the
+
+on the end of b
+
+0xff;
+

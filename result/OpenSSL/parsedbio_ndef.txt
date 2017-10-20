@@ -1,0 +1,30 @@
+Copyright 2008-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Experimental NDEF ASN1 BIO support routines
+
+The usage is quite simple, initialize an ASN1 structure, get a BIO from it then any data written through the BIO will end up translated to appropriate format on the fly. The data is streamed out and does not need to be all held in memory at once. When the BIO is flushed the output is finalized and any signatures etc written out. The BIO is a 'proper' BIO and can handle non blocking I/O correctly. The usage is simple. The implementation is not...
+
+BIO support data stored in the ASN1 BIO ex_arg
+
+ASN1 structure this BIO refers to
+
+Top of the BIO chain
+
+Output BIO
+
+Boundary where content is inserted
+
+DER buffer start
+
+ASN1 bio needs to be next to output BIO
+
+Now let callback prepends any digest, cipher etc BIOs ASN1 structure needs.
+
+Finalize structures
+
+www.openssl.org/source/license.html
+
+License
+
+proper
+

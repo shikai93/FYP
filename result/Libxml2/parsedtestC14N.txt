@@ -1,0 +1,142 @@
+Canonical XML implementation test program (http://www.w3.org/TR/2001/REC-xml-c14n-20010315) See Copyright for the status of this software. Author: Aleksey Sanin <aleksey@aleksey.com>
+
+static void print_xpath_nodes(xmlNodeSetPtr nodes);
+
+build an XML tree from a the file; we need to add default attributes and resolve all character and entities references
+
+Check the document is of the right kind
+
+load xpath file if specified
+
+Canonical form
+
+fprintf(stderr,"File \"%s\" loaded: start canonization\n", xml_filename);
+
+Cleanup
+
+Init libxml
+
+Parse command line and process file
+
+load exclusive namespace from command line
+
+load exclusive namespace from command line
+
+Shutdown libxml
+
+Macro used to grow the current buffer.
+
+allocate an translation buffer.
+
+load XPath expr as a file
+
+Check the document is of the right kind
+
+Register namespaces
+
+Evaluate xpath
+
+print_xpath_nodes(xpath->nodesetval);
+
+static void print_xpath_nodes(xmlNodeSetPtr nodes) { xmlNodePtr cur; int i; if(nodes == NULL ){ fprintf(stderr, "Error: no nodes set defined\n"); return; } fprintf(stderr, "Nodes Set:\n-----\n"); for(i = 0; i < nodes->nodeNr; ++i) { if(nodes->nodeTab[i]->type == XML_NAMESPACE_DECL) { xmlNsPtr ns; ns = (xmlNsPtr)nodes->nodeTab[i]; cur = (xmlNodePtr)ns->next; fprintf(stderr, "namespace \"%s\"=\"%s\" for node %s:%s\n", ns->prefix, ns->href, (cur->ns) ? cur->ns->prefix : BAD_CAST "", cur->name); } else if(nodes->nodeTab[i]->type == XML_ELEMENT_NODE) { cur = nodes->nodeTab[i]; fprintf(stderr, "element node \"%s:%s\"\n", (cur->ns) ? cur->ns->prefix : BAD_CAST "", cur->name); } else { cur = nodes->nodeTab[i]; fprintf(stderr, "node \"%s\": type %d\n", cur->name, cur->type); } } }
+
+LIBXML_C14N_ENABLED
+
+www.w3.org/TR/2001/REC-xml-c14n-20010315)
+
+libxml.h
+
+Usage: %s <mode> <xml-file> [<xpath-expr>] [<inclusive-ns-list>]\n
+
+where <mode> is one of following:\n
+
+--with-comments \t XML file canonicalization v1.0 w comments \n
+
+--without-comments \t XML file canonicalization v1.0 w/o comments\n
+
+--1-1-with-comments \t XML file canonicalization v1.1 w comments\n
+
+--1-1-without-comments \t XML file canonicalization v1.1 w/o comments\n
+
+--exc-with-comments \t Exclusive XML file canonicalization v1.0 w comments\n
+
+--exc-without-comments\t Exclusive XML file canonicalization v1.0 w/o comments\n
+
+Error: unable to parse file \"%s\"\n
+
+Error: empty document for file \"%s\"\n
+
+Error: unable to evaluate xpath expression\n
+
+File \"%s\" loaded: start canonization\n
+
+Error: failed to canonicalize XML file \"%s\" (ret=%d)\n
+
+Error: wrong number of arguments.\n
+
+--with-comments
+
+--without-comments
+
+--1-1-with-comments
+
+--1-1-without-comments
+
+--exc-with-comments
+
+--exc-without-comments
+
+Error: bad option.\n
+
+realloc failed
+
+\'
+
+\'
+
+\0
+
+malloc failed
+
+\0
+
+,
+
+\0
+
+,
+
+\0
+
+Error: unable to parse file \"%s\"\n
+
+Error: empty document for file \"%s\"\n
+
+XPath
+
+Error: XPath element expected in the file \"%s\"\n
+
+Error: XPath content element is NULL \"%s\"\n
+
+Error: unable to create new context\n
+
+Error: unable to register NS with prefix=\"%s\" and href=\"%s\"\n
+
+Error: unable to evaluate xpath expression\n
+
+Error: no nodes set defined\n
+
+Nodes Set:\n-----\n
+
+namespace \"%s\"=\"%s\" for node %s:%s\n
+
+
+
+element node \"%s:%s\"\n
+
+
+
+node \"%s\": type %d\n
+
+%s : XPath/Canonicalization and output support not compiled in\n
+

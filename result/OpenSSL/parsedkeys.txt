@@ -1,0 +1,14 @@
+t need to be generated separately. Public keys come in several flavors, using different cryptographic algorithms. The most popular ones associated with certificates are RSA and DSA, and this HOWTO will show how to generate each of them. 2. To generate a RSA key A RSA key can be used both for encryption and for signing. Generating a key for the RSA algorithm is quite easy, all you have to do is the following: openssl genrsa -des3 -out privkey.pem 2048 With this variant, you will be prompted for a protecting password. If you don
+
+-des3
+
+t want your key to be protected by a password, remove the flag
+
+from the command line above. 4. To generate an EC key An EC key can be used both for key agreement (ECDH) and signing (ECDSA). Generating a key for ECC is similar to generating a DSA key. These are two-step processes. First, you have to get the EC parameters from which the key will be generated: openssl ecparam -name prime256v1 -out prime256v1.pem The prime256v1, or NIST P-256, which stands for
+
+, is the name of an elliptic curve which generates the parameters. You can use the following command to list all supported curves: openssl ecparam -list_curves When that is done, you can generate a key using the created parameters (several keys can be produced from the same parameters): openssl genpkey -des3 -paramfile prime256v1.pem -out private.key With this variant, you will be prompted for a password to protect your key. If you don
+
+-des3
+
+s treated as a distinct algorithm but not as one of the curves listed with
+

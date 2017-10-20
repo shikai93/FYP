@@ -1,0 +1,186 @@
+Copyright 2015-2017 The OpenSSL Project Authors. All Rights Reserved. Copyright (c) 2013-2014 Timo Teräs <timo.teras@gmail.com> Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+Make sure that the processing of symbol names is treated the same as when libcrypto is built. This is done automatically for public headers (see include/openssl/__DECC_INCLUDE_PROLOGUE.H and __DECC_INCLUDE_EPILOGUE.H), but not for internal headers.
+
+Keep in sync with |suffixes|, below.
+
+Process an entry; return number of errors.
+
+Check if a symlink goes to the right spot; return 0 if okay. This can be -1 if bad filename, or an error count.
+
+process a file, return number of errors.
+
+Does it end with a recognized extension?
+
+Does it have X.509 data in it?
+
+This is not an error.
+
+Process a directory; return number of errors found.
+
+Link exists, and is used as-is
+
+New link needed (it may replace something)
+
+Link to be deleted
+
+defined(OPENSSL_SYS_UNIX) || defined(__APPLE__)
+
+www.openssl.org/source/license.html
+
+License
+
+apps.h
+
+internal/o_dir.h
+
+
+
+r
+
+pem
+
+crt
+
+cer
+
+crl
+
+hash bucket
+
+%s: skipping duplicate %s in %s\n
+
+certificate
+
+CRL
+
+%s: hash table overflow for %s\n
+
+collision bucket
+
+.
+
+\0
+
+.
+
+r
+
+%s: skipping %s, cannot open file\n
+
+%s: skipping %s,
+
+it does not contain exactly one certificate or CRL\n
+
+\0
+
+]
+
+>
+
+:
+
+\\
+
+/
+
+;
+
+\0
+
+\0
+
+Skipping %s, can't write\n
+
+/
+
+
+
+filename buffer
+
+Doing %s\n
+
+Skipping %s, out of memory\n
+
+out of memory\n
+
+%s%s%s
+
+%08x.%s%d
+
+link %s -> %s\n
+
+%s%s%n%08x.%s%d
+
+link %s -> %s\n
+
+%s: Can't unlink %s, %s\n
+
+%s: Can't symlink %s, %s\n
+
+%s%s%n%08x.%s%d
+
+unlink %s\n
+
+%s: Can't unlink %s, %s\n
+
+-
+
+Usage: %s [options] [cert-directory...]\n
+
+-
+
+Valid options are:\n
+
+help
+
+-
+
+Display this summary
+
+h
+
+-
+
+Display this summary
+
+compat
+
+-
+
+Create both new- and old-style hash links
+
+old
+
+-
+
+Use old-style hash to generate links
+
+n
+
+-
+
+Do not remove existing links
+
+v
+
+-
+
+Verbose output
+
+%s: Use -help for summary.\n
+
+SSL_CERT_DIR
+
+:
+
+:
+
+/etc/ssl/certs
+
+Not available; use c_rehash script\n
+
+0x7);
+
+0x7));
+

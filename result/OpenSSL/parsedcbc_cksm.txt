@@ -1,0 +1,20 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+fix 15/10/91 eay - thanks to keithr@sco.COM
+
+Transform the data in tout1 so that it will match the return value that the MIT Kerberos mit_des_cbc_cksum API returns.
+
+www.openssl.org/source/license.html
+
+License
+
+des_locl.h
+
+0x000000FF)
+
+0x0000FF00)
+
+0x00FF0000)
+
+0xFF000000);
+

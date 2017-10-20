@@ -1,0 +1,26 @@
+testModule.c : a small tester program for xmlModule See Copyright for the status of this software. joelwreed@comcast.net
+
+for _MAX_PATH
+
+Used for SCO Openserve
+
+build the module filename, and confirm the module exists
+
+LIBXML_SCHEMAS_ENABLED
+
+libxml.h
+
+.
+
+.libs
+
+%s/testdso%s
+
+hello_world
+
+Failure to lookup\n
+
+Lookup returned NULL\n
+
+%s : Module support not compiled in\n
+

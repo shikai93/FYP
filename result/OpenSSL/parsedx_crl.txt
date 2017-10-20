@@ -1,0 +1,38 @@
+Copyright 1995-2016 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+The X509_CRL_INFO structure needs a bit of customisation. Since we cache the original encoding the signature won't be affected by reordering of the revoked field.
+
+Just set cmp function here. We don't sort because that would affect the output of X509_CRL_print().
+
+Set CRL entry issuer according to CRL certificate issuer extension. Check for unhandled critical CRL entry extensions.
+
+Check for critical CRL entry extensions
+
+The X509_CRL structure needs a bit of customisation. Cache some extensions and hash of the whole CRL.
+
+Delta CRLs must have CRL number
+
+See if we have any unhandled critical CRL extensions and indicate this in a flag. We only currently handle IDP so anything else critical sets the flag. This code accesses the X509_CRL structure directly: applications shouldn't do this.
+
+We handle IDP and deltas
+
+Convert IDP into a more convenient form
+
+Set various flags according to IDP
+
+Sort revoked into serial number order if not already sorted. Do this under a lock to avoid race condition.
+
+Need to look for matching name
+
+www.openssl.org/source/license.html
+
+License
+
+internal/cryptlib.h
+
+internal/x509_int.h
+
+x509_lcl.h
+
+t be affected by reordering of the * revoked field. */ static int crl_inf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it, void *exarg) { X509_CRL_INFO *a = (X509_CRL_INFO *)*pval; if (!a || !a->revoked) return 1; switch (operation) { /* * Just set cmp function here. We don
+

@@ -1,0 +1,20 @@
+Copyright 2016-2017 The OpenSSL Project Authors. All Rights Reserved. Licensed under the OpenSSL license (the "License"). You may not use this file except in compliance with the License. You can obtain a copy in the file LICENSE in the source distribution or at https://www.openssl.org/source/license.html
+
+We use a proper main function here instead of the custom main from the test framework because the CRYPTO_mem_leaks_fp function cannot be called a second time without trying to use a null pointer. The test framework calls this function as part of its close down. A work around is to call putenv("OPENSSL_DEBUG_MEMORY=0"); before exiting but that is worse than avoiding the test framework's main.
+
+If -1 return value something bad happened
+
+www.openssl.org/source/license.html
+
+License
+
+testutil.h
+
+OPENSSL_DEBUG_MEMORY=0
+
+OPENSSL_DEBUG_MEMORY
+
+on
+
+freeit
+
